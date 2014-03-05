@@ -42,10 +42,10 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	@Override
-	public void appendToTable(String tableName, int pageNumber,
+	public int appendToTable(String tableName, int pageNumber,
 			Hashtable<String, String> data) throws DBEngineException {
 		// TODO Auto-generated method stub
-		
+		return -1;
 	}
 
 	@Override

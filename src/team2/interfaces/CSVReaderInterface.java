@@ -16,7 +16,10 @@ public interface CSVReaderInterface {
 	
 	public void appendToMetaDataFile(Hashtable<String,String> data) throws DBEngineException;
 	
-	public void appendToTable(String tableName,int pageNumber,Hashtable<String,String> data) throws DBEngineException;
+	/**
+	 * @return Integer , the row at which it was added 
+	 */
+	public int appendToTable(String tableName,int pageNumber,Hashtable<String,String> data) throws DBEngineException;
 	
 	public void deleteRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException; // Mark Row As Deleted
 	
