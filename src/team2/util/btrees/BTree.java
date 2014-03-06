@@ -1,5 +1,7 @@
 package team2.util.btrees;
 
+import java.util.ArrayList;
+
 import team2.interfaces.BtreeInterface;
 
 public class BTree implements BtreeInterface{
@@ -11,7 +13,7 @@ public class BTree implements BtreeInterface{
 	}
 
 	@Override
-	public String get(String key) {
+	public ArrayList<String> get(String key) {
 		// TODO Auto-generated method stub
 		return null;
 	}

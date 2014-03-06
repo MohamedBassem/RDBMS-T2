@@ -1,10 +1,12 @@
 package team2.interfaces;
 
+import java.util.ArrayList;
+
 public interface BtreeInterface {
 	
 	public void insert(String key,String value);
 	
-	public String get(String key);
+	public ArrayList<String> get(String key);
 	
 	public String getTableName();
 	
