@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import team2.interfaces.BtreeInterface;
 
-public class BTree extends main.jdbm.btree.BTree{
+public class BTree extends jdbm.btree.BTree {
 
 	@Override
 	 public synchronized Object insert( Object key, Object value, boolean replace)throws IOException{
@@ -18,7 +18,6 @@ public class BTree extends main.jdbm.btree.BTree{
 			((ArrayList<String>) returned).add((String) value);
 			return returned;
 		}
-		
 	}
 
 
