@@ -12,7 +12,7 @@ public class BTree extends main.jdbm.btree.BTree{
 		ArrayList<String> values = new ArrayList<String>();
 		values.add((String)value);
 		Object returned = super.insert(key, values, false);
-		if(returned.equals(null))
+		if(returned==null)
 			return values;
 		else {
 			((ArrayList<String>) returned).add((String) value);
