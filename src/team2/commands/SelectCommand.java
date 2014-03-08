@@ -1,5 +1,6 @@
 package team2.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -71,7 +72,11 @@ public class SelectCommand implements Command {
 				tree = btfactory.getBtree(this.tableName, key);
 			} catch (DBEngineException e) {}
 			
-			partialRecords.add(tree.get(htblColNameValue.get(key)));
+			try {
+				partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		ArrayList<String> resultsPointer = new ArrayList<String>();
