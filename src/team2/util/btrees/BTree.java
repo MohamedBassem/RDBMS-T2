@@ -3,8 +3,6 @@ package team2.util.btrees;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import team2.interfaces.BtreeInterface;
-
 public class BTree extends jdbm.btree.BTree {
 
 	@Override
