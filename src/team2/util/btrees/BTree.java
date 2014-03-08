@@ -1,69 +1,24 @@
 package team2.util.btrees;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import team2.interfaces.BtreeInterface;
 
-public class BTree implements BtreeInterface{
+public class BTree extends jdbm.btree.BTree {
 
 	@Override
-	public void insert(String key, String value) {
-		// TODO Auto-generated method stub
-		
+	 public synchronized Object insert( Object key, Object value, boolean replace)throws IOException{
+		ArrayList<String> values = new ArrayList<String>();
+		values.add((String)value);
+		Object returned = super.insert(key, values, false);
+		if(returned==null)
+			return values;
+		else {
+			((ArrayList<String>) returned).add((String) value);
+			return returned;
+		}
 	}
 
-	@Override
-	public ArrayList<String> get(String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getColumnName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isPrimary() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setTableName(String tableName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setColumnName(String columnName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setIsPrimary(boolean isPrimary) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void delete(String key) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String serialize() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
