@@ -7,6 +7,7 @@ import team2.commands.SelectCommand;
 import team2.exceptions.DBAppException;
 import team2.exceptions.DBEngineException;
 import team2.util.CSVReader;
+import team2.util.Properties;
 import team2.util.btrees.BTreeFactory;
 
 
@@ -14,6 +15,7 @@ public class Engine {
 	
 	BTreeFactory bTreeFactory;
 	CSVReader reader;
+	Properties properties;
 	
 	public void init(){
 		// TODO
