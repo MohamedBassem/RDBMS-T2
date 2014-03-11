@@ -17,6 +17,7 @@ import java.util.Map;
 
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
+import team2.interfaces.MetaDataListener;
 
 public class CSVReader implements CSVReaderInterface{
 
@@ -72,12 +73,10 @@ public class CSVReader implements CSVReaderInterface{
 	    System.out.println(m);
 	}
 	
-	@Override
-	public void createTableFile(String tableName) throws DBEngineException {
+
 		
-			
-	}
 	
+
 	/*
 	 * The format of the file is tablename_pagenumber
 	 */
@@ -158,6 +157,18 @@ public class CSVReader implements CSVReaderInterface{
 			map = new HashMap<String, Integer>();
 		}
 	    return map;
+
+	}
+	
+	public Hashtable<String, String>[] loadMetaDataFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void listenToMetaDataFileUpdates(MetaDataListener properties) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
