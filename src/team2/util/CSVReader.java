@@ -14,28 +14,31 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
-
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
 import team2.interfaces.MetaDataListener;
 
 public class CSVReader implements CSVReaderInterface{
 
+	private List<MetaDataListener> metadataObservers;
 	private Map<String, Integer> numberOfPages;
 	private Map<String, Integer> numberOfRows;
 	private final String numberOfPagesFile = "data/app/pages.ser";
 	private final String numberOfRowsFile = "data/app/rows.ser";
-	private final String metadataFile = "data/tables/meta.txt";
+	private final String metadataFile = "data/tables/meta.csv";
+	private final String tmpFilePath = "data/tmp";
+	private final String[] metadataColumnOrder = {};
 	
 	public CSVReader() {
 		numberOfPages	= loadPagesTable();
-		numberOfRows	= loadRowsTable(); 
-		
+		numberOfRows	= loadRowsTable();
+		metadataObservers = new ArrayList<MetaDataListener>();
 	}
 	
 	@Override
-	public Hashtable<String, String>[] loadPage(String tableName, int pageNumber)
+	public synchronized Hashtable<String, String>[] loadPage(String tableName, int pageNumber)
 			throws DBEngineException {
 		Hashtable<String, String>[] result = null;
 		try {
@@ -59,19 +62,16 @@ public class CSVReader implements CSVReaderInterface{
 			throw new DBEngineException("Bad file");
 		}
 		return result;
-		
 	}
 	
-	
 	@Override
-	public Hashtable<String, String> loadRow(String tableName, int pageNumber,
+	public synchronized Hashtable<String, String> loadRow(String tableName, int pageNumber,
 			int rowNumber) throws DBEngineException {
 		Hashtable<String, String> result = new Hashtable<String, String>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
 			String line = reader.readLine();
-			
 			for (int i = 0; i <= rowNumber; i++) {
 				line = reader.readLine();
 				if (line.equals("")) {
@@ -87,22 +87,39 @@ public class CSVReader implements CSVReaderInterface{
 		}
 		return result;
 	}
-
-	public static void main(String[] args) throws DBEngineException, IOException, ClassNotFoundException {
-		FileInputStream fis = new FileInputStream("data/app/pages.ser");
-	    ObjectInputStream ois = new ObjectInputStream(fis);
-	    Map<String, Integer> m = (Map<String, Integer>) ois.readObject();
-	    ois.close();
-	    System.out.println(m);
+	
+	public synchronized void editRow(int row, String data, String filePath) throws IOException {
+		File file = new File(filePath);
+		File tmpFile = new File(tmpFilePath);
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		PrintWriter writer = new PrintWriter(new FileWriter(tmpFile));
+		String line = null;
+		int index = -1;
+		while ((line = reader.readLine()) != null) {
+			if (line.equals("")) {
+				continue;
+			}
+			if (index == row) {
+				line = data;
+			}
+			//line will be equal to null if data = null (delete row)
+			if (line != null) {
+				writer.println(line);
+			}
+			index++;
+		}
+		writer.flush();
+		file.delete();
+		tmpFile.renameTo(file);
 	}
 
 	/*
 	 * The format of the file is tablename_pagenumber
 	 */
 	@Override
-	public void createTablePage(String tableName, int newPageNumber)
+	public synchronized void createTablePage(String tableName, int newPageNumber)
 			throws DBEngineException {
-		if ( (new File(encodePageName(tableName,  newPageNumber)).exists())) {
+		if ((new File(encodePageName(tableName,  newPageNumber)).exists())) {
 			throw new DBEngineException("Page already exists");
 		}
 		try {
@@ -122,13 +139,14 @@ public class CSVReader implements CSVReaderInterface{
 	
 	//TODO implement this
 	@Override
-	public void appendToMetaDataFile(Hashtable<String, String> data)
+	public synchronized void appendToMetaDataFile(Hashtable<String, String> data)
 			throws DBEngineException {
 		
 		try {
-			PrintWriter writer = new PrintWriter( new FileWriter(metadataFile), true);
-			writer.println(encodeRow(data));
-			
+			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile), true);
+			writer.println(encodeRow(data, metadataColumnOrder));
+			writer.flush();
+			notifyMetadataObservers();
 		} catch (IOException e) {
 			throw new DBEngineException("There was a problem while accessing the file");
 		}
@@ -136,7 +154,7 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	@Override
-	public int appendToTable(String tableName, int pageNumber,
+	public synchronized int appendToTable(String tableName, int pageNumber,
 			Hashtable<String, String> data) throws DBEngineException {
 		int lastRow = -1;
 		try {
@@ -152,28 +170,52 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	@Override
-	public void deleteRow(String tableName, int pageNumber, int rowNumber)
+	public synchronized void deleteRow(String tableName, int pageNumber, int rowNumber)
 			throws DBEngineException {
-		// TODO Auto-generated method stub
+
+		try {
+			editRow(rowNumber, "", encodePageName(tableName, pageNumber));
+		} catch (IOException e) {
+			throw new DBEngineException("There was a problem accesing the file");
+		}
 		
 	}
 
 	@Override
-	public int appentToTable(String tableName, Hashtable<String, String> data) throws DBEngineException {
+	public synchronized int appentToTable(String tableName, Hashtable<String, String> data) throws DBEngineException {
 		int lastPage = getLastPageIndex(tableName);
 		return appendToTable(tableName, lastPage, data);
 	}
 
-	public Hashtable<String, String>[] loadMetaDataFile() {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized Hashtable<String, String>[] loadMetaDataFile() {
+		Hashtable<String, String>[] result = null;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(metadataFile));
+			String[] columns = decodeRow(reader.readLine());
+			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
+			String line = reader.readLine();
+			while ((line = reader.readLine()) != null) {
+				if (line.equals("")) {
+					continue;
+				}
+				String[] row = decodeRow(line);
+				Hashtable<String, String> table = new Hashtable<String, String>();
+				for (int i = 0; i < row.length; i++) {
+					table.put(columns[i], row[i]);
+				}
+				list.add(table);
+				result = (Hashtable<String, String>[]) list.toArray();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void listenToMetaDataFileUpdates(MetaDataListener properties) {
-		// TODO Auto-generated method stub
-
-	}
+		metadataObservers.add(properties);
+	}	
 
 	@Override
 	public int getLastPageIndex(String tableName) {
@@ -192,6 +234,15 @@ public class CSVReader implements CSVReaderInterface{
 			buffer.append(",");
 		}
 		return buffer.substring(0, buffer.length() - 1).toString();
+	}
+	
+	private String encodeRow(Hashtable<String, String> data, String[] columns) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < columns.length; i++) {
+			buffer.append(data.get(columns[i]));
+			buffer.append(",");
+		}
+		return buffer.substring(0, buffer.length() - 1);
 	}
 	
 	private String[] decodeRow(String row) {
@@ -234,7 +285,6 @@ public class CSVReader implements CSVReaderInterface{
 			map = new HashMap<String, Integer>();
 		}
 	    return map;
-
 	}
 	
 	private void saveRowsTable() throws IOException {
@@ -251,4 +301,10 @@ public class CSVReader implements CSVReaderInterface{
 	    return map;
 	}
 
+	private void notifyMetadataObservers() {
+		Hashtable<String, String>[] metadataFile = loadMetaDataFile();
+		for (MetaDataListener l : metadataObservers) {
+			l.refresh(metadataFile);
+		}
+	}
 }
