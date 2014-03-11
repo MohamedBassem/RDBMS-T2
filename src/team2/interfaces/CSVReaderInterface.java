@@ -24,6 +24,6 @@ public interface CSVReaderInterface {
 	
 	public Hashtable<String,String> loadMetaDataFile();
 	
-	public void listenToMetaDataFileUpdates(Properties properties);
+	public void listenToMetaDataFileUpdates(MetaDataListener properties);
 	
 }

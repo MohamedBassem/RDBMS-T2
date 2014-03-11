@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
+import team2.interfaces.MetaDataListener;
 
 public class CSVReader implements CSVReaderInterface{
 
@@ -56,7 +57,7 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	@Override
-	public void listenToMetaDataFileUpdates(Properties properties) {
+	public void listenToMetaDataFileUpdates(MetaDataListener properties) {
 		// TODO Auto-generated method stub
 	}
 
