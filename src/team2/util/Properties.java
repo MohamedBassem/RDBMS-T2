@@ -1,6 +1,10 @@
 package team2.util;
 
-public class Properties {
+import java.util.Hashtable;
+
+import team2.interfaces.MetaDataListener;
+
+public class Properties implements MetaDataListener {
 	CSVReader reader;
 	
 	public Properties(CSVReader reader){
@@ -11,5 +15,13 @@ public class Properties {
 	private void init(){
 		
 	}
+
+	@Override
+	public void refresh(Hashtable<String, String>[] data) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 }

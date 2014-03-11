@@ -22,12 +22,6 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	@Override
-	public void createTableFile(String tableName) throws DBEngineException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void createTablePage(String tableName, int newPageNumber)
 			throws DBEngineException {
 		// TODO Auto-generated method stub
@@ -64,7 +58,6 @@ public class CSVReader implements CSVReaderInterface{
 	@Override
 	public void listenToMetaDataFileUpdates(Properties properties) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }
