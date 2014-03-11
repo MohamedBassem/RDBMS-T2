@@ -55,4 +55,16 @@ public class CSVReader implements CSVReaderInterface{
 		
 	}
 
+	@Override
+	public Hashtable<String, String> loadMetaDataFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void listenToMetaDataFileUpdates(Properties properties) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
