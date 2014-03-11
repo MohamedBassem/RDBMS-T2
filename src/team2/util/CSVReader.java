@@ -42,7 +42,7 @@ public class CSVReader implements CSVReaderInterface{
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
 			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
-			String line;
+			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
 					continue;
@@ -70,7 +70,7 @@ public class CSVReader implements CSVReaderInterface{
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
-			String line = null;
+			String line = reader.readLine();
 			
 			for (int i = 0; i <= rowNumber; i++) {
 				line = reader.readLine();
