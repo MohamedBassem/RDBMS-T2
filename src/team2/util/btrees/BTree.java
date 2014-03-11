@@ -17,6 +17,19 @@ public class BTree extends jdbm.btree.BTree {
 			return returned;
 		}
 	}
-
+	
+public boolean delete(Object key, String pointer) throws IOException {
+		ArrayList <String> values = (ArrayList<String>) super.find(key);
+		if((values==null) || (!values.contains(pointer))){
+			return false;
+		} 
+		
+		values.remove(pointer);
+		
+		if(values.isEmpty()) {
+			super.remove(key);
+		}
+		return true; 
+	}
 
 }
