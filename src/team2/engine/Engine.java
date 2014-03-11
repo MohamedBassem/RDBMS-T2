@@ -18,7 +18,9 @@ public class Engine {
 	Properties properties;
 	
 	public void init(){
-		// TODO
+		this.bTreeFactory = new BTreeFactory();
+		this.reader = new CSVReader();
+		this.properties = new Properties(reader);
 	}
 	
 	public void createTable(String strTableName,
