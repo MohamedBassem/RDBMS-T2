@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
+import team2.interfaces.MetaDataListener;
 
 public class CSVReader implements CSVReaderInterface{
 
@@ -19,12 +20,6 @@ public class CSVReader implements CSVReaderInterface{
 			int rowNumber) throws DBEngineException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void createTableFile(String tableName) throws DBEngineException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -53,6 +48,17 @@ public class CSVReader implements CSVReaderInterface{
 			throws DBEngineException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Hashtable<String, String> loadMetaDataFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void listenToMetaDataFileUpdates(MetaDataListener properties) {
+		// TODO Auto-generated method stub
 	}
 
 }
