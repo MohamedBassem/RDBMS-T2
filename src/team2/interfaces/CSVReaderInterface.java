@@ -22,7 +22,7 @@ public interface CSVReaderInterface {
 	
 	public void deleteRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException; // Mark Row As Deleted
 	
-	public Hashtable<String,String> loadMetaDataFile();
+	public Hashtable<String,String>[] loadMetaDataFile();
 	
 	public void listenToMetaDataFileUpdates(MetaDataListener properties);
 	
