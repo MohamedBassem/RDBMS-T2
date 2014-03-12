@@ -287,10 +287,6 @@ public class CSVReader implements CSVReaderInterface{
 	    return map;
 	}
 	
-	private void saveRowsTable() throws IOException {
-		saveObject(numberOfRows, numberOfRowsFile);
-	}
-	
 	private Map<String, Integer> loadRowsTable() {
 		Map<String, Integer> map;
 		try {
