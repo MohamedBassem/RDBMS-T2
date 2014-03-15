@@ -137,6 +137,10 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	
+	private void saveRowsTable() throws IOException {
+		saveObject(numberOfRows, numberOfRowsFile);
+	}
+
 	//TODO implement this
 	@Override
 	public synchronized void appendToMetaDataFile(Hashtable<String, String> data)
