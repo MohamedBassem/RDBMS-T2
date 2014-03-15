@@ -52,7 +52,7 @@ public class Engine {
 									Hashtable<String,String> htblColNameValue,
 									String strOperator)
 											throws DBEngineException {
-		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader, strTable, htblColNameValue, strOperator);
+		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties, strTable, htblColNameValue, strOperator);
 		selectCommand.execute();
 		return selectCommand.getResults().iterator();
 				
