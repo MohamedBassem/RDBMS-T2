@@ -56,8 +56,8 @@ public class CSVReader implements CSVReaderInterface{
 					table.put(columns[i], row[i]);
 				}
 				list.add(table);
-				result = (Hashtable<String, String>[]) list.toArray();
 			}
+			result = (Hashtable<String, String>[]) list.toArray();
 		} catch (IOException e) {
 			throw new DBEngineException("Bad file");
 		}
