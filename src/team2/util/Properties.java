@@ -15,7 +15,7 @@ public class Properties implements MetaDataListener {
 	private Hashtable<String, String>[] unparsedData;
 	
 	private Hashtable< String , Hashtable<String, Hashtable<String,String> >  > data;
-	
+
 	private int maximumPageSize;
 	
 	private int bTreeN;
@@ -28,6 +28,15 @@ public class Properties implements MetaDataListener {
 		parseData();
 	}
 	
+	public Hashtable<String, Hashtable<String, Hashtable<String, String>>> getData() {
+		return data;
+	}
+	//TODO save it
+	public void setData(
+			Hashtable<String, Hashtable<String, Hashtable<String, String>>> data) {
+		this.data = data;
+	}
+
 	private void loadPropertiesFile() {
 		java.util.Properties properties = new java.util.Properties();
 		try {
@@ -103,9 +112,9 @@ public class Properties implements MetaDataListener {
 	}
 	
 	/**
-	 * @return String the referncedCol and null if it doesn't reference anything
+	 * @return String the referencedCol and null if it doesn't reference anything
 	 */
-	public String getColumnRefernce(String tblName,String colName){
+	public String getColumnReference(String tblName,String colName){
 		return data.get(tblName).get(colName).get("References");
 	}
 	
