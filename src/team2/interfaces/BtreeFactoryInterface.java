@@ -1,8 +1,8 @@
 package team2.interfaces;
 
 import team2.exceptions.DBEngineException;
-import team2.util.btrees.BTree;
+import team2.util.btrees.BTreeAdopter;
 
 public interface BtreeFactoryInterface {
-	public BTree getBtree(String tableName,String coloumnName) throws DBEngineException; 
+	public BTreeAdopter getBtree(String tableName,String coloumnName) throws DBEngineException; 
 }

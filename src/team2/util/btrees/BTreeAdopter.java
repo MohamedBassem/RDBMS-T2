@@ -3,13 +3,19 @@ package team2.util.btrees;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BTree extends jdbm.btree.BTree {
+import jdbm.btree.BTree;
 
-	@Override
-	 public synchronized Object insert( Object key, Object value, boolean replace)throws IOException{
+public class BTreeAdopter {
+	BTree tree;
+	
+	public BTreeAdopter(BTree tree) {
+		this.tree = tree;
+	}
+
+	 public Object insert( Object key, Object value, boolean replace)throws IOException{
 		ArrayList<String> values = new ArrayList<String>();
 		values.add((String)value);
-		Object returned = super.insert(key, values, false);
+		Object returned = tree.insert(key, values, false);
 		if(returned==null)
 			return values;
 		else {
@@ -19,7 +25,7 @@ public class BTree extends jdbm.btree.BTree {
 	}
 	
 public boolean delete(Object key, String pointer) throws IOException {
-		ArrayList <String> values = (ArrayList<String>) super.find(key);
+		ArrayList <String> values = this.find(key);
 		if((values==null) || (!values.contains(pointer))){
 			return false;
 		} 
@@ -27,9 +33,13 @@ public boolean delete(Object key, String pointer) throws IOException {
 		values.remove(pointer);
 		
 		if(values.isEmpty()) {
-			super.remove(key);
+			tree.remove(key);
 		}
 		return true; 
 	}
+
+public ArrayList<String> find(Object key) throws IOException {	
+	return (ArrayList<String>) tree.find(key);
+}
 
 }

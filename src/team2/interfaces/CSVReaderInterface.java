@@ -20,12 +20,16 @@ public interface CSVReaderInterface {
 	 */
 	public int appendToTable(String tableName,int pageNumber,Hashtable<String,String> data) throws DBEngineException;
 	
-	public int appentToTable(String tableName, Hashtable<String,String> data);
+	public int appentToTable(String tableName, Hashtable<String,String> data) throws DBEngineException;
 	
 	public void deleteRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException; // Mark Row As Deleted
 	
 	public Hashtable<String,String>[] loadMetaDataFile();
 	
 	public void listenToMetaDataFileUpdates(MetaDataListener properties);
+	
+	public int getLastPageIndex(String tableName);
+	
+	public int getLastRow(String tableName, int pageNumber);
 	
 }

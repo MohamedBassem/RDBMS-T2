@@ -9,6 +9,7 @@ import team2.commands.SelectCommand;
 import team2.exceptions.DBAppException;
 import team2.exceptions.DBEngineException;
 import team2.util.CSVReader;
+import team2.util.Properties;
 import team2.util.btrees.BTreeFactory;
 
 
@@ -16,9 +17,12 @@ public class Engine {
 	
 	BTreeFactory bTreeFactory;
 	CSVReader reader;
+	Properties properties;
 	
 	public void init(){
-		// TODO
+		this.bTreeFactory = new BTreeFactory();
+		this.reader = new CSVReader();
+		this.properties = new Properties(reader);
 	}
 	
 	public void createTable(String strTableName,
@@ -57,7 +61,7 @@ public class Engine {
 									Hashtable<String,String> htblColNameValue,
 									String strOperator)
 											throws DBEngineException {
-		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader, strTable, htblColNameValue, strOperator);
+		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties, strTable, htblColNameValue, strOperator);
 		selectCommand.execute();
 		return selectCommand.getResults().iterator();
 				
