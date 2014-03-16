@@ -3,8 +3,6 @@ package team2.engine;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import team2.commands.CreateTableCommand;
-import team2.commands.DeleteCommand;
 import team2.commands.SelectCommand;
 import team2.exceptions.DBAppException;
 import team2.exceptions.DBEngineException;
@@ -25,10 +23,30 @@ public class Engine {
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
-									throws DBEngineException {
-	CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader);
-	newTable.execute(); 
-	
+									throws DBAppException {
+	Hashtable<String, String> metaData = new Hashtable<String, String>();
+	Set<String> columnName = htblColNameType.keySet(); 
+	String [] columnNames = columnName.toArray();  
+	boolean key = false; 	
+	for(int i =0; i<columnNames.length(); i++){
+	if(columnNames[i].equals(strKeyColName){
+	key = true;
+		} 
+	else{
+	key = false;
+	}
+	String ColumnDetails=columnNames[i]+ ", " + htblColNameType.get(columnNames[i]) + ", ";
+	if(key==true){
+	columnDetails+="True, ";	
+	}
+	else{
+	columnDetails+="False, ";
+	}
+	columnDetails+=htblColNameRefs.get(columnNames[i]);  	
+	metaData.put(strTableName, columnDetails);	
+	appendToMetaDataFile(metaData);
+	}
+	reader.createTablePage(strTableName,0);	
 	}
 	
 	public void createIndex(String strTableName, String strColName) throws DBAppException {
@@ -45,9 +63,7 @@ public class Engine {
 								Hashtable<String,String> htblColNameValue,
 								String strOperator)
 										throws DBEngineException {
-		DeleteCommand deleteRow = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader);
-		deleteRow.execute(); 
-	
+		// TODO
 	}
 	
 	public Iterator< Hashtable<String, String >> selectFromTable(String strTable,
