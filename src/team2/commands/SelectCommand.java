@@ -9,7 +9,7 @@ import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
 import team2.util.Properties;
-import team2.util.btrees.BTree;
+import team2.util.btrees.BTreeAdopter;
 import team2.util.btrees.BTreeFactory;
 
 public class SelectCommand implements Command {
@@ -71,7 +71,7 @@ public class SelectCommand implements Command {
 		
 		for(String key: keys){
 			if(properties.isIndexed(this.tableName, key)){
-				BTree tree = null;
+				BTreeAdopter tree = null;
 				try {
 					tree = btfactory.getBtree(this.tableName, key);
 				} catch (DBEngineException e) {}

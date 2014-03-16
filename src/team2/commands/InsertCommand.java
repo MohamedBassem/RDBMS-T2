@@ -8,7 +8,7 @@ import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
 import team2.util.Properties;
-import team2.util.btrees.BTree;
+import team2.util.btrees.BTreeAdopter;
 import team2.util.btrees.BTreeFactory;
 
 public class InsertCommand implements Command {
@@ -47,7 +47,7 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 			
 			for (String column : indexedColumns) {
 				String pointer = tableName + " " + lastPage + " " + row;
-				BTree tree;
+				BTreeAdopter tree;
 				try {
 					tree = btfactory.getBtree(tableName, column);
 					tree.insert(htblColNameValue.get(column), pointer, false);
