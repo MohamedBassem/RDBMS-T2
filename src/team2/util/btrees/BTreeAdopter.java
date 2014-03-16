@@ -8,8 +8,8 @@ import jdbm.btree.BTree;
 public class BTreeAdopter {
 	BTree tree;
 	
-	public BTreeAdopter() {
-		this.tree = BTreeFactory.createTree();
+	public BTreeAdopter(BTree tree) {
+		this.tree = tree;
 	}
 
 	 public Object insert( Object key, Object value, boolean replace)throws IOException{
