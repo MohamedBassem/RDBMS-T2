@@ -8,6 +8,7 @@ import java.util.Set;
 import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
+import team2.util.Properties;
 import team2.util.btrees.BTree;
 import team2.util.btrees.BTreeFactory;
 
@@ -17,17 +18,19 @@ public class SelectCommand implements Command {
 	String tableName;
 	Hashtable<String,String> htblColNameValue;
 	String strOperator;
+	Properties properties;
 	
 	ArrayList< Hashtable<String, String> > results;
 	
 	
-	public SelectCommand(BTreeFactory btfactory,CSVReader reader,String tableName,
+	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,String tableName,
 			Hashtable<String, String> htblColNameValue, String strOperator) {
 		this.btfactory = btfactory;
 		this.reader = reader;
 		this.tableName = tableName;
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
+		this.properties = properties;
 	}
 	
 	private ArrayList<String> intersect(ArrayList<String> resultsPointer,
@@ -67,15 +70,30 @@ public class SelectCommand implements Command {
 		ArrayList< ArrayList<String> > partialRecords = new ArrayList< ArrayList<String> >();
 		
 		for(String key: keys){
-			BTree tree = null;
-			try {
-				tree = btfactory.getBtree(this.tableName, key);
-			} catch (DBEngineException e) {}
-			
-			try {
-				partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
-			} catch (IOException e) {
-				e.printStackTrace();
+			if(properties.isIndexed(this.tableName, key)){
+				BTree tree = null;
+				try {
+					tree = btfactory.getBtree(this.tableName, key);
+				} catch (DBEngineException e) {}
+				
+				try {
+					partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}else{
+				ArrayList<String> partialRecord = new ArrayList<String>();
+				int tablePages = reader.getLastPageIndex(this.tableName);
+				for(int i=0;i<=tablePages;i++){
+					Hashtable<String,String>[] res = reader.loadPage(tableName, i);
+					for(int j=0;j<res.length;j++){
+						if(res[j].get(key).equals(htblColNameValue.get(key))){
+							String pointer = this.tableName + " " + i + " " + j;
+							partialRecord.add(pointer);
+						}
+					}
+				}
+				partialRecords.add(partialRecord);
 			}
 		}
 		
