@@ -25,7 +25,7 @@ public class DeleteCommand implements Command {
 	}
 	public void execute() throws DBEngineException {
 		select.execute();
-		//ArrayList< Hashtable<String, String> > results = select.getResults();
+		ArrayList< Hashtable<String, String> > results = select.getResults();
 		this.deleteFromTable();
 		this.deleteFromTree(); 
 	}

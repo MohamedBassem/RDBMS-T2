@@ -22,6 +22,7 @@ public class Engine {
 	}
 	
 	public void createTable(String strTableName,
+
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
@@ -30,6 +31,7 @@ public class Engine {
 	newTable.execute(); 
 	
 	}
+
 	
 	public void createIndex(String strTableName, String strColName) throws DBAppException {
 		// TODO
@@ -45,10 +47,11 @@ public class Engine {
 								Hashtable<String,String> htblColNameValue,
 								String strOperator)
 										throws DBEngineException {
-		DeleteCommand deleteRow = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader);
-		deleteRow.execute(); 
+		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader);
+		delete.execute(); 
 	
 	}
+
 	
 	public Iterator< Hashtable<String, String >> selectFromTable(String strTable,
 									Hashtable<String,String> htblColNameValue,

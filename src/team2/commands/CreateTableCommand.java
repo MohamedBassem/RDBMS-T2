@@ -15,7 +15,6 @@ public class CreateTableCommand implements Command {
 	Hashtable<String,String>htblColNameRefs;
 	String strKeyColName; 
 	
-
 	public CreateTableCommand(String strTableName,
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
@@ -47,6 +46,7 @@ public class CreateTableCommand implements Command {
 		reader.createTablePage(strTableName,0);	
 
 	}
-	
+
 	}
+
 
