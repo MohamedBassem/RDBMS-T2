@@ -6,7 +6,7 @@ import team2.interfaces.BtreeFactoryInterface;
 public class BTreeFactory implements BtreeFactoryInterface {
 
 	@Override
-	public BTree getBtree(String tableName, String coloumnName)
+	public BTreeAdopter getBtree(String tableName, String coloumnName)
 			throws DBEngineException {
 		// TODO Auto-generated method stub
 		return null;
