@@ -12,7 +12,7 @@ public class BTreeAdopter {
 		this.tree = tree;
 	}
 
-	 public Object insert( Object key, Object value, boolean replace)throws IOException{
+	 public Object insert( Object key, Object value)throws IOException{
 		ArrayList<String> values = new ArrayList<String>();
 		values.add((String)value);
 		Object returned = tree.insert(key, values, false);
