@@ -72,13 +72,33 @@ public class SelectCommand implements Command {
 	
 	@Override
 	public void execute() throws DBEngineException {
-		
-		if(htblColNameValue == null && strOperator == null){
+		if(properties.getData().get(tableName) == null){
+			throw new DBEngineException();
+		}else if(htblColNameValue == null && strOperator == null){
 			selectAll();
 		}else{
+			validate();
 			normalSelect();
 			mergeResults();
 			convertPointers();
+		}
+		
+	}
+
+	private void validate() throws DBEngineException {
+		
+		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
+			throw new DBEngineException();
+		}
+		
+		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
+		
+		Set<String> keys = this.htblColNameValue.keySet();
+		
+		for(String key: keys){
+			if(table.get(key) == null){
+				throw new DBEngineException();
+			}
 		}
 		
 	}
@@ -121,8 +141,6 @@ public class SelectCommand implements Command {
 		
 		if(partialRecords.size() == 0){
 			// DO NOTHING
-		}else if( !strOperator.equals("AND") && !strOperator.equals("OR")){
-			throw new DBEngineException();
 		}else{
 			this.resultPointers = partialRecords.get(0);
 			for(int i=1;i<partialRecords.size();i++){
