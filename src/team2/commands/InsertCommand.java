@@ -51,7 +51,10 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 				try {
 					tree = btfactory.getBtree(tableName, column);
 					tree.insert(htblColNameValue.get(column), pointer, false);
-				} catch (DBEngineException | IOException e) {
+					
+				} catch (DBEngineException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
