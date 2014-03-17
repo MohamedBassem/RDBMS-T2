@@ -77,6 +77,17 @@ public class Properties implements MetaDataListener {
 		return ret;
 	}
 	
+	public ArrayList<String> getForeignKeys(String tblName){
+		ArrayList<String> columns = this.getTableColumns(tblName);
+		ArrayList<String> ret = new ArrayList<String>();
+		
+		for(String column : columns){
+			if ( this.isForeignKey(tblName, column) )
+				ret.add(column);
+		}
+		return ret;
+	}
+	
 	public ArrayList<String> getTableColumns(String tblName){
 		Set<String> columns = data.get(tblName).keySet();
 		ArrayList<String> ret = new ArrayList<String>();
@@ -100,8 +111,21 @@ public class Properties implements MetaDataListener {
 		return data.get(tblName).get(colName).get("Indexed").equals("True");
 	}
 	
+	public boolean isForeignKey(String tblName, String colName){
+		return !data.get(tblName).get(colName).get("References").equals("null");
+	}
+	
 	public boolean isPrimaryKey(String tblName,String colName){
 		return data.get(tblName).get(colName).get("Key").equals("True");
+	}
+	
+	public String getReferenceColumn(String tblName,String colName){
+		String x = data.get(tblName).get(colName).get("References");
+		if(x.equals("null")){
+			return null;
+		}else{
+			return x;
+		}
 	}
 	
 	public String getTablePrimaryKey(String tblName){
