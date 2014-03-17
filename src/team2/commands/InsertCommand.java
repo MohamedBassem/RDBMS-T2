@@ -29,8 +29,7 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 	this.htblColNameValue = htblColNameValue;
 }
 	@Override
-	public void execute() {
-		try {
+	public void execute() throws DBEngineException {
 		if(properties.getData().get(tableName) == null)
 			throw new DBEngineException("Table name is wrong or it doesn't exist.");
 		
@@ -60,17 +59,21 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 					if(properties.isPrimaryKey(tableName, column)) {
 						if(htblColNameValue.get(column) == null)
 							throw new DBEngineException("The primary key can't be null.");
-						if(tree.find(htblColNameValue.get(column)) != null)
-							throw new DBEngineException("Th primary key you're trying to insert is not unique.");
+						try {
+							if(tree.find(htblColNameValue.get(column)) != null)
+								throw new DBEngineException("Th primary key you're trying to insert is not unique.");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 					
-					tree.insert(htblColNameValue.get(column), pointer);
+					try {
+						tree.insert(htblColNameValue.get(column), pointer);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 			}
-		} catch (DBEngineException e) {
-			e.printStackTrace();		
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
+		
 	}
 }
 
