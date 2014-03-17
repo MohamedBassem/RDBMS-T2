@@ -33,26 +33,21 @@ public class CreateIndex implements Command {
 		Hashtable<String, Hashtable<String, String>> table = data.get(tableName);
 		
 		if(table == null) {
-			System.out.println("Table name is wrong or it doesn't exist.");
-			return;
+			 throw new DBEngineException("Table name is wrong or it doesn't exist.");
 		}
 		
 		Hashtable<String, String> column = table.get(columnName);
 		if(column == null) {
-			System.out.println("Column name is wrong or it doesn't exist.");
-			return;
+			 throw new DBEngineException("Column name is wrong or it doesn't exist.");
+			;
+		}
+		if(properties.isIndexed(tableName, columnName)) {
+			 throw new DBEngineException("Column is already indexed.");
 		}
 		column.put("Indexed", "True");
 		properties.setData(data);
-		BTreeAdopter tree = factory.getBtree(tableName, columnName);
-		
-		if(tree != null) {
-			System.out.println("This column is already indexed.");
-			return;
-		}
-		
-		tree = factory.createTree(tableName, columnName);
-		
+		BTreeAdopter tree = factory.createTree(tableName, columnName);
+				
 		SelectCommand select = new SelectCommand(factory, reader, properties,
 				tableName, null, null);
 		select.execute();
