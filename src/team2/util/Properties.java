@@ -31,6 +31,7 @@ public class Properties implements MetaDataListener {
 	public Hashtable<String, Hashtable<String, Hashtable<String, String>>> getData() {
 		return data;
 	}
+	
 	//TODO save it
 	public void setData(
 			Hashtable<String, Hashtable<String, Hashtable<String, String>>> data) {
@@ -93,6 +94,7 @@ public class Properties implements MetaDataListener {
 		}
 		return ret;
 	}
+	
 	
 	public boolean isIndexed(String tblName, String colName){
 		return data.get(tblName).get(colName).get("Indexed").equals("True");
