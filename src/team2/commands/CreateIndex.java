@@ -13,16 +13,14 @@ import team2.util.btrees.BTreeFactory;
 public class CreateIndex implements Command {
 	String tableName;
 	String columnName;
-	String type;
 	Properties properties;
 	CSVReader reader;
 	BTreeFactory factory;
 	
-	public CreateIndex(String tableName, String columnName, String type, 
+	public CreateIndex(String tableName, String columnName,
 			Properties properties, CSVReader reader, BTreeFactory factory) {
 		this.tableName = tableName;
 		this.columnName = columnName;
-		this.type = type;
 		this.properties = properties;
 		this.reader = reader;
 		this.factory = factory;
@@ -35,12 +33,12 @@ public class CreateIndex implements Command {
 		data.get(tableName).get(columnName).put("Indexed", "True");
 		properties.setData(data);
 		
-		BTreeAdopter tree = factory.createTree(tableName, columnName, type);
+		BTreeAdopter tree = factory.createTree(tableName, columnName);
 		SelectCommand select = new SelectCommand(factory, reader, properties,
 				tableName, null, null);
 		
 		select.execute();
-		ArrayList<Hashtable<String, String>> rows = select.results;
+		ArrayList<Hashtable<String, String>> rows = select.getResults();
 		ArrayList<String> pointers = select.getResultPointers();	
 		
 		for(int i = 0; i < rows.size(); i++) {
