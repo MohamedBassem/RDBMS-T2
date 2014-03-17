@@ -1,20 +1,15 @@
 package team2.commands;
 
-
-
-import java.util.Hashtable;
-import java.util.Set;
-import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
-import team2.util.CSVReader;
 
 public class CreateTableCommand implements Command {
-	CSVReader reader;
+	CSV reader;
 	String strTableName;
 	Hashtable<String,String> htblColNameType;
 	Hashtable<String,String>htblColNameRefs;
 	String strKeyColName; 
 	
+@Override
 	public CreateTableCommand(String strTableName,
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
@@ -25,28 +20,25 @@ public class CreateTableCommand implements Command {
 	this.strKeyColName=strKeyColName;
 	this.reader=reader; 	
 	}
-	public void execute() throws DBEngineException{
+	public void execute() throws DBAppExcpetion{
 	Hashtable<String, String> metaData = new Hashtable<String, String>();
 	Set<String> columnName = htblColNameType.keySet(); 
-	String [] columnNames = (String[]) columnName.toArray();   	
-	for(int i =0; i<columnNames.length; i++){
+	String [] columnNames = columnName.toArray();  
+	boolean key = false; 	
+	for(int i =0; i<columnNames.length(); i++){
 		String ColumnDetails=columnNames[i]+ ", " + htblColNameType.get(columnNames[i]) + ", ";
 			if(columnNames[i].equals(strKeyColName)){
-				ColumnDetails+="True, True, ";	
-			//Btree newBtree = new Btree(); 
-			//newBtree.create fix me!!
+				columnDetails+="True, ";	
 			}
 			else{
-				ColumnDetails+="False, False, ";
+				columnDetails+="False, ";
 			}
-		ColumnDetails+=htblColNameRefs.get(columnNames[i]);  	
-		metaData.put(strTableName, ColumnDetails);	
-		reader.appendToMetaDataFile(metaData);
+		columnDetails+=htblColNameRefs.get(columnNames[i]);  	
+		metaData.put(strTableName, columnDetails);	
+		appendToMetaDataFile(metaData);
 		}
 		reader.createTablePage(strTableName,0);	
-
 	}
-
 	}
-
-
+	}
+}
