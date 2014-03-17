@@ -20,7 +20,15 @@ public class SelectCommand implements Command {
 	String strOperator;
 	Properties properties;
 	
+	// The final arraylist of objects
 	ArrayList< Hashtable<String, String> > results;
+	
+	// The arraylist of results pointer
+	ArrayList< String > resultPointers;
+	
+	// The partial results before merging using OR or AND
+	ArrayList< ArrayList<String> > partialRecords;
+	
 	
 	
 	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,String tableName,
@@ -64,10 +72,41 @@ public class SelectCommand implements Command {
 	
 	@Override
 	public void execute() throws DBEngineException {
+		if(properties.getData().get(tableName) == null){
+			throw new DBEngineException();
+		}else if(htblColNameValue == null && strOperator == null){
+			selectAll();
+		}else{
+			validate();
+			normalSelect();
+			mergeResults();
+			convertPointers();
+		}
+		
+	}
+
+	private void validate() throws DBEngineException {
+		
+		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
+			throw new DBEngineException();
+		}
+		
+		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
 		
 		Set<String> keys = this.htblColNameValue.keySet();
 		
-		ArrayList< ArrayList<String> > partialRecords = new ArrayList< ArrayList<String> >();
+		for(String key: keys){
+			if(table.get(key) == null){
+				throw new DBEngineException();
+			}
+		}
+		
+	}
+
+	private void normalSelect() throws DBEngineException {
+		Set<String> keys = this.htblColNameValue.keySet();
+		
+		this.partialRecords = new ArrayList< ArrayList<String> >();
 		
 		for(String key: keys){
 			if(properties.isIndexed(this.tableName, key)){
@@ -78,16 +117,14 @@ public class SelectCommand implements Command {
 				
 				try {
 					partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (IOException e) {}
 			}else{
 				ArrayList<String> partialRecord = new ArrayList<String>();
 				int tablePages = reader.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
 					Hashtable<String,String>[] res = reader.loadPage(tableName, i);
 					for(int j=0;j<res.length;j++){
-						if(res[j].get(key).equals(htblColNameValue.get(key))){
+						if(res[j] != null && res[j].get(key).equals(htblColNameValue.get(key))){
 							String pointer = this.tableName + " " + i + " " + j;
 							partialRecord.add(pointer);
 						}
@@ -97,31 +134,61 @@ public class SelectCommand implements Command {
 			}
 		}
 		
-		ArrayList<String> resultsPointer = new ArrayList<String>();
+	}
+	
+	private void mergeResults() throws DBEngineException {
+		this.resultPointers = new ArrayList<String>();
 		
 		if(partialRecords.size() == 0){
 			// DO NOTHING
-		}else if( !strOperator.equals("AND") && !strOperator.equals("OR")){
-			throw new DBEngineException();
 		}else{
-			resultsPointer = partialRecords.get(0);
+			this.resultPointers = partialRecords.get(0);
 			for(int i=1;i<partialRecords.size();i++){
 				if(strOperator.equals("AND")){
-					resultsPointer = intersect(resultsPointer,partialRecords.get(i));
+					this.resultPointers = intersect(this.resultPointers,partialRecords.get(i));
 				}else{
-					resultsPointer = union(resultsPointer,partialRecords.get(i));
+					this.resultPointers = union(this.resultPointers,partialRecords.get(i));
 				}
 			}
 		}
 		
+	}
+
+	private void selectAll() throws DBEngineException {
+		
+		this.resultPointers = new ArrayList<String>();
 		this.results = new ArrayList< Hashtable<String, String> >();
 		
-		for (String result : resultsPointer) {
+		int tablePages = reader.getLastPageIndex(this.tableName);
+		
+		for(int i=0;i<=tablePages;i++){
+			Hashtable<String,String>[] res = reader.loadPage(tableName, i);
+			for(int j=0;j<res.length;j++){
+				if(res[j] == null){ // Deleted Record
+					continue;
+				}else{
+					String pointer = this.tableName + " " + i + " " + j;
+					resultPointers.add(pointer);
+					results.add(res[j]);
+				}
+				
+			}
+		}
+		
+	}
+
+	private void convertPointers() throws DBEngineException {
+		this.results = new ArrayList< Hashtable<String, String> >();
+		
+		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
 			Hashtable<String, String> record = reader.loadRow(row[0] , Integer.parseInt(row[1]) , Integer.parseInt(row[2]) );
 			this.results.add(record);
 		}
-		
+	}
+	
+	public ArrayList<String> getResultPointers(){
+		return this.resultPointers;
 	}
 	
 	public ArrayList<Hashtable<String, String> > getResults(){
