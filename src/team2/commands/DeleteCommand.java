@@ -1,12 +1,15 @@
 package team2.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
+import team2.util.btrees.BTreeAdopter;
 import team2.util.btrees.BTreeFactory;
+import team2.util.Properties;
 
 public class DeleteCommand implements Command {
 	String strTableName; 
@@ -14,7 +17,8 @@ public class DeleteCommand implements Command {
 	String strOperator;  
 	CSVReader reader; 
 	BTreeFactory btfactory;
-	SelectCommand select = new SelectCommand(this.btfactory,this.reader,this.strTableName,
+	Properties properties;
+	SelectCommand select = new SelectCommand(this.btfactory,this.reader, this.properties, this.strTableName,
 			this.htblColNameValue, this.strOperator);
 	public DeleteCommand(String strTableName,Hashtable<String,String> htblColNameValue,
 								String strOperator, CSVReader reader){
@@ -23,19 +27,31 @@ public class DeleteCommand implements Command {
 	this.strOperator=strOperator;
 	this.reader=reader; 
 	}
-	public void execute() throws DBEngineException {
+	public void execute() throws DBEngineException, IOException {
 		select.execute();
-		ArrayList< Hashtable<String, String> > results = select.getResults();
 		this.deleteFromTable();
 		this.deleteFromTree(); 
 	}
 	
-	public void deleteFromTable(){
-		//loop through tables from hashmap and get pointer and delete.	
-		//reader.deleteRow(this.strTableName,int pageNumber,/*select.getPointer()*/ 1); 
+	public void deleteFromTable() throws DBEngineException{
+		ArrayList<String> pointers = select.getResultPointers(); 
+		for(int i =0; i<pointers.size(); i++){
+		String [] x = ((String) pointers.get(i)).split(" ");
+		int pageNumber = Integer.parseInt(x[1]);
+		int rowNumber= Integer.parseInt(x[2]);
+		reader.deleteRow(this.strTableName,pageNumber,rowNumber); 
 		}
-	public void deleteFromTree(){
-		
+	}
+	public void deleteFromTree() throws DBEngineException, IOException{
+		ArrayList<String> indexedColumns = properties.getIndexedColumns(strTableName); 
+		for(int i=0; i<indexedColumns.size(); i++){
+			BTreeAdopter adoptor= btfactory.getBtree(strTableName, indexedColumns.get(i));
+			String key = htblColNameValue.get(indexedColumns.get(i));
+			ArrayList<String> pointers = adoptor.find(key);
+			for(int j=0; j<pointers.size(); j++){
+				boolean x = adoptor.delete(key, pointers.get(i));
+			}
+		}
 	}
 
 }
