@@ -18,18 +18,20 @@ public class CreateTableCommand implements Command {
 	Hashtable<String,String> htblColNameType;
 	Hashtable<String,String>htblColNameRefs;
 	String strKeyColName; 
+	BTreeFactory btreeFactory;
 	
 	public CreateTableCommand(String strTableName,
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
-							String strKeyColName, CSVReader reader){
-	this.strTableName=strTableName; 
-	this.htblColNameType=htblColNameType;
-	this.htblColNameRefs= htblColNameRefs; 
-	this.strKeyColName=strKeyColName;
-	this.reader=reader; 	
+							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory){
+		this.strTableName=strTableName; 
+		this.htblColNameType=htblColNameType;
+		this.htblColNameRefs= htblColNameRefs; 
+		this.strKeyColName=strKeyColName;
+		this.reader=reader; 	
+		this.btreeFactory = btreeFactory;
 	}
-	public void execute() throws DBEngineException, IOException{
+	public void execute() throws DBEngineException{
 	Set<String> columnName = htblColNameType.keySet(); 
 	String [] columnNames = (String[]) columnName.toArray();   	
 	for(int i =0; i<columnNames.length; i++){
@@ -40,9 +42,7 @@ public class CreateTableCommand implements Command {
 			if(columnNames[i].equals(strKeyColName)){
 				metaData.put("Key", "True");
 				metaData.put("Indexed", "True");
-			//BTreeFactory factory = new BTreeFactory("Tree");
-			//factory.createBtree();
-			
+				this.btreeFactory.createTree(this.strTableName, this.strKeyColName);
 			}
 			else{
 				metaData.put("Key", "False");
