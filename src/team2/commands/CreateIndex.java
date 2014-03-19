@@ -28,7 +28,7 @@ public class CreateIndex implements Command {
 	}
 
 	@Override
-	public void execute() throws DBEngineException, IOException {
+	public void execute() throws DBEngineException {
 		Hashtable<String, Hashtable<String, Hashtable<String,String>>> data 
 		= properties.getData();
 		Hashtable<String, Hashtable<String, String>> table = data.get(tableName);
@@ -57,8 +57,12 @@ public class CreateIndex implements Command {
 		for(int i = 0; i < rows.size(); i++) {
 			String value = rows.get(i).get(columnName);
 			String pointer = pointers.get(i);
-			tree.insert(value, pointer);
+			try {
+				tree.insert(value, pointer);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		}
+	}
 
 }
