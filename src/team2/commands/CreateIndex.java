@@ -1,5 +1,6 @@
 package team2.commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -27,7 +28,7 @@ public class CreateIndex implements Command {
 	}
 
 	@Override
-	public void execute() throws DBEngineException {
+	public void execute() throws DBEngineException, IOException {
 		Hashtable<String, Hashtable<String, Hashtable<String,String>>> data 
 		= properties.getData();
 		Hashtable<String, Hashtable<String, String>> table = data.get(tableName);
@@ -39,7 +40,6 @@ public class CreateIndex implements Command {
 		Hashtable<String, String> column = table.get(columnName);
 		if(column == null) {
 			 throw new DBEngineException("Column name is wrong or it doesn't exist.");
-			;
 		}
 		if(properties.isIndexed(tableName, columnName)) {
 			 throw new DBEngineException("Column is already indexed.");
@@ -57,7 +57,7 @@ public class CreateIndex implements Command {
 		for(int i = 0; i < rows.size(); i++) {
 			String value = rows.get(i).get(columnName);
 			String pointer = pointers.get(i);
-			tree.insert(value, pointer, false);
+			tree.insert(value, pointer);
 		}
 		}
 

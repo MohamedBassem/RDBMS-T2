@@ -31,8 +31,8 @@ public class Engine {
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
 									throws DBEngineException {
-	CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader);
-	newTable.execute(); 
+		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader);
+		newTable.execute(); 
 	
 	}
 
@@ -68,6 +68,6 @@ public class Engine {
 	}
 	
 	public void saveAll() throws DBEngineException {
-		// TODO
+		this.bTreeFactory.saveAll();
 	}
 }
