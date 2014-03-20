@@ -33,7 +33,7 @@ public class Engine {
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
 									throws DBEngineException {
-		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory);
+		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory,properties);
 		newTable.execute(); 
 	
 	}

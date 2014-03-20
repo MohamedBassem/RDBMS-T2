@@ -37,6 +37,7 @@ public class CSVReader implements CSVReaderInterface{
 	public CSVReader() {
 		numberOfPages	= loadPagesTable();
 		numberOfRows	= loadRowsTable();
+		loadColumnsOrder();
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
 	}
@@ -130,6 +131,8 @@ public class CSVReader implements CSVReaderInterface{
 		try {
 			
 			FileWriter writer = new FileWriter(encodePageName(tableName, newPageNumber));
+			writer.write(encodeHeader(columns)+"\n");
+			writer.close();
 			if (numberOfPages.containsKey(tableName)) {
 				numberOfPages.put(tableName, numberOfPages.get(tableName) + 1);
 			}
@@ -339,4 +342,15 @@ public class CSVReader implements CSVReaderInterface{
 			columnsOrder = new HashMap<String, List<String>>();
 		}
 	}
+	
+	private String encodeHeader(String[] columns) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < columns.length; i++) {
+			buffer.append(columns[i]);
+			buffer.append(",");
+		}
+		return buffer.substring(0, buffer.length() - 1);
+	}
+	
+	
 }

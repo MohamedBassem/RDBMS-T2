@@ -2,14 +2,13 @@ package team2.commands;
 
 
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Set;
 
 import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
-import team2.util.btrees.BTreeAdopter;
+import team2.util.Properties;
 import team2.util.btrees.BTreeFactory;
 
 public class CreateTableCommand implements Command {
@@ -17,19 +16,21 @@ public class CreateTableCommand implements Command {
 	String strTableName;
 	Hashtable<String,String> htblColNameType;
 	Hashtable<String,String>htblColNameRefs;
-	String strKeyColName; 
+	String strKeyColName;
+	Properties properties;
 	BTreeFactory btreeFactory;
 	
 	public CreateTableCommand(String strTableName,
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
-							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory){
+							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,Properties properties){
 		this.strTableName=strTableName; 
 		this.htblColNameType=htblColNameType;
 		this.htblColNameRefs= htblColNameRefs; 
 		this.strKeyColName=strKeyColName;
 		this.reader=reader; 	
 		this.btreeFactory = btreeFactory;
+		this.properties = properties;
 	}
 	public void execute() throws DBEngineException{
 	Set<String> columnName = htblColNameType.keySet(); 
@@ -51,7 +52,7 @@ public class CreateTableCommand implements Command {
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
-		reader.createTablePage(strTableName,0);	
+		reader.createTablePage(strTableName,0,(String[])properties.getData().get(this.strTableName).keySet().toArray());	
 
 	}
 

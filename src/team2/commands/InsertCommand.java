@@ -39,7 +39,7 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 		if(lastRow == properties.getMaximumPageSize()) {
 			lastPage++;
 			
-				reader.createTablePage(tableName, lastPage);		
+				reader.createTablePage(tableName, lastPage,(String[])properties.getData().get(this.tableName).keySet().toArray());		
 		}	
 		
 			Set<String> columns = htblColNameValue.keySet();
