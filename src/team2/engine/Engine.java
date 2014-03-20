@@ -18,9 +18,12 @@ import team2.util.btrees.BTreeFactory;
 public class Engine {
 	
 	BTreeFactory bTreeFactory;
-	CSVReader reader;
-	Properties properties;
+	public CSVReader reader;
+	public Properties properties;
 	
+	public Engine(){
+		this.init();
+	}
 	public void init(){
 		this.bTreeFactory = new BTreeFactory();
 		this.reader = new CSVReader();

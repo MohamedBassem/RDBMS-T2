@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
 
+import team2.exceptions.DBEngineException;
 import team2.interfaces.MetaDataListener;
 
 public class Properties implements MetaDataListener {
 	
 	private CSVReader reader;
 	
-	private Hashtable<String, String>[] unparsedData;
+	private ArrayList<Hashtable<String, String>>unparsedData;
 	
 	private Hashtable< String , Hashtable<String, Hashtable<String,String> >  > data;
 
@@ -23,6 +24,7 @@ public class Properties implements MetaDataListener {
 	
 	public Properties(CSVReader reader){
 		this.reader = reader;
+		reader.listenToMetaDataFileUpdates(this);
 		loadData();
 		loadPropertiesFile();
 		parseData();
@@ -53,17 +55,33 @@ public class Properties implements MetaDataListener {
 	}
 
 	private void loadData(){
-		this.unparsedData = reader.loadMetaDataFile();
+		try {
+			this.unparsedData = reader.loadMetaDataFile();
+		} catch (DBEngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
-	public void refresh(Hashtable<String, String>[] data) {
+	public void refresh( ArrayList<Hashtable<String, String>> data) {
 		this.unparsedData = data;
 		parseData();
 	}
 	
 	private void parseData(){
 		this.data = new Hashtable< String , Hashtable<String,Hashtable<String,String> >  >();
+		
+		for(Hashtable<String, String> row : unparsedData){
+			if( !data.containsKey(row.get("Table Name"))){
+				data.put( row.get("Table Name") , new Hashtable<String,Hashtable<String,String>>());
+			}
+			data.get(row.get("Table Name")).put(row.get("Column Name"), new Hashtable<String,String>());
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Column Type", row.get("Column Type"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Key", row.get("Key"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Indexed", row.get("Indexed"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("References", row.get("References"));
+		}
 	}
 	
 	public ArrayList<String> getIndexedColumns(String tblName){

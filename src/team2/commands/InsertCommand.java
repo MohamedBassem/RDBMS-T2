@@ -9,6 +9,7 @@ import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
 import team2.util.Properties;
+import team2.util.Utils;
 import team2.util.btrees.BTreeAdopter;
 import team2.util.btrees.BTreeFactory;
 
@@ -39,7 +40,7 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 		if(lastRow == properties.getMaximumPageSize()) {
 			lastPage++;
 			
-				reader.createTablePage(tableName, lastPage,(String[])properties.getData().get(this.tableName).keySet().toArray());		
+				reader.createTablePage(tableName, lastPage,Utils.setToArray(properties.getData().get(this.tableName).keySet()));		
 		}	
 		
 			Set<String> columns = htblColNameValue.keySet();

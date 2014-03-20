@@ -9,6 +9,7 @@ import team2.exceptions.DBEngineException;
 import team2.interfaces.Command;
 import team2.util.CSVReader;
 import team2.util.Properties;
+import team2.util.Utils;
 import team2.util.btrees.BTreeFactory;
 
 public class CreateTableCommand implements Command {
@@ -33,13 +34,14 @@ public class CreateTableCommand implements Command {
 		this.properties = properties;
 	}
 	public void execute() throws DBEngineException{
-	Set<String> columnName = htblColNameType.keySet(); 
-	String [] columnNames = (String[]) columnName.toArray();   	
-	for(int i =0; i<columnNames.length; i++){
-		Hashtable<String, String> metaData = new Hashtable<String, String>();
-		metaData.put("Table Name", strTableName);
-		metaData.put("Column Name", columnNames[i]);
-		metaData.put("Column Type", htblColNameType.get(columnNames[i]));
+		Set<String> columnName = htblColNameType.keySet();
+		String [] columnNames = Utils.setToArray(columnName);   	
+		for(int i =0; i<columnNames.length; i++){
+			
+			Hashtable<String, String> metaData = new Hashtable<String, String>();
+			metaData.put("Table Name", strTableName);
+			metaData.put("Column Name", columnNames[i]);
+			metaData.put("Column Type", htblColNameType.get(columnNames[i]));
 			if(columnNames[i].equals(strKeyColName)){
 				metaData.put("Key", "True");
 				metaData.put("Indexed", "True");
@@ -52,10 +54,10 @@ public class CreateTableCommand implements Command {
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
-		reader.createTablePage(strTableName,0,(String[])properties.getData().get(this.strTableName).keySet().toArray());	
-
+		reader.createTablePage(strTableName,0,Utils.setToArray(properties.getData().get(this.strTableName).keySet()));	
+	
 	}
 
-	}
+}
 
 

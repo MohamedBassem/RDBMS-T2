@@ -1,9 +1,9 @@
 package team2.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
 import team2.interfaces.MetaDataListener;
@@ -43,9 +44,8 @@ public class CSVReader implements CSVReaderInterface{
 	}
 	
 	@Override
-	public synchronized Hashtable<String, String>[] loadPage(String tableName, int pageNumber)
+	public synchronized ArrayList<Hashtable<String, String>> loadPage(String tableName, int pageNumber)
 			throws DBEngineException {
-		Hashtable<String, String>[] result = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
@@ -62,11 +62,10 @@ public class CSVReader implements CSVReaderInterface{
 				}
 				list.add(table);
 			}
-			result = (Hashtable<String, String>[]) list.toArray();
+			return list;
 		} catch (IOException e) {
 			throw new DBEngineException("Bad file");
 		}
-		return result;
 	}
 	
 	@Override
@@ -162,9 +161,10 @@ public class CSVReader implements CSVReaderInterface{
 			throws DBEngineException {
 		
 		try {
-			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile), true);
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(metadataFile, true)));			
 			writer.println(encodeRow(data, metadataColumnOrder));
 			writer.flush();
+			writer.close();
 			notifyMetadataObservers();
 		} catch (IOException e) {
 			throw new DBEngineException("There was a problem while accessing the file");
@@ -206,8 +206,7 @@ public class CSVReader implements CSVReaderInterface{
 		return appendToTable(tableName, lastPage, data);
 	}
 
-	public synchronized Hashtable<String, String>[] loadMetaDataFile() {
-		Hashtable<String, String>[] result = null;
+	public synchronized ArrayList<Hashtable<String, String>> loadMetaDataFile() throws DBEngineException {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(metadataFile));
 			String[] columns = decodeRow(reader.readLine());
@@ -223,12 +222,12 @@ public class CSVReader implements CSVReaderInterface{
 					table.put(columns[i], row[i]);
 				}
 				list.add(table);
-				result = (Hashtable<String, String>[]) list.toArray();
 			}
+			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new DBEngineException();
 		}
-		return result;
 	}
 
 	@Override
@@ -317,7 +316,13 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	private void notifyMetadataObservers() {
-		Hashtable<String, String>[] metadataFile = loadMetaDataFile();
+		ArrayList<Hashtable<String, String>> metadataFile = null;
+		try {
+			metadataFile = loadMetaDataFile();
+		} catch (DBEngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for (MetaDataListener l : metadataObservers) {
 			l.refresh(metadataFile);
 		}

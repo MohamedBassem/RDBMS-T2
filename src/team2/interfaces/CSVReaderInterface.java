@@ -1,5 +1,6 @@
 package team2.interfaces;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import team2.exceptions.DBEngineException;
@@ -7,7 +8,7 @@ import team2.util.Properties;
 
 public interface CSVReaderInterface {
 	
-	public Hashtable<String,String>[] loadPage(String tableName,int pageNumber) throws DBEngineException;
+	public ArrayList<Hashtable<String, String>> loadPage(String tableName,int pageNumber) throws DBEngineException;
 	
 	public Hashtable<String,String> loadRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException;
 	
@@ -24,7 +25,7 @@ public interface CSVReaderInterface {
 	
 	public void deleteRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException; // Mark Row As Deleted
 	
-	public Hashtable<String,String>[] loadMetaDataFile();
+	public ArrayList<Hashtable<String, String>> loadMetaDataFile() throws DBEngineException;
 	
 	public void listenToMetaDataFileUpdates(MetaDataListener properties);
 	
