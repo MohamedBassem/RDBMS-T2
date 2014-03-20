@@ -30,7 +30,7 @@ public class CSVReader implements CSVReaderInterface{
 	private final String numberOfRowsFile = "data/app/rows.ser";
 	private final String metadataFile = "data/tables/meta.csv";
 	private final String tmpFilePath = "data/tmp";
-	private final String[] metadataColumnOrder = {};
+	private final String[] metadataColumnOrder = {"Table Name", "Column Name", "Column Type", "Key", "Indexed", "References"};
 	private final String columnOrderFilePath = "data/app/columns.csv";
 	private Map<String, List<String>> columnsOrder;
 	
