@@ -1,5 +1,6 @@
 package team2.engine;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -33,22 +34,22 @@ public class Engine {
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
 									throws DBEngineException {
-	CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader);
-	newTable.execute(); 
+		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory);
+		newTable.execute(); 
 	
 	}
 
-	
-	public void createIndex(String strTableName, String strColName) throws DBAppException, DBEngineException {
-		CreateIndex newIndex = new CreateIndex(strTableName, strColName, properties, reader, bTreeFactory);
-		newIndex.execute();
+	public void createIndex(String strTableName, String strColName) throws DBEngineException {
+		CreateIndex createIndex = new CreateIndex(strTableName, strColName, this.properties, reader, bTreeFactory);
+		createIndex.execute();
 	}
 	
 	public void insertIntoTable(String strTableName,
 								Hashtable<String,String> htblColNameValue)
-										throws DBAppException, DBEngineException {
-		InsertCommand insert = new InsertCommand(bTreeFactory, reader, strTableName, properties, htblColNameValue);
-		insert.execute();
+										throws DBEngineException, IOException {
+		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory, reader, strTableName, properties, htblColNameValue);
+		insertCommand.execute();
+		
 	}
 	
 	public void deleteFromTable(String strTableName,
@@ -72,6 +73,6 @@ public class Engine {
 	}
 	
 	public void saveAll() throws DBEngineException {
-		// TODO
+		this.bTreeFactory.saveAll();
 	}
 }

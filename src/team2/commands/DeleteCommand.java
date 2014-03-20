@@ -27,10 +27,14 @@ public class DeleteCommand implements Command {
 	this.strOperator=strOperator;
 	this.reader=reader; 
 	}
-	public void execute() throws DBEngineException, IOException {
+	public void execute() throws DBEngineException {
 		select.execute();
 		this.deleteFromTable();
-		this.deleteFromTree(); 
+		try {
+			this.deleteFromTree();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
 	}
 	
 	public void deleteFromTable() throws DBEngineException{
