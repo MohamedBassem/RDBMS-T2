@@ -1,0 +1,44 @@
+package team2.commands;
+
+import team2.interfaces.Command;
+
+public class CreateTableCommand implements Command {
+	CSV reader;
+	String strTableName;
+	Hashtable<String,String> htblColNameType;
+	Hashtable<String,String>htblColNameRefs;
+	String strKeyColName; 
+	
+@Override
+	public CreateTableCommand(String strTableName,
+							Hashtable<String,String> htblColNameType,
+							Hashtable<String,String>htblColNameRefs,
+							String strKeyColName, CSVReader reader){
+	this.strTableName=strTableName; 
+	this.htblColNameType=htblColNameType;
+	this.htblColNameRefs= htblColNameRefs; 
+	this.strKeyColName=strKeyColName;
+	this.reader=reader; 	
+	}
+	public void execute() throws DBAppExcpetion{
+	Hashtable<String, String> metaData = new Hashtable<String, String>();
+	Set<String> columnName = htblColNameType.keySet(); 
+	String [] columnNames = columnName.toArray();  
+	boolean key = false; 	
+	for(int i =0; i<columnNames.length(); i++){
+		String ColumnDetails=columnNames[i]+ ", " + htblColNameType.get(columnNames[i]) + ", ";
+			if(columnNames[i].equals(strKeyColName)){
+				columnDetails+="True, ";	
+			}
+			else{
+				columnDetails+="False, ";
+			}
+		columnDetails+=htblColNameRefs.get(columnNames[i]);  	
+		metaData.put(strTableName, columnDetails);	
+		appendToMetaDataFile(metaData);
+		}
+		reader.createTablePage(strTableName,0);	
+	}
+	}
+	}
+}
