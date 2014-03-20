@@ -11,7 +11,7 @@ public interface CSVReaderInterface {
 	
 	public Hashtable<String,String> loadRow(String tableName,int pageNumber,int rowNumber) throws DBEngineException;
 	
-	public void createTablePage(String tableName,int newPageNumber) throws DBEngineException;
+	public void createTablePage(String tableName,int newPageNumber, String[] columns) throws DBEngineException;
 	
 	public void appendToMetaDataFile(Hashtable<String,String> data) throws DBEngineException;
 	

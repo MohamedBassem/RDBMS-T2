@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import team2.exceptions.DBEngineException;
@@ -30,10 +31,13 @@ public class CSVReader implements CSVReaderInterface{
 	private final String metadataFile = "data/tables/meta.csv";
 	private final String tmpFilePath = "data/tmp";
 	private final String[] metadataColumnOrder = {};
+	private final String columnOrderFilePath = "data/app/columns.csv";
+	private Map<String, List<String>> columnsOrder;
 	
 	public CSVReader() {
 		numberOfPages	= loadPagesTable();
 		numberOfRows	= loadRowsTable();
+		
 		metadataObservers = new ArrayList<MetaDataListener>();
 	}
 	
@@ -116,22 +120,30 @@ public class CSVReader implements CSVReaderInterface{
 	/*
 	 * The format of the file is tablename_pagenumber
 	 */
+	
 	@Override
-	public synchronized void createTablePage(String tableName, int newPageNumber)
+	public synchronized void createTablePage(String tableName, int newPageNumber, String[] columns )
 			throws DBEngineException {
 		if ((new File(encodePageName(tableName,  newPageNumber)).exists())) {
 			throw new DBEngineException("Page already exists");
 		}
 		try {
+			
 			FileWriter writer = new FileWriter(encodePageName(tableName, newPageNumber));
 			if (numberOfPages.containsKey(tableName)) {
 				numberOfPages.put(tableName, numberOfPages.get(tableName) + 1);
 			}
 			numberOfRows.put(encodePageName(tableName, newPageNumber), 0);
+			LinkedList<String> list = new LinkedList<String>();
+			for (String s : columns) {
+				list.add(s);
+			}
+			columnsOrder.put(tableName, list);
+			saveColumnsOrder();
 			savePagesTable();
 			saveRowsTable();
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new DBEngineException("There was a problem while accessing the file");
 		}
 	}
@@ -305,6 +317,26 @@ public class CSVReader implements CSVReaderInterface{
 		Hashtable<String, String>[] metadataFile = loadMetaDataFile();
 		for (MetaDataListener l : metadataObservers) {
 			l.refresh(metadataFile);
+		}
+	}
+	
+	private void saveColumnsOrder() {
+		try {
+			saveObject(columnsOrder, columnOrderFilePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadColumnsOrder() {
+		try {
+			columnsOrder = (Map<String, List<String>>) loadObject(columnOrderFilePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			columnsOrder = new HashMap<String, List<String>>();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			columnsOrder = new HashMap<String, List<String>>();
 		}
 	}
 }
