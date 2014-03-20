@@ -37,43 +37,42 @@ public InsertCommand(BTreeFactory btfactory, CSVReader reader, String tableName,
 		int lastPage = reader.getLastPageIndex(tableName);
 		int lastRow = reader.getLastRow(tableName, lastPage);
 		
-		if(lastRow == properties.getMaximumPageSize()) {
+		if(lastRow+1 == properties.getMaximumPageSize()) {
 			lastPage++;
-			
-				reader.createTablePage(tableName, lastPage,Utils.setToArray(properties.getData().get(this.tableName).keySet()));		
+			reader.createTablePage(tableName, lastPage,Utils.setToArray(properties.getData().get(this.tableName).keySet()));		
 		}	
 		
-			Set<String> columns = htblColNameValue.keySet();
-			for (String column : columns) {
-				if(properties.getData().get(tableName).get(column) == null)
-					throw new DBEngineException("Column name is wrong or it doesn't exist.");
+		Set<String> columns = htblColNameValue.keySet();
+		for (String column : columns) {
+			if(properties.getData().get(tableName).get(column) == null)
+				throw new DBEngineException("Column name is wrong or it doesn't exist.");
+		}
+
+		int row = reader.appendToTable(tableName, lastPage, htblColNameValue);
+		ArrayList<String> indexedColumns = properties.getIndexedColumns(tableName);
+		
+		for (String column : indexedColumns) {
+			String pointer = tableName + " " + lastPage + " " + row;
+			BTreeAdopter tree;
+			
+			tree = btfactory.getBtree(tableName, column);
+			if(properties.isPrimaryKey(tableName, column)) {
+				if(htblColNameValue.get(column) == null)
+					throw new DBEngineException("The primary key can't be null.");
+				try {
+					if(tree.find(htblColNameValue.get(column)) != null)
+						throw new DBEngineException("Th primary key you're trying to insert is not unique.");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			
-			int row = reader.appendToTable(tableName, lastPage, htblColNameValue);
-			ArrayList<String> indexedColumns = properties.getIndexedColumns(tableName);
-			
-			for (String column : indexedColumns) {
-				String pointer = tableName + " " + lastPage + " " + row;
-				BTreeAdopter tree;
-				
-					tree = btfactory.getBtree(tableName, column);
-					if(properties.isPrimaryKey(tableName, column)) {
-						if(htblColNameValue.get(column) == null)
-							throw new DBEngineException("The primary key can't be null.");
-						try {
-							if(tree.find(htblColNameValue.get(column)) != null)
-								throw new DBEngineException("Th primary key you're trying to insert is not unique.");
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-					
-					try {
-						tree.insert(htblColNameValue.get(column), pointer);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			try {
+				tree.insert(htblColNameValue.get(column), pointer);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
+		}
 		
 	}
 }

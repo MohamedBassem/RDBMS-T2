@@ -31,14 +31,19 @@ public class CSVReader implements CSVReaderInterface{
 	private final String numberOfRowsFile = "data/app/rows.ser";
 	private final String metadataFile = "data/tables/meta.csv";
 	private final String tmpFilePath = "data/tmp";
-	private final String[] metadataColumnOrder = {"Table Name", "Column Name", "Column Type", "Key", "Indexed", "References"};
+	private final String[] metadataColumnOrder_ = {"Table Name", "Column Name", "Column Type", "Key", "Indexed", "References"};
+	private final ArrayList<String> metadataColumnOrder;
 	private final String columnOrderFilePath = "data/app/columns.csv";
-	private Map<String, List<String>> columnsOrder;
+	private Map<String, ArrayList<String>> columnsOrder;
 	
 	public CSVReader() {
 		numberOfPages	= loadPagesTable();
 		numberOfRows	= loadRowsTable();
 		loadColumnsOrder();
+		metadataColumnOrder = new ArrayList<String>();
+		for(String str : metadataColumnOrder_){
+			metadataColumnOrder.add(str);
+		}
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
 	}
@@ -134,9 +139,11 @@ public class CSVReader implements CSVReaderInterface{
 			writer.close();
 			if (numberOfPages.containsKey(tableName)) {
 				numberOfPages.put(tableName, numberOfPages.get(tableName) + 1);
+			}else{
+				numberOfPages.put(tableName, 1);
 			}
 			numberOfRows.put(encodePageName(tableName, newPageNumber), 0);
-			LinkedList<String> list = new LinkedList<String>();
+			ArrayList<String> list = new ArrayList<String>();
 			for (String s : columns) {
 				list.add(s);
 			}
@@ -178,11 +185,13 @@ public class CSVReader implements CSVReaderInterface{
 		int lastRow = -1;
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(encodePageName(tableName, pageNumber), true));
-			writer.println(encodeRow(data));
+			writer.println(encodeRow(data,columnsOrder.get(tableName)));
 			writer.flush();
-			numberOfRows.put(encodePageName(tableName, pageNumber), numberOfRows.get(encodePageName(tableName, pageNumber) + 1));
+			numberOfRows.put(encodePageName(tableName, pageNumber), numberOfRows.get(encodePageName(tableName, pageNumber)) + 1);
 			lastRow = getLastRow(tableName, pageNumber);
-		} catch (IOException e) {
+			saveRowsTable();
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DBEngineException("There was a problem writing into the file");
 		}
 		return lastRow;
@@ -254,10 +263,10 @@ public class CSVReader implements CSVReaderInterface{
 		return buffer.substring(0, buffer.length() - 1).toString();
 	}
 	
-	private String encodeRow(Hashtable<String, String> data, String[] columns) {
+	private String encodeRow(Hashtable<String, String> data, ArrayList<String> columns) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < columns.length; i++) {
-			buffer.append(data.get(columns[i]));
+		for (int i = 0; i < columns.size(); i++) {
+			buffer.append(data.get(columns.get(i)));
 			buffer.append(",");
 		}
 		return buffer.substring(0, buffer.length() - 1);
@@ -338,13 +347,13 @@ public class CSVReader implements CSVReaderInterface{
 	
 	private void loadColumnsOrder() {
 		try {
-			columnsOrder = (Map<String, List<String>>) loadObject(columnOrderFilePath);
+			columnsOrder = (Map<String, ArrayList<String>>) loadObject(columnOrderFilePath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			columnsOrder = new HashMap<String, List<String>>();
+			columnsOrder = new HashMap<String, ArrayList<String>>();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			columnsOrder = new HashMap<String, List<String>>();
+			columnsOrder = new HashMap<String, ArrayList<String>>();
 		}
 	}
 	

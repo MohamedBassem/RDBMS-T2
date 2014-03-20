@@ -16,8 +16,10 @@ public class DBAppTest {
 	public static void main(String[] args) throws DBEngineException {
 		Engine dbEngine = new Engine();
 		//call here each of the test methods and watch the output
-		testEngine_Meta();
-		System.out.println(dbEngine.properties.getData());
+		//testEngine_Meta(dbEngine);
+		//testEngine_Insert(dbEngine);
+		//testEngine_DublicateIDInsert(dbEngine);
+		testEngine_Select(dbEngine);
 
 	}
 
@@ -198,12 +200,13 @@ public class DBAppTest {
 			String tableName = "Employee";
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("Dept", "Accounting");
+			//htblColNameValue.put("ID", "5");
 
 			Iterator iter = dbEngine.selectFromTable(tableName,
 					htblColNameValue, "OR");
 			while (iter.hasNext()) {
-				//keep printing rows numbers
-				 
+				Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+				System.out.println(obj);
 			}
 
 		} catch (DBEngineException e) {
@@ -300,11 +303,10 @@ public class DBAppTest {
 	 * This method should create two tables Employee and Department where the Metadata
 	 * file should hold all the information on these tables.
 	 */
-	public static void testEngine_Meta() {
+	public static void testEngine_Meta(Engine dbEngine) {
 		
 
 		try {
-			Engine dbEngine = new Engine();
 			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");

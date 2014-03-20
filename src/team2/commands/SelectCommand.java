@@ -79,6 +79,7 @@ public class SelectCommand implements Command {
 		}else{
 			validate();
 			normalSelect();
+			System.out.println(this.partialRecords);
 			mergeResults();
 			convertPointers();
 		}
@@ -109,13 +110,16 @@ public class SelectCommand implements Command {
 		this.partialRecords = new ArrayList< ArrayList<String> >();
 		
 		for(String key: keys){
+			
 			if(properties.isIndexed(this.tableName, key)){
+				
 				BTreeAdopter tree = null;
 				try {
 					tree = btfactory.getBtree(this.tableName, key);
+					
 				} catch (DBEngineException e) {}
-				
 				try {
+					//System.out.println(tree.find("1"));
 					partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
 				} catch (IOException e) {}
 			}else{
