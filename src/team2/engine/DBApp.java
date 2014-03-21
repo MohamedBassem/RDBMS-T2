@@ -24,9 +24,9 @@ public class DBApp {
 		this.init();
 	}
 	public void init(){
-		this.bTreeFactory = new BTreeFactory();
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
+		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
 	}
 	
 	public void createTable(String strTableName,
