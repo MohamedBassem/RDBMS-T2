@@ -19,7 +19,7 @@ public class DBAppTest {
 		//testEngine_Meta(dbEngine);
 		//testEngine_Insert(dbEngine);
 		//testEngine_DublicateIDInsert(dbEngine);
-		testEngine_Select(dbEngine);
+		//testEngine_Select(dbEngine);
 
 	}
 

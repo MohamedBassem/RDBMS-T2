@@ -46,6 +46,10 @@ public class CSVReader implements CSVReaderInterface{
 		}
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
+		
+		System.out.println(numberOfRows);
+		System.out.println(numberOfPages);
+		System.out.println(columnsOrder);
 	}
 	
 	@Override
@@ -143,6 +147,8 @@ public class CSVReader implements CSVReaderInterface{
 				list.add(s);
 			}
 			writer.println(encodeColumnsRow(columns));
+			writer.flush();
+			writer.close();
 			columnsOrder.put(tableName, list);
 			saveColumnsOrder();
 			savePagesTable();
