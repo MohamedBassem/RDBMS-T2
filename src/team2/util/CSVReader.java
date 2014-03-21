@@ -47,9 +47,9 @@ public class CSVReader implements CSVReaderInterface{
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
 		
-		System.out.println(numberOfRows);
-		System.out.println(numberOfPages);
-		System.out.println(columnsOrder);
+//		System.out.println(numberOfRows);
+//		System.out.println(numberOfPages);
+//		System.out.println(columnsOrder);
 	}
 	
 	@Override

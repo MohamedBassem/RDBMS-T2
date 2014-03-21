@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import jdbm.btree.BTree;
 
 public class BTreeAdopter {
-	public BTree tree;
+	private BTree tree;
 	private BTreeFactory factory;
 	
 	public BTreeAdopter(BTree tree,BTreeFactory factory) {

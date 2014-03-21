@@ -37,6 +37,9 @@ public class DBAppTest {
 		// -------------------------------------
 		//testEngine_CreateIndex(dbEngine); //PASSED
 		//testEngine_NonExistingColumnCreateIndex(dbEngine); //PASSED
+		// -------------------------------------
+		// Custom tests :
+		//testEngine_SelectAll(dbEngine); // PASSED
 	}
 
      /*
@@ -564,6 +567,28 @@ public class DBAppTest {
 	
 			dbEngine.saveAll();
 
+		} catch (DBEngineException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void testEngine_SelectAll(Engine dbEngine){
+		try {
+			String tableName = "Employee";
+			Hashtable<String, String> htblColNameValue = null;
+
+			Iterator iter = dbEngine.selectFromTable(tableName,
+					htblColNameValue, null);
+			if(iter==null){
+				System.out.println("No records found");
+			   return;
+			}
+			
+			while (iter.hasNext()) {
+				Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+				System.out.println(obj);
+			}
+			
 		} catch (DBEngineException e) {
 			e.printStackTrace();
 		}
