@@ -12,6 +12,7 @@ import team2.interfaces.BtreeFactoryInterface;
 
 public class BTreeFactory implements BtreeFactoryInterface {
 	RecordManager recman;
+
 	
 	ArrayList<BTreeAdopter> inMemoryTrees;
 	
@@ -31,7 +32,7 @@ public class BTreeFactory implements BtreeFactoryInterface {
 		try {
 			long recid = this.recman.getNamedObject(tableName+"."+columnName);
 			BTree tree = BTree.load( recman, recid );
-			BTreeAdopter ret = new BTreeAdopter(tree);
+			BTreeAdopter ret = new BTreeAdopter(tree,this);
 			inMemoryTrees.add(ret);
 			return ret;
 		} catch (IOException e) {
@@ -45,7 +46,7 @@ public class BTreeFactory implements BtreeFactoryInterface {
 		try {
 			tree = BTree.createInstance( recman, new StringComparator() );
 			recman.setNamedObject( tableName+"."+columnName , tree.getRecid() );
-			BTreeAdopter ret = new BTreeAdopter(tree);
+			BTreeAdopter ret = new BTreeAdopter(tree,this);
 			inMemoryTrees.add(ret);
 			return ret;
 		} catch (IOException e) {
