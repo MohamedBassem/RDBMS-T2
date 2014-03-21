@@ -6,20 +6,24 @@ import java.util.ArrayList;
 import jdbm.btree.BTree;
 
 public class BTreeAdopter {
-	BTree tree;
+	private BTree tree;
+	private BTreeFactory factory;
 	
-	public BTreeAdopter(BTree tree) {
+	public BTreeAdopter(BTree tree,BTreeFactory factory) {
 		this.tree = tree;
+		this.factory = factory;
 	}
 
 	 public Object insert( Object key, Object value)throws IOException{
 		ArrayList<String> values = new ArrayList<String>();
 		values.add((String)value);
 		Object returned = tree.insert(key, values, false);
-		if(returned==null)
+		if(returned==null){
+			factory.saveAll();
 			return values;
-		else {
+		}else {
 			((ArrayList<String>) returned).add((String) value);
+			factory.saveAll();
 			return returned;
 		}
 	}
@@ -35,6 +39,7 @@ public boolean delete(Object key, String pointer) throws IOException {
 		if(values.isEmpty()) {
 			tree.remove(key);
 		}
+		factory.saveAll();
 		return true; 
 	}
 

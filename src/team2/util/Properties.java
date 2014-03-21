@@ -6,23 +6,25 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
 
+import team2.exceptions.DBEngineException;
 import team2.interfaces.MetaDataListener;
 
 public class Properties implements MetaDataListener {
 	
 	private CSVReader reader;
 	
-	private Hashtable<String, String>[] unparsedData;
+	private ArrayList<Hashtable<String, String>>unparsedData;
 	
 	private Hashtable< String , Hashtable<String, Hashtable<String,String> >  > data;
 
 	private int maximumPageSize;
-	
+	 
 	private int bTreeN;
 	
 	
 	public Properties(CSVReader reader){
 		this.reader = reader;
+		reader.listenToMetaDataFileUpdates(this);
 		loadData();
 		loadPropertiesFile();
 		parseData();
@@ -36,6 +38,25 @@ public class Properties implements MetaDataListener {
 	public void setData(
 			Hashtable<String, Hashtable<String, Hashtable<String, String>>> data) {
 		this.data = data;
+		ArrayList<Hashtable<String,String>> toBeSaved = new ArrayList<Hashtable<String,String>>();
+		for(String tblName : this.data.keySet()){
+			for(String columnName : this.data.get(tblName).keySet()){
+				Hashtable<String,String> row = new Hashtable<String,String>();
+				Hashtable<String,String> col = this.data.get(tblName).get(columnName);
+				row.put("Table Name",tblName);
+				row.put("Column Name",columnName);
+				row.put("Column Type", col.get("Column Type"));
+				row.put("Key", col.get("Key"));
+				row.put("Indexed", col.get("Indexed"));
+				row.put("References", col.get("References"));
+				toBeSaved.add(row);
+			}
+		}
+		try {
+			reader.saveMetaDataFile(toBeSaved);
+		} catch (DBEngineException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadPropertiesFile() {
@@ -53,17 +74,32 @@ public class Properties implements MetaDataListener {
 	}
 
 	private void loadData(){
-		this.unparsedData = reader.loadMetaDataFile();
+		try {
+			this.unparsedData = reader.loadMetaDataFile();
+		} catch (DBEngineException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
-	public void refresh(Hashtable<String, String>[] data) {
+	public void refresh( ArrayList<Hashtable<String, String>> data) {
 		this.unparsedData = data;
 		parseData();
 	}
 	
 	private void parseData(){
 		this.data = new Hashtable< String , Hashtable<String,Hashtable<String,String> >  >();
+		
+		for(Hashtable<String, String> row : unparsedData){
+			if( !data.containsKey(row.get("Table Name"))){
+				data.put( row.get("Table Name") , new Hashtable<String,Hashtable<String,String>>());
+			}
+			data.get(row.get("Table Name")).put(row.get("Column Name"), new Hashtable<String,String>());
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Column Type", row.get("Column Type"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Key", row.get("Key"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Indexed", row.get("Indexed"));
+			data.get(row.get("Table Name")).get(row.get("Column Name")).put("References", row.get("References"));
+		}
 	}
 	
 	public ArrayList<String> getIndexedColumns(String tblName){
