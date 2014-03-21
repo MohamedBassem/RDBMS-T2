@@ -27,13 +27,13 @@ public class CSVReader implements CSVReaderInterface{
 	private List<MetaDataListener> metadataObservers;
 	private Map<String, Integer> numberOfPages;
 	private Map<String, Integer> numberOfRows;
-	private final String numberOfPagesFile = "data/app/pages.ser";
-	private final String numberOfRowsFile = "data/app/rows.ser";
-	private final String metadataFile = "data/tables/meta.csv";
+	private final String numberOfPagesFile = "data/pages.ser";
+	private final String numberOfRowsFile = "data/rows.ser";
+	private final String columnOrderFilePath = "data/columns.csv";
+	private final String metadataFile = "data/meta.csv";
 	private final String tmpFilePath = "data/tmp";
 	private final String[] metadataColumnOrder_ = {"Table Name", "Column Name", "Column Type", "Key", "Indexed", "References"};
 	private final ArrayList<String> metadataColumnOrder;
-	private final String columnOrderFilePath = "data/app/columns.csv";
 	private Map<String, ArrayList<String>> columnsOrder;
 	
 	public CSVReader() {
@@ -189,7 +189,7 @@ public class CSVReader implements CSVReaderInterface{
 	public synchronized void saveMetaDataFile(Hashtable<String, String>[] data) throws DBEngineException {
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile));
-			encodeColumnsRow(metadataColumnOrder_);
+			writer.println(encodeColumnsRow(metadataColumnOrder_));
 			for (Hashtable<String, String> row : data) {
 				writer.println(encodeRow(row, metadataColumnOrder));
 			}
@@ -288,11 +288,11 @@ public class CSVReader implements CSVReaderInterface{
 	}
 	
 	private String encodePageName(String tableName, int pageNumber) {
-		return String.format("data/tables/%s_%s", tableName, pageNumber);
+		return String.format("data/%s_%s", tableName, pageNumber);
 	}
 	
 	private String[] decodePageName(String fileName) {
-		return fileName.split("data/tables/")[1].split("_");
+		return fileName.split("data/")[1].split("_");
 	}
 	
 	private void saveObject(Object obj, String filePath) throws IOException {

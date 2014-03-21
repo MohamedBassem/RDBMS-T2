@@ -58,7 +58,6 @@ public class Properties implements MetaDataListener {
 		try {
 			this.unparsedData = reader.loadMetaDataFile();
 		} catch (DBEngineException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import team2.engine.Engine;
+import team2.engine.DBApp;
 import team2.exceptions.DBEngineException;
 import team2.util.btrees.BTreeAdopter;
 
@@ -16,7 +16,7 @@ public class DBAppTest {
 	 * @param args
 	 */
 	public static void main(String[] args) throws DBEngineException {
-		Engine dbEngine = new Engine();
+		DBApp dbEngine = new DBApp();
 		//System.out.println(dbEngine.properties.getData());
 		
 		//testEngine_Meta(dbEngine); //PASSED
@@ -45,7 +45,7 @@ public class DBAppTest {
      /*
       * This method should execute the insertion and the pages should show the inserted data
       */
-	public static void testEngine_Insert(Engine dbEngine) {
+	public static void testEngine_Insert(DBApp dbEngine) {
 		
 
 		try {
@@ -120,7 +120,7 @@ public class DBAppTest {
 	/*
 	 * This method should throws an exception because there are duplicate entries with the same primary key 
 	 */
-	public static void testEngine_DublicateIDInsert(Engine dbEngine) {
+	public static void testEngine_DublicateIDInsert(DBApp dbEngine) {
 		
 
 		try {
@@ -183,7 +183,7 @@ public class DBAppTest {
 	 * This method should throw an exception because the insertion consists of
 	 *  a column name "End_Date" does not exist
 	 */
-	public static void testEngine_NonExistingColumnInsert(Engine dbEngine) {
+	public static void testEngine_NonExistingColumnInsert(DBApp dbEngine) {
 		// Test
 
 		try {
@@ -233,7 +233,7 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the records that have the 
 	 * Dept value equals IT or Accounting; this entries should have a deletion marker 
 	 */
-	public static void testEngine_DeleteOR(Engine dbEngine) {
+	public static void testEngine_DeleteOR(DBApp dbEngine) {
 		
 
 		try {
@@ -253,7 +253,7 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the record that has 
 	 * this two conditions satisfied and this record should have a deletion marker. 
 	 */
-	public static void testEngine_DeleteAND(Engine dbEngine) {
+	public static void testEngine_DeleteAND(DBApp dbEngine) {
 		
 
 		try {
@@ -274,7 +274,7 @@ public class DBAppTest {
    *This method should print all the rows numbers of the records that 
    *match the selection 
    */
-	public static void testEngine_Select(Engine dbEngine) {
+	public static void testEngine_Select(DBApp dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -299,7 +299,7 @@ public class DBAppTest {
 	   *This method should print no records found since no
 	   * records matched the selection
 	   */
-		public static void testEngine_SelectNoRecordsFound(Engine dbEngine) {
+		public static void testEngine_SelectNoRecordsFound(DBApp dbEngine) {
 
 			try {
 				String tableName = "Employee";
@@ -327,7 +327,7 @@ public class DBAppTest {
 		   *This method should throw an exception because the selection 
 		   *is from a table "Employer" that does not exist.
 		   */
-			public static void testEngine_SelectNoTable(Engine dbEngine) {
+			public static void testEngine_SelectNoTable(DBApp dbEngine) {
 
 				try {
 					String tableName = "Employer";
@@ -353,7 +353,7 @@ public class DBAppTest {
     /*
      * This method should create an index on the Dept attribute
      */
-	public static void testEngine_CreateIndex(Engine dbEngine) {
+	public static void testEngine_CreateIndex(DBApp dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -368,7 +368,7 @@ public class DBAppTest {
 	 * the requested index is on a variable that does not exist
 	 */
 	
-	public static void testEngine_NonExistingColumnCreateIndex(Engine dbEngine) {
+	public static void testEngine_NonExistingColumnCreateIndex(DBApp dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -383,7 +383,7 @@ public class DBAppTest {
 	 * This method should create two tables Employee and Department where the Metadata
 	 * file should hold all the information on these tables.
 	 */
-	public static void testEngine_Meta(Engine dbEngine) {
+	public static void testEngine_Meta(DBApp dbEngine) {
 		
 
 		try {
@@ -432,7 +432,7 @@ public class DBAppTest {
 		
 
 		try {
-			Engine dbEngine = new Engine();
+			DBApp dbEngine = new DBApp();
 			
 			
 			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
@@ -478,7 +478,7 @@ public class DBAppTest {
 		
 
 		try {
-			Engine dbEngine = new Engine();
+			DBApp dbEngine = new DBApp();
 			
 			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
 
@@ -528,7 +528,7 @@ public class DBAppTest {
 		
 
 		try {
-			Engine dbEngine = new Engine();
+			DBApp dbEngine = new DBApp();
 			
 			
 			// Second table
@@ -572,7 +572,7 @@ public class DBAppTest {
 		}
 	}
 	
-	public static void testEngine_SelectAll(Engine dbEngine){
+	public static void testEngine_SelectAll(DBApp dbEngine){
 		try {
 			String tableName = "Employee";
 			Hashtable<String, String> htblColNameValue = null;

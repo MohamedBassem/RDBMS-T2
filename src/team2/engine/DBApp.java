@@ -16,13 +16,13 @@ import team2.util.Properties;
 import team2.util.btrees.BTreeFactory;
 
 
-public class Engine {
+public class DBApp {
 	
 	BTreeFactory bTreeFactory;
 	CSVReader reader;
 	Properties properties;
 	
-	public Engine(){
+	public DBApp(){
 		this.init();
 	}
 	public void init(){

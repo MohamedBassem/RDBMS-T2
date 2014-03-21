@@ -1,9 +1,8 @@
-install : clean
-	touch data/tables/meta.csv
-	echo "Table Name,Column Name,Column Type,Key,Indexed,References" >> data/tables/meta.csv
+all : clean
+	touch data/meta.csv
+	echo "Table Name,Column Name,Column Type,Key,Indexed,References" >> data/meta.csv
 
 clean :
-	rm -f data/app/*
-	rm -f data/tables/*
+	rm -f data/*
 	rm -f *.db
 	rm -f *.lg
