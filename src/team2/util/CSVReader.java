@@ -47,9 +47,9 @@ public class CSVReader implements CSVReaderInterface{
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
 		
-		System.out.println(numberOfRows);
-		System.out.println(numberOfPages);
-		System.out.println(columnsOrder);
+		//System.out.println(numberOfRows);
+		//System.out.println(numberOfPages);
+		//System.out.println(columnsOrder);
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class CSVReader implements CSVReaderInterface{
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
 			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
-			String line = reader.readLine();
+			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
 					continue;
