@@ -1,6 +1,5 @@
 package team2.engine;
 
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -9,7 +8,6 @@ import team2.commands.CreateTableCommand;
 import team2.commands.DeleteCommand;
 import team2.commands.InsertCommand;
 import team2.commands.SelectCommand;
-import team2.exceptions.DBAppException;
 import team2.exceptions.DBEngineException;
 import team2.util.CSVReader;
 import team2.util.Properties;

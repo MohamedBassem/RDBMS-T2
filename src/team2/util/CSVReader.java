@@ -186,7 +186,7 @@ public class CSVReader implements CSVReaderInterface{
 		
 	}
 	
-	public synchronized void saveMetaDataFile(Hashtable<String, String>[] data) throws DBEngineException {
+	public synchronized void saveMetaDataFile(ArrayList<Hashtable<String, String>> data) throws DBEngineException {
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile));
 			writer.println(encodeColumnsRow(metadataColumnOrder_));

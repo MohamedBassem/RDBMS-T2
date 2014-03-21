@@ -33,6 +33,6 @@ public interface CSVReaderInterface {
 	
 	public int getLastRow(String tableName, int pageNumber);
 	
-	void saveMetaDataFile(Hashtable<String, String>[] data) throws DBEngineException;
+	void saveMetaDataFile(ArrayList<Hashtable<String, String>> data) throws DBEngineException;
 	
 }

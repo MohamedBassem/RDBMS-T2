@@ -38,6 +38,25 @@ public class Properties implements MetaDataListener {
 	public void setData(
 			Hashtable<String, Hashtable<String, Hashtable<String, String>>> data) {
 		this.data = data;
+		ArrayList<Hashtable<String,String>> toBeSaved = new ArrayList<Hashtable<String,String>>();
+		for(String tblName : this.data.keySet()){
+			for(String columnName : this.data.get(tblName).keySet()){
+				Hashtable<String,String> row = new Hashtable<String,String>();
+				Hashtable<String,String> col = this.data.get(tblName).get(columnName);
+				row.put("Table Name",tblName);
+				row.put("Column Name",columnName);
+				row.put("Column Type", col.get("Column Type"));
+				row.put("Key", col.get("Key"));
+				row.put("Indexed", col.get("Indexed"));
+				row.put("References", col.get("References"));
+				toBeSaved.add(row);
+			}
+		}
+		try {
+			reader.saveMetaDataFile(toBeSaved);
+		} catch (DBEngineException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadPropertiesFile() {
