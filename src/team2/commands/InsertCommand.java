@@ -2,6 +2,7 @@ package team2.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class InsertCommand implements Command {
 				if(properties.isForeignKey(tableName, column)) {
 					if(htblColNameValue.get(column) != null){
 						String reference = properties.getReferenceColumn(tableName, column);
-						String[] references = reference.split(".");
+						String[] references = reference.split("\\.");
 						BTreeAdopter refTree = btFactory.getBtree(references[0], references[1]);
 						try {
 							if(refTree.find(htblColNameValue.get(column)) == null)

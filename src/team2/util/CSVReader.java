@@ -243,7 +243,7 @@ public class CSVReader implements CSVReaderInterface{
 			BufferedReader reader = new BufferedReader(new FileReader(metadataFile));
 			String[] columns = decodeRow(reader.readLine());
 			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
-			String line = reader.readLine();
+			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
 					continue;

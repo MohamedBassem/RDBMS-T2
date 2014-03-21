@@ -15,9 +15,10 @@ public class DBAppTest {
 	 */
 	public static void main(String[] args) throws DBEngineException {
 		Engine dbEngine = new Engine();
+		System.out.println(dbEngine.properties.getData());
 		//call here each of the test methods and watch the output
 		//testEngine_Meta(dbEngine);
-		//testEngine_Insert(dbEngine);
+		// testEngine_Insert(dbEngine); // PASSED
 		//testEngine_DublicateIDInsert(dbEngine);
 		//testEngine_Select(dbEngine);
 
