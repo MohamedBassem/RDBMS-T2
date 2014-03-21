@@ -1,5 +1,6 @@
 package team2.engine;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -38,7 +39,6 @@ public class Engine {
 	
 	}
 
-	
 	public void createIndex(String strTableName, String strColName) throws DBEngineException {
 		CreateIndex createIndex = new CreateIndex(strTableName, strColName, this.properties, reader, bTreeFactory);
 		createIndex.execute();
@@ -46,7 +46,7 @@ public class Engine {
 	
 	public void insertIntoTable(String strTableName,
 								Hashtable<String,String> htblColNameValue)
-										throws DBEngineException {
+										throws DBEngineException, IOException {
 		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory, reader, strTableName, properties, htblColNameValue);
 		insertCommand.execute();
 		
