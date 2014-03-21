@@ -1,5 +1,6 @@
 package team2.engine;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -41,7 +42,6 @@ public class Engine {
 	
 	}
 
-	
 	public void createIndex(String strTableName, String strColName) throws DBEngineException {
 		CreateIndex createIndex = new CreateIndex(strTableName, strColName, this.properties, reader, bTreeFactory);
 		createIndex.execute();

@@ -18,7 +18,7 @@ public class Properties implements MetaDataListener {
 	private Hashtable< String , Hashtable<String, Hashtable<String,String> >  > data;
 
 	private int maximumPageSize;
-	
+	 
 	private int bTreeN;
 	
 	

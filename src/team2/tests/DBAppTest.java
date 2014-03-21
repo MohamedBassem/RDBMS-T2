@@ -92,7 +92,7 @@ public class DBAppTest {
 			htblColNameValue.put("Dept", "Software");
 			htblColNameValue.put("Start_Date", "12-12-2030");
 			
-			dbEngine.insertIntoTable(tableName, htblColNameValue);
+			dbEngine.insertIntoTable(tableName, htblColNameValue); 
 			
 			htblColNameValue.put("ID", (new Integer(2)).toString());
 			htblColNameValue.put("Name", "John Smith");

@@ -9,6 +9,6 @@ public class Utils {
 		for(String str : set){
 			ret[i++] = str;
 		}
-		return ret;
+		return ret; 
 	}
 }
