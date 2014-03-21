@@ -73,13 +73,12 @@ public class SelectCommand implements Command {
 	@Override
 	public void execute() throws DBEngineException {
 		if(properties.getData().get(tableName) == null){
-			throw new DBEngineException();
+			throw new DBEngineException("This table doesn't exist");
 		}else if(htblColNameValue == null && strOperator == null){
 			selectAll();
 		}else{
 			validate();
 			normalSelect();
-			System.out.println(this.partialRecords);
 			mergeResults();
 			convertPointers();
 		}
@@ -89,7 +88,7 @@ public class SelectCommand implements Command {
 	private void validate() throws DBEngineException {
 		
 		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
-			throw new DBEngineException();
+			throw new DBEngineException("Unknown Opertator");
 		}
 		
 		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
@@ -98,7 +97,7 @@ public class SelectCommand implements Command {
 		
 		for(String key: keys){
 			if(table.get(key) == null){
-				throw new DBEngineException();
+				throw new DBEngineException("Wrong Column Name");
 			}
 		}
 		
@@ -119,10 +118,10 @@ public class SelectCommand implements Command {
 					
 				} catch (DBEngineException e) {}
 				try {
-					//System.out.println(tree.find("1"));
 					partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
 				} catch (IOException e) {}
 			}else{
+				
 				ArrayList<String> partialRecord = new ArrayList<String>();
 				int tablePages = reader.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
@@ -142,7 +141,6 @@ public class SelectCommand implements Command {
 	
 	private void mergeResults() throws DBEngineException {
 		this.resultPointers = new ArrayList<String>();
-		
 		if(partialRecords.size() == 0){
 			// DO NOTHING
 		}else{

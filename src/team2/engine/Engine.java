@@ -18,7 +18,7 @@ import team2.util.btrees.BTreeFactory;
 
 public class Engine {
 	
-	BTreeFactory bTreeFactory;
+	public BTreeFactory bTreeFactory;
 	public CSVReader reader;
 	public Properties properties;
 	
@@ -59,7 +59,7 @@ public class Engine {
 								Hashtable<String,String> htblColNameValue,
 								String strOperator)
 										throws DBEngineException {
-		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader);
+		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader,properties,bTreeFactory);
 		delete.execute(); 
 	
 	}
@@ -71,8 +71,12 @@ public class Engine {
 											throws DBEngineException {
 		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties, strTable, htblColNameValue, strOperator);
 		selectCommand.execute();
-		return selectCommand.getResults().iterator();
-				
+		Iterator< Hashtable<String, String >> results = selectCommand.getResults().iterator();
+		if(results.hasNext() == false){
+			return null;
+		}else{
+			return results;
+		}
 	}
 	
 	public void saveAll() throws DBEngineException {

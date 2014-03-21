@@ -47,9 +47,9 @@ public class CSVReader implements CSVReaderInterface{
 		
 		metadataObservers = new ArrayList<MetaDataListener>();
 		
-		//System.out.println(numberOfRows);
-		//System.out.println(numberOfPages);
-		//System.out.println(columnsOrder);
+		System.out.println(numberOfRows);
+		System.out.println(numberOfPages);
+		System.out.println(columnsOrder);
 	}
 	
 	@Override
@@ -62,6 +62,7 @@ public class CSVReader implements CSVReaderInterface{
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
+					list.add(null);
 					continue;
 				}
 				String[] row = decodeRow(line);
@@ -87,9 +88,6 @@ public class CSVReader implements CSVReaderInterface{
 			String line = null;
 			for (int i = 0; i <= rowNumber; i++) {
 				line = reader.readLine();
-				if (line.equals("")) {
-					i--;
-				}
 			}
 			String[] row = decodeRow(line);
 			for (int i = 0; i < row.length; i++) {
@@ -223,7 +221,6 @@ public class CSVReader implements CSVReaderInterface{
 	@Override
 	public synchronized void deleteRow(String tableName, int pageNumber, int rowNumber)
 			throws DBEngineException {
-
 		try {
 			editRow(rowNumber, "", encodePageName(tableName, pageNumber));
 		} catch (IOException e) {

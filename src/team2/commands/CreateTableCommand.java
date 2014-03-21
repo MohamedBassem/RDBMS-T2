@@ -34,6 +34,7 @@ public class CreateTableCommand implements Command {
 		this.properties = properties;
 	}
 	public void execute() throws DBEngineException{
+		validate();
 		Set<String> columnName = htblColNameType.keySet();
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i =0; i<columnNames.length; i++){
@@ -56,6 +57,27 @@ public class CreateTableCommand implements Command {
 		}
 		reader.createTablePage(strTableName,0,Utils.setToArray(properties.getData().get(this.strTableName).keySet()));	
 	
+	}
+	private void validate() throws DBEngineException{
+		
+		if( properties.getData().get(this.strTableName) != null  ){
+			throw new DBEngineException("The table already exists.");
+		}
+		
+		if( htblColNameType.get(strKeyColName) == null ){
+			throw new DBEngineException("This key doesn't name a column");
+		}
+		
+		for(String column : htblColNameRefs.keySet()){
+			if( !htblColNameRefs.get(column).equals("null") ){
+				String[] s = htblColNameRefs.get(column).split("\\.");
+				if( properties.getData().get(s[0]) == null || 
+						properties.getData().get(s[0]).get(s[1]) == null){
+					throw new DBEngineException("The referenced column doesn't exist.");
+				}
+			}
+		}
+		
 	}
 
 }

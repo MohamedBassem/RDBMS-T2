@@ -70,7 +70,6 @@ public class Properties implements MetaDataListener {
 	}
 	
 	private void parseData(){
-		System.out.println(unparsedData);
 		this.data = new Hashtable< String , Hashtable<String,Hashtable<String,String> >  >();
 		
 		for(Hashtable<String, String> row : unparsedData){

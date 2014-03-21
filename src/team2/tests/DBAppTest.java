@@ -1,12 +1,14 @@
 package team2.tests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import team2.engine.Engine;
 import team2.exceptions.DBEngineException;
+import team2.util.btrees.BTreeAdopter;
 
 public class DBAppTest {
 
@@ -15,13 +17,26 @@ public class DBAppTest {
 	 */
 	public static void main(String[] args) throws DBEngineException {
 		Engine dbEngine = new Engine();
-		System.out.println(dbEngine.properties.getData());
-		//call here each of the test methods and watch the output
-		//testEngine_Meta(dbEngine);
-		// testEngine_Insert(dbEngine); // PASSED
-		//testEngine_DublicateIDInsert(dbEngine);
-		//testEngine_Select(dbEngine);
-
+		//System.out.println(dbEngine.properties.getData());
+		
+		//testEngine_Meta(dbEngine); //PASSED
+		//testEngine_MetaError(); //PASSED
+		//testEngine_MetaDuplicate(); //PASSED
+		// testEngine_MetaRefrence(); //PASSED
+		// --------------------------------
+		//testEngine_Insert(dbEngine); //PASSED
+		//testEngine_DublicateIDInsert(dbEngine);//PASSED
+		//testEngine_NonExistingColumnInsert(dbEngine); //PASSED
+		// -------------------------------------
+		//testEngine_Select(dbEngine); // PASSED
+		//testEngine_SelectNoRecordsFound(dbEngine); // PASSED
+		//testEngine_SelectNoTable(dbEngine); // PASSED
+		// -------------------------------------
+		//testEngine_DeleteOR(dbEngine); //PASSED
+		//testEngine_DeleteAND(dbEngine); //PASSED
+		// -------------------------------------
+		//testEngine_CreateIndex(dbEngine); //PASSED
+		//testEngine_NonExistingColumnCreateIndex(dbEngine); //PASSED
 	}
 
      /*
@@ -31,7 +46,28 @@ public class DBAppTest {
 		
 
 		try {
-			String tableName = "Employee";
+			
+			String tableName = "Department";
+
+			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			htblColNameValue_.put("Name", "Accounting");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "HR");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "IT");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			 
+			htblColNameValue_.put("Name", "Software");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			
+			tableName = "Employee";
 
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
@@ -85,7 +121,27 @@ public class DBAppTest {
 		
 
 		try {
-			String tableName = "Employee";
+			
+			String tableName = "Department";
+
+			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			htblColNameValue_.put("Name", "Accounting");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "HR");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "IT");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "Software");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			tableName = "Employee";
 
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
@@ -128,7 +184,27 @@ public class DBAppTest {
 		// Test
 
 		try {
-			String tableName = "Employee";
+			
+			String tableName = "Department";
+
+			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			htblColNameValue_.put("Name", "Accounting");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "HR");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "IT");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			htblColNameValue_.put("Name", "Software");
+			htblColNameValue_.put("Location", "test");
+			dbEngine.insertIntoTable(tableName, htblColNameValue_);
+			
+			tableName = "Employee";
 
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
@@ -160,7 +236,7 @@ public class DBAppTest {
 		try {
 			String tableName = "Employee";
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-			htblColNameValue.put("Dept", "IT");
+			//htblColNameValue.put("Dept", "IT");
 			htblColNameValue.put("Dept", "Accounting");
 
 			dbEngine.deleteFromTable(tableName, htblColNameValue, "OR");
@@ -201,7 +277,8 @@ public class DBAppTest {
 			String tableName = "Employee";
 			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
 			htblColNameValue.put("Dept", "Accounting");
-			//htblColNameValue.put("ID", "5");
+			htblColNameValue.put("ID", "3");
+			htblColNameValue.put("Name", "Adam Mathew");
 
 			Iterator iter = dbEngine.selectFromTable(tableName,
 					htblColNameValue, "OR");
@@ -232,13 +309,12 @@ public class DBAppTest {
 					System.out.println("No records found");
 				   return;
 				}
+				
 				while (iter.hasNext()) {
-					//keep printing rows numbers
-					 
+					Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+					System.out.println(obj);
 				}
 				
-				
-
 			} catch (DBEngineException e) {
 				e.printStackTrace();
 			}
@@ -309,17 +385,17 @@ public class DBAppTest {
 
 		try {
 			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
-			htblColNameType.put("ID", "java.lang.Integer");
+			//htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Location", "java.lang.String");
 
 			Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
-			htblColNameRefs.put("ID", "null");
+			//htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Location", "null");
 
 			dbEngine.createTable("Department", htblColNameType,
-					htblColNameRefs, "ID");
+					htblColNameRefs, "Name");
 			
 			String tableName = "Employee";
 			htblColNameType = new Hashtable<String, String>();
@@ -331,7 +407,7 @@ public class DBAppTest {
 			htblColNameRefs = new Hashtable<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
-			htblColNameRefs.put("Dept", "Department.ID");
+			htblColNameRefs.put("Dept", "Department.Name");
 			htblColNameRefs.put("Start_Date", "null");
 
 			dbEngine.createTable(tableName, htblColNameType, htblColNameRefs,
