@@ -84,7 +84,7 @@ public class CSVReader implements CSVReaderInterface{
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
-			String line = reader.readLine();
+			String line = null;
 			for (int i = 0; i <= rowNumber; i++) {
 				line = reader.readLine();
 				if (line.equals("")) {
@@ -275,15 +275,6 @@ public class CSVReader implements CSVReaderInterface{
 	@Override
 	public int getLastRow(String tableName, int pageNumber) {
 		return numberOfRows.get(encodePageName(tableName, pageNumber)) - 1;
-	}
-	
-	private String encodeRow(Hashtable<String, String> data) {
-		StringBuffer buffer = new StringBuffer("");
-		for (String key : data.keySet()) {
-			buffer.append(data.get(key));
-			buffer.append(",");
-		}
-		return buffer.substring(0, buffer.length() - 1).toString();
 	}
 	
 	private String encodeRow(Hashtable<String, String> data, ArrayList<String> columns) {
