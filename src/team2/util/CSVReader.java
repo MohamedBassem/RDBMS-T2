@@ -1,9 +1,9 @@
 package team2.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,8 +14,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import team2.exceptions.DBEngineException;
 import team2.interfaces.CSVReaderInterface;
 import team2.interfaces.MetaDataListener;
@@ -25,29 +27,42 @@ public class CSVReader implements CSVReaderInterface{
 	private List<MetaDataListener> metadataObservers;
 	private Map<String, Integer> numberOfPages;
 	private Map<String, Integer> numberOfRows;
-	private final String numberOfPagesFile = "data/app/pages.ser";
-	private final String numberOfRowsFile = "data/app/rows.ser";
-	private final String metadataFile = "data/tables/meta.csv";
+	private final String numberOfPagesFile = "data/pages.ser";
+	private final String numberOfRowsFile = "data/rows.ser";
+	private final String columnOrderFilePath = "data/columns.csv";
+	private final String metadataFile = "data/meta.csv";
 	private final String tmpFilePath = "data/tmp";
-	private final String[] metadataColumnOrder = {};
+	private final String[] metadataColumnOrder_ = {"Table Name", "Column Name", "Column Type", "Key", "Indexed", "References"};
+	private final ArrayList<String> metadataColumnOrder;
+	private Map<String, ArrayList<String>> columnsOrder;
 	
 	public CSVReader() {
 		numberOfPages	= loadPagesTable();
 		numberOfRows	= loadRowsTable();
+		loadColumnsOrder();
+		metadataColumnOrder = new ArrayList<String>();
+		for(String str : metadataColumnOrder_){
+			metadataColumnOrder.add(str);
+		}
+		
 		metadataObservers = new ArrayList<MetaDataListener>();
+		
+//		System.out.println(numberOfRows);
+//		System.out.println(numberOfPages);
+//		System.out.println(columnsOrder);
 	}
 	
 	@Override
-	public synchronized Hashtable<String, String>[] loadPage(String tableName, int pageNumber)
+	public synchronized ArrayList<Hashtable<String, String>> loadPage(String tableName, int pageNumber)
 			throws DBEngineException {
-		Hashtable<String, String>[] result = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
 			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
-			String line = reader.readLine();
+			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
+					list.add(null);
 					continue;
 				}
 				String[] row = decodeRow(line);
@@ -57,11 +72,10 @@ public class CSVReader implements CSVReaderInterface{
 				}
 				list.add(table);
 			}
-			result = (Hashtable<String, String>[]) list.toArray();
+			return list;
 		} catch (IOException e) {
 			throw new DBEngineException("Bad file");
 		}
-		return result;
 	}
 	
 	@Override
@@ -71,12 +85,9 @@ public class CSVReader implements CSVReaderInterface{
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
-			String line = reader.readLine();
+			String line = null;
 			for (int i = 0; i <= rowNumber; i++) {
 				line = reader.readLine();
-				if (line.equals("")) {
-					i--;
-				}
 			}
 			String[] row = decodeRow(line);
 			for (int i = 0; i < row.length; i++) {
@@ -96,9 +107,6 @@ public class CSVReader implements CSVReaderInterface{
 		String line = null;
 		int index = -1;
 		while ((line = reader.readLine()) != null) {
-			if (line.equals("")) {
-				continue;
-			}
 			if (index == row) {
 				line = data;
 			}
@@ -115,46 +123,81 @@ public class CSVReader implements CSVReaderInterface{
 
 	/*
 	 * The format of the file is tablename_pagenumber
-	 */
+	 */ 
+	
 	@Override
-	public synchronized void createTablePage(String tableName, int newPageNumber)
+	public synchronized void createTablePage(String tableName, int newPageNumber, String[] columns )
 			throws DBEngineException {
 		if ((new File(encodePageName(tableName,  newPageNumber)).exists())) {
 			throw new DBEngineException("Page already exists");
 		}
 		try {
-			FileWriter writer = new FileWriter(encodePageName(tableName, newPageNumber));
+			
+			PrintWriter writer = new PrintWriter(new FileWriter(encodePageName(tableName, newPageNumber)));
 			if (numberOfPages.containsKey(tableName)) {
 				numberOfPages.put(tableName, numberOfPages.get(tableName) + 1);
+			}else{
+				numberOfPages.put(tableName, 1);
 			}
 			numberOfRows.put(encodePageName(tableName, newPageNumber), 0);
+			ArrayList<String> list = new ArrayList<String>();
+			for (String s : columns) {
+				list.add(s);
+			}
+			writer.println(encodeColumnsRow(columns));
+			writer.flush();
+			writer.close();
+			columnsOrder.put(tableName, list);
+			saveColumnsOrder();
 			savePagesTable();
 			saveRowsTable();
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			throw new DBEngineException("There was a problem while accessing the file");
 		}
 	}
 
+	private String encodeColumnsRow(String[] list) {
+		StringBuffer buffer = new StringBuffer("");
+		for (String s : list) {
+			buffer.append(s);
+			buffer.append(",");
+		}
+		return buffer.substring(0, buffer.length() - 1);
+	}
 	
 	private void saveRowsTable() throws IOException {
 		saveObject(numberOfRows, numberOfRowsFile);
 	}
 
-	//TODO implement this
+	
 	@Override
 	public synchronized void appendToMetaDataFile(Hashtable<String, String> data)
 			throws DBEngineException {
-		
 		try {
-			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile), true);
+			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(metadataFile, true)));			
 			writer.println(encodeRow(data, metadataColumnOrder));
 			writer.flush();
+			writer.close();
 			notifyMetadataObservers();
 		} catch (IOException e) {
 			throw new DBEngineException("There was a problem while accessing the file");
 		}
 		
+	}
+	
+	public synchronized void saveMetaDataFile(ArrayList<Hashtable<String, String>> data) throws DBEngineException {
+		try {
+			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile));
+			writer.println(encodeColumnsRow(metadataColumnOrder_));
+			for (Hashtable<String, String> row : data) {
+				writer.println(encodeRow(row, metadataColumnOrder));
+			}
+			writer.flush();
+			notifyMetadataObservers();
+		} catch (IOException e) {
+			throw new DBEngineException("There was a problem while accessing the file");
+		}
 	}
 
 	@Override
@@ -163,11 +206,13 @@ public class CSVReader implements CSVReaderInterface{
 		int lastRow = -1;
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(encodePageName(tableName, pageNumber), true));
-			writer.println(encodeRow(data));
+			writer.println(encodeRow(data,columnsOrder.get(tableName)));
 			writer.flush();
-			numberOfRows.put(encodePageName(tableName, pageNumber), numberOfRows.get(encodePageName(tableName, pageNumber) + 1));
+			numberOfRows.put(encodePageName(tableName, pageNumber), numberOfRows.get(encodePageName(tableName, pageNumber)) + 1);
 			lastRow = getLastRow(tableName, pageNumber);
-		} catch (IOException e) {
+			saveRowsTable();
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DBEngineException("There was a problem writing into the file");
 		}
 		return lastRow;
@@ -176,7 +221,6 @@ public class CSVReader implements CSVReaderInterface{
 	@Override
 	public synchronized void deleteRow(String tableName, int pageNumber, int rowNumber)
 			throws DBEngineException {
-
 		try {
 			editRow(rowNumber, "", encodePageName(tableName, pageNumber));
 		} catch (IOException e) {
@@ -191,13 +235,12 @@ public class CSVReader implements CSVReaderInterface{
 		return appendToTable(tableName, lastPage, data);
 	}
 
-	public synchronized Hashtable<String, String>[] loadMetaDataFile() {
-		Hashtable<String, String>[] result = null;
+	public synchronized ArrayList<Hashtable<String, String>> loadMetaDataFile() throws DBEngineException {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(metadataFile));
 			String[] columns = decodeRow(reader.readLine());
 			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
-			String line = reader.readLine();
+			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
 					continue;
@@ -208,12 +251,12 @@ public class CSVReader implements CSVReaderInterface{
 					table.put(columns[i], row[i]);
 				}
 				list.add(table);
-				result = (Hashtable<String, String>[]) list.toArray();
 			}
+			return list;
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new DBEngineException();
 		}
-		return result;
 	}
 
 	@Override
@@ -231,19 +274,10 @@ public class CSVReader implements CSVReaderInterface{
 		return numberOfRows.get(encodePageName(tableName, pageNumber)) - 1;
 	}
 	
-	private String encodeRow(Hashtable<String, String> data) {
-		StringBuffer buffer = new StringBuffer("");
-		for (String key : data.keySet()) {
-			buffer.append(data.get(key));
-			buffer.append(",");
-		}
-		return buffer.substring(0, buffer.length() - 1).toString();
-	}
-	
-	private String encodeRow(Hashtable<String, String> data, String[] columns) {
+	private String encodeRow(Hashtable<String, String> data, ArrayList<String> columns) {
 		StringBuffer buffer = new StringBuffer();
-		for (int i = 0; i < columns.length; i++) {
-			buffer.append(data.get(columns[i]));
+		for (int i = 0; i < columns.size(); i++) {
+			buffer.append(data.get(columns.get(i)));
 			buffer.append(",");
 		}
 		return buffer.substring(0, buffer.length() - 1);
@@ -254,11 +288,11 @@ public class CSVReader implements CSVReaderInterface{
 	}
 	
 	private String encodePageName(String tableName, int pageNumber) {
-		return String.format("data/tables/%s_%s", tableName, pageNumber);
+		return String.format("data/%s_%s", tableName, pageNumber);
 	}
 	
 	private String[] decodePageName(String fileName) {
-		return fileName.split("data/tables/")[1].split("_");
+		return fileName.split("data/")[1].split("_");
 	}
 	
 	private void saveObject(Object obj, String filePath) throws IOException {
@@ -302,9 +336,37 @@ public class CSVReader implements CSVReaderInterface{
 	}
 
 	private void notifyMetadataObservers() {
-		Hashtable<String, String>[] metadataFile = loadMetaDataFile();
+		ArrayList<Hashtable<String, String>> metadataFile = null;
+		try {
+			metadataFile = loadMetaDataFile();
+		} catch (DBEngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for (MetaDataListener l : metadataObservers) {
 			l.refresh(metadataFile);
 		}
 	}
+	
+	private void saveColumnsOrder() {
+		try {
+			saveObject(columnsOrder, columnOrderFilePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void loadColumnsOrder() {
+		try {
+			columnsOrder = (Map<String, ArrayList<String>>) loadObject(columnOrderFilePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			columnsOrder = new HashMap<String, ArrayList<String>>();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			columnsOrder = new HashMap<String, ArrayList<String>>();
+		}
+	}
+	
+	
 }

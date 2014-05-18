@@ -73,7 +73,7 @@ public class SelectCommand implements Command {
 	@Override
 	public void execute() throws DBEngineException {
 		if(properties.getData().get(tableName) == null){
-			throw new DBEngineException();
+			throw new DBEngineException("This table doesn't exist");
 		}else if(htblColNameValue == null && strOperator == null){
 			selectAll();
 		}else{
@@ -88,7 +88,7 @@ public class SelectCommand implements Command {
 	private void validate() throws DBEngineException {
 		
 		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
-			throw new DBEngineException();
+			throw new DBEngineException("Unknown Opertator");
 		}
 		
 		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
@@ -97,7 +97,7 @@ public class SelectCommand implements Command {
 		
 		for(String key: keys){
 			if(table.get(key) == null){
-				throw new DBEngineException();
+				throw new DBEngineException("Wrong Column Name");
 			}
 		}
 		
@@ -109,22 +109,25 @@ public class SelectCommand implements Command {
 		this.partialRecords = new ArrayList< ArrayList<String> >();
 		
 		for(String key: keys){
+			
 			if(properties.isIndexed(this.tableName, key)){
+				
 				BTreeAdopter tree = null;
 				try {
 					tree = btfactory.getBtree(this.tableName, key);
+					
 				} catch (DBEngineException e) {}
-				
 				try {
 					partialRecords.add((ArrayList<String>) tree.find(htblColNameValue.get(key)));
 				} catch (IOException e) {}
 			}else{
+				
 				ArrayList<String> partialRecord = new ArrayList<String>();
 				int tablePages = reader.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
-					Hashtable<String,String>[] res = reader.loadPage(tableName, i);
-					for(int j=0;j<res.length;j++){
-						if(res[j] != null && res[j].get(key).equals(htblColNameValue.get(key))){
+					ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+					for(int j=0;j<res.size();j++){
+						if(res.get(j) != null && res.get(j).get(key).equals(htblColNameValue.get(key))){
 							String pointer = this.tableName + " " + i + " " + j;
 							partialRecord.add(pointer);
 						}
@@ -138,7 +141,6 @@ public class SelectCommand implements Command {
 	
 	private void mergeResults() throws DBEngineException {
 		this.resultPointers = new ArrayList<String>();
-		
 		if(partialRecords.size() == 0){
 			// DO NOTHING
 		}else{
@@ -162,14 +164,14 @@ public class SelectCommand implements Command {
 		int tablePages = reader.getLastPageIndex(this.tableName);
 		
 		for(int i=0;i<=tablePages;i++){
-			Hashtable<String,String>[] res = reader.loadPage(tableName, i);
-			for(int j=0;j<res.length;j++){
-				if(res[j] == null){ // Deleted Record
+			ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+			for(int j=0;j<res.size();j++){
+				if(res.get(j) == null){ // Deleted Record
 					continue;
 				}else{
 					String pointer = this.tableName + " " + i + " " + j;
 					resultPointers.add(pointer);
-					results.add(res[j]);
+					results.add(res.get(j));
 				}
 				
 			}
