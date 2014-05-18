@@ -1,4 +1,4 @@
-sql-eldonya
+RDBMS-T2
 ===========
 
-Database Engine b2ezn ellah :D
+RDMBS written in Java for educational purpose.
