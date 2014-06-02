@@ -1,14 +1,15 @@
-package team2.util.btrees;
+package eg.edu.guc.dbms.utils.btrees;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.interfaces.BtreeFactoryInterface;
 
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 import jdbm.btree.BTree;
 import jdbm.helper.StringComparator;
-import team2.exceptions.DBEngineException;
-import team2.interfaces.BtreeFactoryInterface;
 
 public class BTreeFactory implements BtreeFactoryInterface {
 	RecordManager recman;

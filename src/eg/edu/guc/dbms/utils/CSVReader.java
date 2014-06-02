@@ -1,4 +1,4 @@
-package team2.util;
+package eg.edu.guc.dbms.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,9 +18,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import team2.exceptions.DBEngineException;
-import team2.interfaces.CSVReaderInterface;
-import team2.interfaces.MetaDataListener;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.interfaces.CSVReaderInterface;
+import eg.edu.guc.dbms.interfaces.MetaDataListener;
+
 
 public class CSVReader implements CSVReaderInterface{
 

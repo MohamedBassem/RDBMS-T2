@@ -1,10 +1,11 @@
-package team2.interfaces;
+package eg.edu.guc.dbms.interfaces;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import team2.exceptions.DBEngineException;
-import team2.util.Properties;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.utils.Properties;
+
 
 public interface CSVReaderInterface {
 	

@@ -1,4 +1,4 @@
-package team2.util;
+package eg.edu.guc.dbms.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
 
-import team2.exceptions.DBEngineException;
-import team2.interfaces.MetaDataListener;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.interfaces.MetaDataListener;
+
 
 public class Properties implements MetaDataListener {
 	
