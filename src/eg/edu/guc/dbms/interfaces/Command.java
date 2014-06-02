@@ -1,8 +1,9 @@
-package team2.interfaces;
+package eg.edu.guc.dbms.interfaces;
 
 import java.io.IOException;
 
-import team2.exceptions.DBEngineException;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+
 
 public interface Command {
 	

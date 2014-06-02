@@ -1,17 +1,18 @@
-package team2.engine;
+package eg.edu.guc.dbms.engine;
 
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import team2.commands.CreateIndex;
-import team2.commands.CreateTableCommand;
-import team2.commands.DeleteCommand;
-import team2.commands.InsertCommand;
-import team2.commands.SelectCommand;
-import team2.exceptions.DBEngineException;
-import team2.util.CSVReader;
-import team2.util.Properties;
-import team2.util.btrees.BTreeFactory;
+import eg.edu.guc.dbms.commands.CreateIndex;
+import eg.edu.guc.dbms.commands.CreateTableCommand;
+import eg.edu.guc.dbms.commands.DeleteCommand;
+import eg.edu.guc.dbms.commands.InsertCommand;
+import eg.edu.guc.dbms.commands.SelectCommand;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.utils.CSVReader;
+import eg.edu.guc.dbms.utils.Properties;
+import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
+
 
 
 public class DBApp {

@@ -1,4 +1,4 @@
-package team2.util;
+package eg.edu.guc.dbms.utils;
 
 import java.util.Set;
 

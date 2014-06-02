@@ -1,4 +1,4 @@
-package team2.tests;
+package eg.edu.guc.dbms.tests;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import team2.engine.DBApp;
-import team2.exceptions.DBEngineException;
-import team2.util.btrees.BTreeAdopter;
+import eg.edu.guc.dbms.engine.DBApp;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
+
 
 public class DBAppTest {
 
