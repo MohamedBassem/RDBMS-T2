@@ -1,4 +1,4 @@
-package team2.interfaces;
+package eg.edu.guc.dbms.interfaces;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

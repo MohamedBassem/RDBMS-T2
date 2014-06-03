@@ -1,4 +1,4 @@
-package team2.commands;
+package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,13 +8,14 @@ import java.util.Set;
 
 import javax.swing.text.TabableView;
 
-import team2.exceptions.DBEngineException;
-import team2.interfaces.Command;
-import team2.util.CSVReader;
-import team2.util.Properties;
-import team2.util.Utils;
-import team2.util.btrees.BTreeAdopter;
-import team2.util.btrees.BTreeFactory;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.utils.CSVReader;
+import eg.edu.guc.dbms.utils.Properties;
+import eg.edu.guc.dbms.utils.Utils;
+import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
+import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
+
 
 public class InsertCommand implements Command {
 	BTreeFactory btFactory;
