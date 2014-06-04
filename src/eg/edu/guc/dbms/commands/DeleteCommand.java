@@ -7,6 +7,8 @@ import java.util.List;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.interfaces.LogManager;
+import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -19,6 +21,7 @@ public class DeleteCommand implements Command {
 	String strOperator;  
 	CSVReader reader; 
 	BTreeFactory btfactory;
+	int pageId;
 	Properties properties;
 	SelectCommand select;
 	public DeleteCommand(String strTableName,Hashtable<String,String> htblColNameValue,
@@ -48,6 +51,7 @@ public class DeleteCommand implements Command {
 		for(int i =0; i<pointers.size(); i++){
 			String [] x = ((String) pointers.get(i)).split(" ");
 			int pageNumber = Integer.parseInt(x[1]);
+			pageId = pageNumber;
 			int rowNumber= Integer.parseInt(x[2]);
 			reader.deleteRow(this.strTableName,pageNumber,rowNumber); 
 		}

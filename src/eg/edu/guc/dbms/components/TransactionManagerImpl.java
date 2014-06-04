@@ -52,8 +52,9 @@ public class TransactionManagerImpl implements TransactionManager {
 	@Override
 	public void executeTrasaction(PhysicalPlanTree tree) {
 		ArrayList<Command> steps = new ArrayList<Command>();
-		
+		treeToSteps(tree, steps);
 		Transaction transaction = new Transaction(bufferManager, logManager, steps);
+		transaction.execute();
 	}
 	
 	public static void main(String[] args) {
@@ -101,6 +102,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			List<Hashtable<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
 			step = new IntermediateSelectCommand(previousResult, node.getTableName(), node.getColValues(), node.getOperator());
 		}	
+		steps.add(step);
 	}
 
 	
