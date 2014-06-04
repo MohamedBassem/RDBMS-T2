@@ -17,7 +17,7 @@ public interface LogManager {
     public void recordDelete(String strTransID, String tableName, int pageNumber,
             String strKeyValue,
             Hashtable<String,String> htblColValues);
-    public void recordCommit( String strTransID );
+    public void recordCommit( String strTransID);
 
 	
 }
