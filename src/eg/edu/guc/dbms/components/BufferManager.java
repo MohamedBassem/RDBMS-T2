@@ -99,7 +99,11 @@ public class BufferManager {
 	}
 	
 	public void createTable(String tableName,String[] columns){
-		
+		try {
+			databaseIO.createTablePage(tableName, columns);
+		} catch (DBEngineException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public synchronized void LRU(){
