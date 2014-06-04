@@ -6,6 +6,6 @@ import eg.edu.guc.dbms.interfaces.LogManager;
 public class LogManagerFactory {
 
 	public static LogManager getInstance() {
-		return new LogManagerImpl();
+		return LogManagerImpl.getInstance();
 	}
 }
