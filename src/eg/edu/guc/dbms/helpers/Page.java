@@ -1,5 +1,12 @@
 package eg.edu.guc.dbms.helpers;
 
-public class Page {
+import java.util.ArrayList;
 
+public class Page extends ArrayList<Tuple> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1912185703703568541L;
+	
 }

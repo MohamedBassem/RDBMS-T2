@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import eg.edu.guc.dbms.helpers.BufferSlot;
+import eg.edu.guc.dbms.helpers.Page;
 
 public class BufferManager {
 	
@@ -52,8 +53,12 @@ public class BufferManager {
 		
 	}
 	
-	// TODO The write phase
-	public synchronized void write(String tableName,int pageNumber){
+	
+	public synchronized void write(String tableName,int pageNumber,Page page){
+		
+	}
+	
+	public synchronized void createTable(String tableName,String[] columns){
 		
 	}
 
