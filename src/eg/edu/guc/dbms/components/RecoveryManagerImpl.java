@@ -3,6 +3,9 @@ package eg.edu.guc.dbms.components;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Hashtable;
+
+import javax.swing.plaf.SliderUI;
+
 import eg.edu.guc.dbms.engine.DBApp;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.RecoveryManager;
@@ -40,6 +43,9 @@ public class RecoveryManagerImpl implements RecoveryManager {
 				switch (splittedLine[1]) {
 				case "I":
 					Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
+							.substring(0, splittedLine[splittedLine.length - 1]
+									.length() - 2);
 					for (int i = 4; i < splittedLine.length; i++) {
 						htblColNameValue.put(splittedLine[i].substring(0,
 								splittedLine[i].indexOf("=")), splittedLine[i]
@@ -56,6 +62,9 @@ public class RecoveryManagerImpl implements RecoveryManager {
 
 				case "D":
 					htblColNameValue = new Hashtable<String, String>();
+					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
+							.substring(0, splittedLine[splittedLine.length - 1]
+									.length() - 2);
 					for (int i = 5; i < splittedLine.length; i++) {
 						htblColNameValue.put(splittedLine[i].substring(0,
 								splittedLine[i].indexOf("=")), splittedLine[i]
