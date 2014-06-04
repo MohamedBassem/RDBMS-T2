@@ -3,8 +3,6 @@ package eg.edu.guc.dbms.components;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Hashtable;
-
-import sun.org.mozilla.javascript.ast.ForLoop;
 import eg.edu.guc.dbms.engine.DBApp;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.RecoveryManager;
@@ -14,7 +12,6 @@ public class RecoveryManagerImpl implements RecoveryManager {
 	RandomAccessFile raf;
 	DBApp engine;
 	Hashtable<String, Boolean> transactions;
-
 
 	public void recover() throws IOException, DBEngineException {
 		raf = new RandomAccessFile("data/log/logFile.log", "r");
@@ -31,22 +28,23 @@ public class RecoveryManagerImpl implements RecoveryManager {
 		}
 		raf.seek(0);
 		doAction(raf);
-		
+
 	}
-	
-	public void doAction(RandomAccessFile raf) {
+
+	public void doAction(RandomAccessFile raf) throws IOException,
+			DBEngineException {
 		String line = raf.readLine();
 		while (line != null) {
 			if (!line.contains("<START ") && !line.contains("<COMMIT ")) {
 				String[] splittedLine = line.split(",");
-				Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-				for (int i = 3; i < splittedLine.length; i++) {
-					htblColNameValue.put(splittedLine[i].
-							substring(0,splittedLine[i].indexOf("=")), splittedLine[i].
-							substring(splittedLine[i].indexOf("=")));
-				}
 				switch (splittedLine[1]) {
 				case "I":
+					Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+					for (int i = 4; i < splittedLine.length; i++) {
+						htblColNameValue.put(splittedLine[i].substring(0,
+								splittedLine[i].indexOf("=")), splittedLine[i]
+								.substring(splittedLine[i].indexOf("=")));
+					}
 					if (transactions.get(splittedLine[0]))
 						engine.insertIntoTable(splittedLine[2],
 								htblColNameValue);
@@ -58,6 +56,11 @@ public class RecoveryManagerImpl implements RecoveryManager {
 
 				case "D":
 					htblColNameValue = new Hashtable<String, String>();
+					for (int i = 5; i < splittedLine.length; i++) {
+						htblColNameValue.put(splittedLine[i].substring(0,
+								splittedLine[i].indexOf("=")), splittedLine[i]
+								.substring(splittedLine[i].indexOf("=")));
+					}
 					if (transactions.get(splittedLine[0]))
 						engine.deleteFromTable(splittedLine[2],
 								htblColNameValue, "AND");
@@ -69,9 +72,18 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					break;
 
 				case "U":
-					if (transactions.get(splittedLine[0]))
-					
-					engine.updateTable(splittedLine[2], htblColNameValue, "AND", colValue);
+					htblColNameValue = new Hashtable<String, String>();
+					Hashtable<String, String> colValue = new Hashtable<String, String>();
+					colValue.put(splittedLine[5], splittedLine[4]);
+					if (transactions.get(splittedLine[0])) {
+						htblColNameValue.put(splittedLine[5], splittedLine[7]);
+						engine.updateTable(splittedLine[2], htblColNameValue,
+								"AND", colValue);
+					} else {
+						htblColNameValue.put(splittedLine[5], splittedLine[6]);
+						engine.updateTable(splittedLine[2], htblColNameValue,
+								"AND", colValue);
+					}
 					break;
 
 				default:
@@ -80,6 +92,6 @@ public class RecoveryManagerImpl implements RecoveryManager {
 
 			}
 		}
-		
+
 	}
 }

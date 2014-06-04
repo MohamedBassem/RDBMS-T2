@@ -54,11 +54,11 @@ public class LogManagerImpl implements LogManager {
 
 	@Override
 	public void recordUpdate(String strTransID, String tableName,
-			int pageNummber, String strKeyValue, String strColName,
+			int pageNumber, String strKeyValue, String strColName,
 			Object objOld, Object objNew) throws IOException {
 		// <T1,U,Student4,pageNumber,colName,x.y>
 		// Transcation1 : Update colName from table Student page 4 from x to y
-		String result = "<" + strTransID + ",U," + tableName + pageNummber
+		String result = "<" + strTransID + ",U," + tableName + "," + pageNumber
 				+ "," + strKeyValue + "," + strColName + ","
 				+ objOld.toString() + "," + objNew.toString() + ">\n";
 		bfr.write(result);
@@ -71,7 +71,7 @@ public class LogManagerImpl implements LogManager {
 			throws IOException {
 		// <T1,I,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
-		String result = "<" + strTransID + ",I," + tableName + pageNumber + ","
+		String result = "<" + strTransID + ",I," + tableName + "," + pageNumber + ","
 				+ htblColValues.toString() + ">\n";
 		bfr.write(result);
 	}
@@ -82,7 +82,7 @@ public class LogManagerImpl implements LogManager {
 			Hashtable<String, String> htblColValues) throws IOException {
 		// <T1,D,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
-		String result = "<" + strTransID + ",D," + tableName + pageNumber + ","
+		String result = "<" + strTransID + ",D," + tableName + "," + pageNumber + ","
 				+ strKeyValue + "," + htblColValues.toString() + ">\n";
 		bfr.write(result);
 
