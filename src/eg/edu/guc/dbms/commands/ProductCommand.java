@@ -24,18 +24,19 @@ public class ProductCommand implements Command {
 	@Override
 	public void execute() throws DBEngineException, IOException {
 		for (int i = 0; i < relation1.size(); i++) {
-			Hashtable<String, String> record = new Hashtable<String, String>();
-			Set<String> keys = relation1.get(i).keySet();
-			for (String key : keys) {
-				record.put(key, relation1.get(i).get(key));
-			}
-			for (int k = 0; k < relation2.size(); k++) {
-				Set<String> keys2 = relation2.get(k).keySet();
-				for (String key : keys2) {
-					record.put(key, relation2.get(k).get(key));
+			for (int count = 0; count < relation2.size(); count++) {
+				Hashtable<String, String> record = new Hashtable<String, String>();
+
+				Set<String> keys = relation1.get(i).keySet();
+				for (String key : keys) {
+					record.put(key, relation1.get(i).get(key));
 				}
+				Set<String> keys2 = relation2.get(count).keySet();
+				for (String key : keys2) {
+					record.put(key, relation2.get(count).get(key));
+				}
+				result.add(record);
 			}
-			result.add(record);
 		}
 	}
 
