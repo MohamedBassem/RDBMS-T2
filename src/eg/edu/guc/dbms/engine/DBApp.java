@@ -8,6 +8,7 @@ import eg.edu.guc.dbms.commands.CreateTableCommand;
 import eg.edu.guc.dbms.commands.DeleteCommand;
 import eg.edu.guc.dbms.commands.InsertCommand;
 import eg.edu.guc.dbms.commands.SelectCommand;
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
@@ -20,6 +21,7 @@ public class DBApp {
 	BTreeFactory bTreeFactory;
 	CSVReader reader;
 	Properties properties;
+	BufferManager bufferManager;
 	
 	public DBApp(){
 		this.init();
@@ -28,6 +30,8 @@ public class DBApp {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
+		// TODO
+		this.bufferManager = new BufferManager(0, 100);
 	}
 	
 	public void createTable(String strTableName,
@@ -36,20 +40,20 @@ public class DBApp {
 							Hashtable<String,String>htblColNameRefs,
 							String strKeyColName) 
 									throws DBEngineException {
-		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory,properties);
+		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory,properties,bufferManager);
 		newTable.execute(); 
 	
 	}
 
 	public void createIndex(String strTableName, String strColName) throws DBEngineException {
-		CreateIndex createIndex = new CreateIndex(strTableName, strColName, this.properties, reader, bTreeFactory);
+		CreateIndex createIndex = new CreateIndex(strTableName, strColName, this.properties, reader, bTreeFactory,bufferManager);
 		createIndex.execute();
 	}
 	
 	public void insertIntoTable(String strTableName,
 								Hashtable<String,String> htblColNameValue)
 										throws DBEngineException {
-		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory, reader, strTableName, properties, htblColNameValue);
+		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory, reader,bufferManager, strTableName, properties, htblColNameValue);
 		insertCommand.execute();
 		
 	}
@@ -58,7 +62,7 @@ public class DBApp {
 								Hashtable<String,String> htblColNameValue,
 								String strOperator)
 										throws DBEngineException {
-		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader,properties,bTreeFactory);
+		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader,properties,bTreeFactory,bufferManager);
 		delete.execute(); 
 	
 	}
@@ -68,7 +72,7 @@ public class DBApp {
 									Hashtable<String,String> htblColNameValue,
 									String strOperator)
 											throws DBEngineException {
-		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties, strTable, htblColNameValue, strOperator);
+		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties,bufferManager, strTable, htblColNameValue, strOperator);
 		selectCommand.execute();
 		Iterator< Hashtable<String, String >> results = selectCommand.getResults().iterator();
 		if(results.hasNext() == false){

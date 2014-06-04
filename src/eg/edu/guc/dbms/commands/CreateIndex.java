@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.utils.CSVReader;
@@ -19,14 +20,16 @@ public class CreateIndex implements Command {
 	Properties properties;
 	CSVReader reader;
 	BTreeFactory factory;
+	BufferManager bufferManager;
 	
 	public CreateIndex(String tableName, String columnName,
-			Properties properties, CSVReader reader, BTreeFactory factory) {
+			Properties properties, CSVReader reader, BTreeFactory factory,BufferManager bufferManager) {
 		this.tableName = tableName;
 		this.columnName = columnName;
 		this.properties = properties;
 		this.reader = reader;
 		this.factory = factory;
+		this.bufferManager = bufferManager;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class CreateIndex implements Command {
 		properties.setData(data);
 		BTreeAdopter tree = factory.createTree(tableName, columnName);
 				
-		SelectCommand select = new SelectCommand(factory, reader, properties,
+		SelectCommand select = new SelectCommand(factory, reader, properties, bufferManager,
 				tableName, null, null);
 		select.execute();
 		ArrayList<Hashtable<String, String>> rows = select.getResults();

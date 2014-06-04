@@ -157,5 +157,10 @@ public class BufferManager {
 	private String encodePageName(String tableName, int pageNumber) {
 		return String.format("%s_%s", tableName, pageNumber);
 	}
+	
+	public int getLastPageIndex(String tableName){
+		return databaseIO.getLastPageIndex(tableName);
+	}
+	
 
 }
