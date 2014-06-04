@@ -22,8 +22,13 @@ public class BufferSlot {
 		lastUsed = System.currentTimeMillis();
 	}
 	
-	public Semaphore getMutex(){
-		return mutex;
+	public void acquire(){
+		numUsing++;
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Page getPage(){
@@ -43,11 +48,8 @@ public class BufferSlot {
 		return System.currentTimeMillis()- lastUsed;
 	}
 	
-	public void use(){
-		numUsing++;
-	}
-	
 	public void release(){
+		mutex.release();
 		numUsing--;
 	}
 	

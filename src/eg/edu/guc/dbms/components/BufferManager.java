@@ -62,31 +62,48 @@ public class BufferManager {
 	}
 	
 	
-	public Page read(String tableName,int pageNumber){
+	public Page read(String tableName,int pageNumber,boolean bModify){
 		String pageName = encodePageName(tableName, pageNumber);
+		Page page = null;
+		BufferSlot slot = null;
 		if(usedSlots.containsKey(pageName)){
-			BufferSlot slot = usedSlots.get(pageName);
-			slot.use();
-			try {
-				slot.getMutex().acquire();
-				return slot.getPage();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			slot = usedSlots.get(pageName);
+			slot.acquire();
+			page = slot.getPage();
+			if(!bModify){
+				slot.release();
 			}
 		}else{
-			BufferSlot slot = getEmptySlot();
+			slot = getEmptySlot();
 			usedSlots.put(pageName, slot);
-			slot.use();
+			slot.acquire();
 			try {
-				slot.getMutex().acquire();
-				Page page = databaseIO.loadPage(tableName, pageNumber);
-				slot.setPage(pageName, page);
-				return page;
-			} catch (InterruptedException | DBEngineException e) {
+				page = databaseIO.loadPage(tableName, pageNumber);
+			} catch (DBEngineException e) {
 				e.printStackTrace();
 			}
+			slot.setPage(pageName, page);
 		}
-		return null;
+		if(!bModify){
+			slot.release();
+		}
+		
+		return page;
+	}
+
+	public void write(String tableName,int pageNumber,Page page){
+		String pageName = encodePageName(tableName, pageNumber);
+		BufferSlot slot = usedSlots.get(pageName);
+		slot.setPage(pageName, page);
+		slot.release();
+	}
+	
+	public void createTable(String tableName,String[] columns){
+		
+	}
+	
+	public synchronized void LRU(){
+		
 	}
 	
 	private BufferSlot getEmptySlot() {
@@ -111,25 +128,6 @@ public class BufferManager {
 		return slot;
 	}
 
-	public void write(String tableName,int pageNumber,Page page){
-		
-	}
-	
-	public void createTable(String tableName,String[] columns){
-		
-	}
-	
-	public void release(String tableName,int pageNumber){
-		String pageName = encodePageName(tableName, pageNumber);
-		BufferSlot slot = usedSlots.get(pageName);
-		slot.release();
-		slot.getMutex().release();
-	}
-	
-	public synchronized void LRU(){
-		
-	}
-
 	
 	private void initializeFlusher() {
 		new Thread(new Runnable() {
@@ -148,7 +146,7 @@ public class BufferManager {
 	
 	private void runFlusher(){
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				LRU();
