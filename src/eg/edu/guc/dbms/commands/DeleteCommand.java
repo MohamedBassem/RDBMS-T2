@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.interfaces.LogManager;
 import eg.edu.guc.dbms.transactions.Transaction;
@@ -23,16 +25,18 @@ public class DeleteCommand implements Command {
 	BTreeFactory btfactory;
 	int pageId;
 	Properties properties;
+	BufferManager bufferManager;
 	SelectCommand select;
 	public DeleteCommand(String strTableName,Hashtable<String,String> htblColNameValue,
-								String strOperator, CSVReader reader,Properties properties,BTreeFactory btfactory){
+								String strOperator, CSVReader reader,Properties properties,BTreeFactory btfactory, BufferManager bufferManager){
 		this.strTableName=strTableName; 
 		this.htblColNameValue=htblColNameValue; 
 		this.strOperator=strOperator;
 		this.reader=reader;
 		this.properties = properties;
 		this.btfactory = btfactory;
-		select = new SelectCommand(this.btfactory,this.reader, this.properties, this.strTableName,
+		this.bufferManager = bufferManager;
+		select = new SelectCommand(this.btfactory,this.reader, this.properties,this.bufferManager, this.strTableName,
 				this.htblColNameValue, this.strOperator);
 	}
 	
@@ -53,7 +57,9 @@ public class DeleteCommand implements Command {
 			int pageNumber = Integer.parseInt(x[1]);
 			pageId = pageNumber;
 			int rowNumber= Integer.parseInt(x[2]);
-			reader.deleteRow(this.strTableName,pageNumber,rowNumber); 
+			Page page = bufferManager.read(strTableName, pageNumber, true);
+			page.set(rowNumber, null);
+			bufferManager.write(strTableName, pageNumber, page);
 		}
 	}
 	

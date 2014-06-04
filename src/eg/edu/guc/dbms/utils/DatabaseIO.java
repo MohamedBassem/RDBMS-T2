@@ -133,10 +133,10 @@ public class DatabaseIO {
 		objectStream.close();
 	}
 	
-	// TODO
-//	public int getLastPageIndex(String tableName) {
-//		return numberOfPages.get(tableName) - 1;
-//	}
+	
+	public int getLastPageIndex(String tableName) {
+		return numberOfPages.get(tableName) - 1;
+	}
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Integer> loadPagesTable() {

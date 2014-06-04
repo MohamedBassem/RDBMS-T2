@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.interfaces.LogManager;
@@ -21,11 +22,12 @@ public class CreateTableCommand implements Command {
 	String strKeyColName;
 	Properties properties;
 	BTreeFactory btreeFactory;
+	BufferManager bufferManager;
 	
 	public CreateTableCommand(String strTableName,
 							Hashtable<String,String> htblColNameType,
 							Hashtable<String,String>htblColNameRefs,
-							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,Properties properties){
+							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,Properties properties, BufferManager bufferManager){
 		this.strTableName=strTableName; 
 		this.htblColNameType=htblColNameType;
 		this.htblColNameRefs= htblColNameRefs; 
@@ -33,6 +35,7 @@ public class CreateTableCommand implements Command {
 		this.reader=reader; 	
 		this.btreeFactory = btreeFactory;
 		this.properties = properties;
+		this.bufferManager = bufferManager;
 	}
 	public void execute() throws DBEngineException{
 		validate();
@@ -56,7 +59,7 @@ public class CreateTableCommand implements Command {
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
-		reader.createTablePage(strTableName,0,Utils.setToArray(properties.getData().get(this.strTableName).keySet()));	
+		bufferManager.createTable(strTableName,Utils.setToArray(properties.getData().get(this.strTableName).keySet()));	
 	
 	}
 	private void validate() throws DBEngineException{
