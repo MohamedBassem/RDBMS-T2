@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.text.TabableView;
@@ -91,5 +92,10 @@ public class InsertCommand implements Command {
 				}			
 			}
 		}
+	@Override
+	public List<Hashtable<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 		
 }

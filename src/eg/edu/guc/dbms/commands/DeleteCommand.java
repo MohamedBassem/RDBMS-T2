@@ -3,6 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
@@ -62,6 +63,12 @@ public class DeleteCommand implements Command {
 				adoptor.delete(results.get(j).get(indexedColumns.get(i)), pointers.get(j));
 			}
 		}
+	}
+
+	@Override
+	public List<Hashtable<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

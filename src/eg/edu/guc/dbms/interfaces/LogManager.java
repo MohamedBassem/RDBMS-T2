@@ -20,7 +20,8 @@ public interface LogManager {
     public void recordDelete(String strTransID, String tableName, int pageNumber,
             String strKeyValue,
             Hashtable<String,String> htblColValues) throws IOException;
-    public void recordCommit( String strTransID ) throws IOException;
+    public void recordCommit( String strTransID) throws IOException;
+
 
 	
 }

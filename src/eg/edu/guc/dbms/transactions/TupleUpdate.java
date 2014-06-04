@@ -1,6 +1,17 @@
 package eg.edu.guc.dbms.transactions;
 
-public class TupleUpdate extends Step {
+import java.io.IOException;
+
+import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.interfaces.Command;
+
+public class TupleUpdate implements Command {
+
+	@Override
+	public void execute() throws DBEngineException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 

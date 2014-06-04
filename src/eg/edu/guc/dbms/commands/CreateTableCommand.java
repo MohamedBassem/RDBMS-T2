@@ -1,8 +1,7 @@
 package eg.edu.guc.dbms.commands;
 
-
-
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -11,7 +10,6 @@ import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.Utils;
 import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
-
 
 public class CreateTableCommand implements Command {
 	CSVReader reader;
@@ -79,6 +77,11 @@ public class CreateTableCommand implements Command {
 			}
 		}
 		
+	}
+	@Override
+	public List<Hashtable<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
