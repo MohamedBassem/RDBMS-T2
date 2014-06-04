@@ -1,6 +1,5 @@
 package eg.edu.guc.dbms.components;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -95,6 +94,7 @@ public class BufferManager {
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);
+		slot.setDirty(true);
 		slot.release();
 	}
 	
@@ -107,6 +107,35 @@ public class BufferManager {
 	}
 	
 	public synchronized void LRU(){
+		
+		BufferSlot leastUsedSlot = null;
+		long lastAccessed = 0;
+		for(String pageName : usedSlots.keySet()){
+			BufferSlot bufferSlot = usedSlots.get(pageName);
+			if(bufferSlot.isDirty()){
+				try {
+					databaseIO.writePage(bufferSlot.getTableName(), bufferSlot.getPageNumber(), bufferSlot.getPage());
+					bufferSlot.setDirty(false);
+				} catch (DBEngineException e) {
+					e.printStackTrace();
+				}
+			}
+			if(lastAccessed < bufferSlot.getLastUsed()){
+				lastAccessed = bufferSlot.getLastUsed();
+				leastUsedSlot = bufferSlot;
+			}
+			
+		}
+		if(leastUsedSlot != null){
+			usedSlots.remove(leastUsedSlot.getPageName());
+			leastUsedSlot.clear();
+			unUsedSlots.add(leastUsedSlot);
+			
+			Object mon = waitingForFreeSlots.poll();
+			synchronized (mon) {
+				mon.notify();
+			}
+		}
 		
 	}
 	

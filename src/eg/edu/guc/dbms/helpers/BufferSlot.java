@@ -9,10 +9,12 @@ public class BufferSlot {
 	private Semaphore mutex;
 	private long lastUsed;
 	private int numUsing;
+	private boolean dirty;
 	
 	public BufferSlot(int id){
 		this.id = id;
 		numUsing = 0;
+		dirty = false;
 		mutex = new Semaphore(1, true);
 	}
 	
@@ -57,9 +59,27 @@ public class BufferSlot {
 		return numUsing == 0;
 	}
 	
+	public boolean isDirty(){
+		return dirty;
+	}
+	
+	public void setDirty(boolean dirty){
+		this.dirty = dirty;
+	}
+	
 	public void clear(){
 		this.pageName = null;
 		this.page = null;
 		this.lastUsed = System.currentTimeMillis();
+		this.dirty = false;
+		this.numUsing = 0;
+	}
+	
+	public String getTableName(){
+		return pageName.split("_")[0];
+	}
+	
+	public int getPageNumber(){
+		return Integer.parseInt(pageName.split("_")[1]);
 	}
 }
