@@ -5,24 +5,47 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import eg.edu.guc.dbms.helpers.BufferQueueEntry;
+import eg.edu.guc.dbms.helpers.BufferSlot;
 
 public class BufferManager {
+	
+	public static final int FLUSH_PERIOD = 2000;
 	
 	/**
 	 * The Queue of unused buffer slots
 	 */
-	Queue<BufferQueueEntry> unUsedSlots;
+	Queue<BufferSlot> unUsedSlots;
 	
 	/**
 	 * The hashMap containing the used slots 
 	 */
-	HashMap<Integer,BufferQueueEntry> usedSlots;
+	HashMap<String,BufferSlot> usedSlots;
 	
+	/**
+	 * The minimum number of memory slots
+	 */
+	int minimumSlots;
+	
+	/**
+	 * The maximum number of memory slots to be used
+	 */
+	int maximumSlots;
+	
+	public BufferManager(int minimumSlots,int maximumSlots){
+		this.minimumSlots = minimumSlots;
+		this.maximumSlots = maximumSlots;
+	}
 	
 	public void init(){
-		unUsedSlots = new LinkedList<BufferQueueEntry>();
-		usedSlots = new HashMap<Integer,BufferQueueEntry>();
+		unUsedSlots = new LinkedList<BufferSlot>();
+		usedSlots = new HashMap<String,BufferSlot>();
+		
+		for(int i=0;i<maximumSlots;i++){
+			unUsedSlots.add(new BufferSlot(i));
+		}
+		
+		new Thread(new BufferManagerFlushRunnable(this, FLUSH_PERIOD)).start();
+		
 	}
 	
 	public synchronized void read(String tableName,int pageNumber){
