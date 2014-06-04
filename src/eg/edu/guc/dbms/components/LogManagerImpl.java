@@ -1,10 +1,8 @@
 package eg.edu.guc.dbms.components;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Hashtable;
 import eg.edu.guc.dbms.interfaces.LogManager;
 
@@ -22,7 +20,7 @@ public class LogManagerImpl implements LogManager {
 		x.init();
 		x.recordStart("T1");
 		x.recordInsert("T1", "Student", 4, h);
-		x.recordUpdate("T1", "Student", 1, "", "ID", 2, 4);
+		x.recordUpdate("T1", "Student", 1, "sd", "ID", 2, 4);
 		x.recordDelete("T1", "Student", 2, "abc", h);
 		x.recordCommit("T1");
 		x.flushLog();
@@ -61,8 +59,8 @@ public class LogManagerImpl implements LogManager {
 		// <T1,U,Student4,pageNumber,colName,x.y>
 		// Transcation1 : Update colName from table Student page 4 from x to y
 		String result = "<" + strTransID + ",U," + tableName + pageNummber
-				+ "," + strColName + "," + objOld.toString() + ","
-				+ objNew.toString() + ">\n";
+				+ "," + strKeyValue + "," + strColName + ","
+				+ objOld.toString() + "," + objNew.toString() + ">\n";
 		bfr.write(result);
 
 	}
@@ -85,7 +83,7 @@ public class LogManagerImpl implements LogManager {
 		// <T1,D,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
 		String result = "<" + strTransID + ",D," + tableName + pageNumber + ","
-				+ htblColValues.toString() + ">\n";
+				+ strKeyValue + "," + htblColValues.toString() + ">\n";
 		bfr.write(result);
 
 	}
