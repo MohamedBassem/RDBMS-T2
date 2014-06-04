@@ -1,18 +1,12 @@
 package eg.edu.guc.dbms.sql;
 
 import java.util.Hashtable;
-import java.util.List;
 
-public class Insert extends PhysicalPlanTree {
+public class Index extends PhysicalPlanTree {
 
 	@Override
 	public Operation getOperation() {
-		return Operation.INSERT;
-	}
-
-	public Hashtable<String, String> getColValues() {
-		// TODO Auto-generated method stub
-		return null;
+		return Operation.INDEX;
 	}
 
 	public String getTableName() {
@@ -20,5 +14,12 @@ public class Insert extends PhysicalPlanTree {
 		return null;
 	}
 
+	public String getColumnName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
 
 }

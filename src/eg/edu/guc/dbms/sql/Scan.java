@@ -9,10 +9,11 @@ public class Scan extends PhysicalPlanTree {
 		return Operation.SCAN;
 	}
 
-	@Override
-	public List<PhysicalPlanTree> getChildren() {
+	public String getTableName() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

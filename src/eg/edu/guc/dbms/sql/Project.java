@@ -6,13 +6,11 @@ public class Project extends PhysicalPlanTree {
 
 	@Override
 	public Operation getOperation() {
-		return Operation.PRODUCT;
+		return Operation.PROJECT;
 	}
 
-	@Override
-	public List<PhysicalPlanTree> getChildren() {
+	public List<String> getProjectionColumn() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

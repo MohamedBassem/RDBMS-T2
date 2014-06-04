@@ -3,6 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -196,6 +197,12 @@ public class SelectCommand implements Command {
 	
 	public ArrayList<Hashtable<String, String> > getResults(){
 		return this.results;
+	}
+
+	@Override
+	public List<Hashtable<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
