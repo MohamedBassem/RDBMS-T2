@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.helpers.BufferSlot;
 import eg.edu.guc.dbms.helpers.Page;
+import eg.edu.guc.dbms.utils.DatabaseIO;
 
 public class BufferManager {
 	
@@ -32,14 +34,24 @@ public class BufferManager {
 	 */
 	int maximumSlots;
 	
+	/**
+	 * The queue containing monitors for threads waiting for free slots to wake them up
+	 */
+	Queue<Object> waitingForFreeSlots;
+	
+	
+	DatabaseIO databaseIO;
+	
 	public BufferManager(int minimumSlots,int maximumSlots){
 		this.minimumSlots = minimumSlots;
 		this.maximumSlots = maximumSlots;
+		databaseIO = new DatabaseIO();
 	}
 	
 	public void init(){
 		unUsedSlots = new LinkedList<BufferSlot>();
 		usedSlots = new HashMap<String,BufferSlot>();
+		waitingForFreeSlots = new LinkedList<Object>();
 		
 		for(int i=0;i<maximumSlots;i++){
 			unUsedSlots.add(new BufferSlot(i));
@@ -50,21 +62,74 @@ public class BufferManager {
 	}
 	
 	
-	public synchronized void read(String tableName,int pageNumber){
+	public Page read(String tableName,int pageNumber){
+		String pageName = encodePageName(tableName, pageNumber);
+		if(usedSlots.containsKey(pageName)){
+			BufferSlot slot = usedSlots.get(pageName);
+			slot.use();
+			try {
+				slot.getMutex().acquire();
+				return slot.getPage();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}else{
+			BufferSlot slot = getEmptySlot();
+			usedSlots.put(pageName, slot);
+			slot.use();
+			try {
+				slot.getMutex().acquire();
+				Page page = databaseIO.loadPage(tableName, pageNumber);
+				slot.setPage(pageName, page);
+				return page;
+			} catch (InterruptedException | DBEngineException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	private BufferSlot getEmptySlot() {
+		if(unUsedSlots.size() == 0){
+			Object mon = new Object();
+			waitingForFreeSlots.add(mon);
+			synchronized (mon) {
+			    try {
+					mon.wait(); // Wait until notified by another thread that there is an empty slot
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		BufferSlot slot = unUsedSlots.poll();
+		
+		if(unUsedSlots.size() < minimumSlots || usedSlots.size() > maximumSlots ){
+			runFlusher();
+		}
+		
+		return slot;
+	}
+
+	public void write(String tableName,int pageNumber,Page page){
 		
 	}
 	
-	public synchronized void write(String tableName,int pageNumber,Page page){
+	public void createTable(String tableName,String[] columns){
 		
 	}
 	
-	public synchronized void createTable(String tableName,String[] columns){
-		
+	public void release(String tableName,int pageNumber){
+		String pageName = encodePageName(tableName, pageNumber);
+		BufferSlot slot = usedSlots.get(pageName);
+		slot.release();
+		slot.getMutex().release();
 	}
 	
 	public synchronized void LRU(){
 		
 	}
+
 	
 	private void initializeFlusher() {
 		new Thread(new Runnable() {
@@ -79,6 +144,20 @@ public class BufferManager {
 				}
 			}
 		}).start();
+	}
+	
+	private void runFlusher(){
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				LRU();
+			}
+		}).start();
+	}
+	
+	private String encodePageName(String tableName, int pageNumber) {
+		return String.format("%s_%s", tableName, pageNumber);
 	}
 
 }

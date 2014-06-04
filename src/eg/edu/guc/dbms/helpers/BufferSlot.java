@@ -8,9 +8,11 @@ public class BufferSlot {
 	private Page page;
 	private Semaphore mutex;
 	private long lastUsed;
+	private int numUsing;
 	
 	public BufferSlot(int id){
 		this.id = id;
+		numUsing = 0;
 		mutex = new Semaphore(1, true);
 	}
 	
@@ -39,6 +41,18 @@ public class BufferSlot {
 	
 	public long getLastUsed(){
 		return System.currentTimeMillis()- lastUsed;
+	}
+	
+	public void use(){
+		numUsing++;
+	}
+	
+	public void release(){
+		numUsing--;
+	}
+	
+	public boolean isNotUsed(){
+		return numUsing == 0;
 	}
 	
 	public void clear(){
