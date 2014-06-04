@@ -45,14 +45,14 @@ public class BufferManager {
 			unUsedSlots.add(new BufferSlot(i));
 		}
 		
-		new Thread(new BufferManagerFlushRunnable(this, FLUSH_PERIOD)).start();
+		initializeFlusher();
 		
 	}
+	
 	
 	public synchronized void read(String tableName,int pageNumber){
 		
 	}
-	
 	
 	public synchronized void write(String tableName,int pageNumber,Page page){
 		
@@ -60,6 +60,25 @@ public class BufferManager {
 	
 	public synchronized void createTable(String tableName,String[] columns){
 		
+	}
+	
+	public synchronized void LRU(){
+		
+	}
+	
+	private void initializeFlusher() {
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				while(true){
+					LRU();
+					try {
+						Thread.sleep(FLUSH_PERIOD);
+					} catch (InterruptedException e) {}
+				}
+			}
+		}).start();
 	}
 
 }
