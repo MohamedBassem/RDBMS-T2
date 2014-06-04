@@ -8,7 +8,9 @@ import java.util.Set;
 
 import javax.swing.text.TabableView;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
@@ -23,15 +25,16 @@ public class InsertCommand implements Command {
 	String tableName;
 	Properties properties;
 	Hashtable<String,String> htblColNameValue; 
+	BufferManager bufferManager;
 	
-	
-	public InsertCommand(BTreeFactory btFactory, CSVReader reader, String tableName, 
+	public InsertCommand(BTreeFactory btFactory, CSVReader reader, BufferManager bufferManager, String tableName, 
 			Properties properties, Hashtable<String,String> htblColNameValue) {
 		this.btFactory = btFactory;
 		this.reader = reader;
 		this.tableName = tableName;
 		this.properties = properties;
 		this.htblColNameValue = htblColNameValue;
+		this.bufferManager = bufferManager;
 	}
 	@Override
 	public void execute() throws DBEngineException {
@@ -71,18 +74,20 @@ public class InsertCommand implements Command {
 				}
 			}
 			
-			int lastPage = reader.getLastPageIndex(tableName);
-			int lastRow = reader.getLastRow(tableName, lastPage);
-			
-			if(lastRow+1 == properties.getMaximumPageSize()) {
+			int lastPage = bufferManager.getLastPageIndex(tableName);
+			Page page = bufferManager.read(tableName, lastPage, false);
+			if(page.size()+1 == properties.getMaximumPageSize()) {
 				lastPage++;
-				reader.createTablePage(tableName, lastPage,Utils.setToArray(properties.getData().get(this.tableName).keySet()));		
-			}	
-			int row = reader.appendToTable(tableName, lastPage, htblColNameValue);
+			}
+			page = bufferManager.read(tableName, lastPage, true);
+			page.add(htblColNameValue);
+			int insertRow = page.size()-1;
+			bufferManager.write(tableName, lastPage, page);
+			
 			ArrayList<String> indexedColumns = properties.getIndexedColumns(tableName);
 			
 			for (String column : indexedColumns) {
-				String pointer = tableName + " " + lastPage + " " + row;
+				String pointer = tableName + " " + lastPage + " " + insertRow;
 				tree = btFactory.getBtree(tableName, column);
 				try {
 					tree.insert(htblColNameValue.get(column), pointer);

@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.helpers.Page;
+import eg.edu.guc.dbms.helpers.Tuple;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
@@ -20,6 +23,7 @@ public class SelectCommand implements Command {
 	Hashtable<String,String> htblColNameValue;
 	String strOperator;
 	Properties properties;
+	BufferManager bufferManager;
 	
 	// The final arraylist of objects
 	ArrayList< Hashtable<String, String> > results;
@@ -32,7 +36,7 @@ public class SelectCommand implements Command {
 	
 	
 	
-	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,String tableName,
+	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,BufferManager bufferManager, String tableName,
 			Hashtable<String, String> htblColNameValue, String strOperator) {
 		this.btfactory = btfactory;
 		this.reader = reader;
@@ -40,6 +44,7 @@ public class SelectCommand implements Command {
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
 		this.properties = properties;
+		this.bufferManager = bufferManager;
 	}
 	
 	private ArrayList<String> intersect(ArrayList<String> resultsPointer,
@@ -124,9 +129,9 @@ public class SelectCommand implements Command {
 			}else{
 				
 				ArrayList<String> partialRecord = new ArrayList<String>();
-				int tablePages = reader.getLastPageIndex(this.tableName);
+				int tablePages = bufferManager.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
-					ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+					Page res = bufferManager.read(tableName, i, false);
 					for(int j=0;j<res.size();j++){
 						if(res.get(j) != null && res.get(j).get(key).equals(htblColNameValue.get(key))){
 							String pointer = this.tableName + " " + i + " " + j;
@@ -162,10 +167,10 @@ public class SelectCommand implements Command {
 		this.resultPointers = new ArrayList<String>();
 		this.results = new ArrayList< Hashtable<String, String> >();
 		
-		int tablePages = reader.getLastPageIndex(this.tableName);
+		int tablePages = bufferManager.getLastPageIndex(this.tableName);
 		
 		for(int i=0;i<=tablePages;i++){
-			ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+			Page res = bufferManager.read(tableName, i, false);
 			for(int j=0;j<res.size();j++){
 				if(res.get(j) == null){ // Deleted Record
 					continue;
@@ -185,7 +190,9 @@ public class SelectCommand implements Command {
 		
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
-			Hashtable<String, String> record = reader.loadRow(row[0] , Integer.parseInt(row[1]) , Integer.parseInt(row[2]) );
+			
+			Page page = bufferManager.read(row[0] , Integer.parseInt(row[1]) , false );
+			Tuple record = page.get(Integer.parseInt(row[2]));
 			this.results.add(record);
 		}
 	}
