@@ -2,7 +2,7 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -33,15 +33,15 @@ public class CreateIndex implements Command {
 
 	@Override
 	public void execute() throws DBEngineException {
-		Hashtable<String, Hashtable<String, Hashtable<String,String>>> data 
+		HashMap<String, HashMap<String, HashMap<String,String>>> data 
 		= properties.getData();
-		Hashtable<String, Hashtable<String, String>> table = data.get(tableName);
+		HashMap<String, HashMap<String, String>> table = data.get(tableName);
 		
 		if(table == null) {
 			 throw new DBEngineException("Table name is wrong or it doesn't exist.");
 		}
 		
-		Hashtable<String, String> column = table.get(columnName);
+		HashMap<String, String> column = table.get(columnName);
 		if(column == null) {
 			 throw new DBEngineException("Column name is wrong or it doesn't exist.");
 		}
@@ -55,7 +55,7 @@ public class CreateIndex implements Command {
 		SelectCommand select = new SelectCommand(factory, reader, properties, bufferManager,
 				tableName, null, null);
 		select.execute();
-		ArrayList<Hashtable<String, String>> rows = select.getResults();
+		ArrayList<HashMap<String, String>> rows = select.getResults();
 		ArrayList<String> pointers = select.getResultPointers();	
 		
 		for(int i = 0; i < rows.size(); i++) {

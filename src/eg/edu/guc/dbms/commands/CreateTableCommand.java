@@ -2,7 +2,7 @@ package eg.edu.guc.dbms.commands;
 
 
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Set;
 
 import eg.edu.guc.dbms.components.BufferManager;
@@ -17,16 +17,16 @@ import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 public class CreateTableCommand implements Command {
 	CSVReader reader;
 	String strTableName;
-	Hashtable<String,String> htblColNameType;
-	Hashtable<String,String>htblColNameRefs;
+	HashMap<String,String> htblColNameType;
+	HashMap<String,String>htblColNameRefs;
 	String strKeyColName;
 	Properties properties;
 	BTreeFactory btreeFactory;
 	BufferManager bufferManager;
 	
 	public CreateTableCommand(String strTableName,
-							Hashtable<String,String> htblColNameType,
-							Hashtable<String,String>htblColNameRefs,
+							HashMap<String,String> htblColNameType,
+							HashMap<String,String>htblColNameRefs,
 							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,Properties properties, BufferManager bufferManager){
 		this.strTableName=strTableName; 
 		this.htblColNameType=htblColNameType;
@@ -43,7 +43,7 @@ public class CreateTableCommand implements Command {
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i =0; i<columnNames.length; i++){
 			
-			Hashtable<String, String> metaData = new Hashtable<String, String>();
+			HashMap<String, String> metaData = new HashMap<String, String>();
 			metaData.put("Table Name", strTableName);
 			metaData.put("Column Name", columnNames[i]);
 			metaData.put("Column Type", htblColNameType.get(columnNames[i]));

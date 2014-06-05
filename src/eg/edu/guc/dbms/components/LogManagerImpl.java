@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.components;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import eg.edu.guc.dbms.interfaces.LogManager;
 
@@ -34,7 +34,7 @@ public class LogManagerImpl implements LogManager{
 
 	@Override
 	public void recordInsert(String strTransID, String tableName,
-			int pageNumber, Hashtable<String, String> htblColValues) {
+			int pageNumber, HashMap<String, String> htblColValues) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -42,7 +42,7 @@ public class LogManagerImpl implements LogManager{
 	@Override
 	public void recordDelete(String strTransID, String tableName,
 			int pageNumber, String strKeyValue,
-			Hashtable<String, String> htblColValues) {
+			HashMap<String, String> htblColValues) {
 		// TODO Auto-generated method stub
 		
 	}

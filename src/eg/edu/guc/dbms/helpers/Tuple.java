@@ -1,9 +1,9 @@
 package eg.edu.guc.dbms.helpers;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
-public class Tuple extends Hashtable<String,String> {
+public class Tuple extends HashMap<String,String> {
 	
 	public Tuple(){
 		super();

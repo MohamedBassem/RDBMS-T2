@@ -2,7 +2,7 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Set;
 
 import eg.edu.guc.dbms.components.BufferManager;
@@ -20,13 +20,13 @@ public class SelectCommand implements Command {
 	BTreeFactory btfactory;
 	CSVReader reader;
 	String tableName;
-	Hashtable<String,String> htblColNameValue;
+	HashMap<String,String> htblColNameValue;
 	String strOperator;
 	Properties properties;
 	BufferManager bufferManager;
 	
 	// The final arraylist of objects
-	ArrayList< Hashtable<String, String> > results;
+	ArrayList< HashMap<String, String> > results;
 	
 	// The arraylist of results pointer
 	ArrayList< String > resultPointers;
@@ -37,7 +37,7 @@ public class SelectCommand implements Command {
 	
 	
 	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,BufferManager bufferManager, String tableName,
-			Hashtable<String, String> htblColNameValue, String strOperator) {
+			HashMap<String, String> htblColNameValue, String strOperator) {
 		this.btfactory = btfactory;
 		this.reader = reader;
 		this.tableName = tableName;
@@ -97,7 +97,7 @@ public class SelectCommand implements Command {
 			throw new DBEngineException("Unknown Opertator");
 		}
 		
-		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
+		HashMap<String, HashMap<String, String>> table = properties.getData().get(tableName);
 		
 		Set<String> keys = this.htblColNameValue.keySet();
 		
@@ -165,7 +165,7 @@ public class SelectCommand implements Command {
 	private void selectAll() throws DBEngineException {
 		
 		this.resultPointers = new ArrayList<String>();
-		this.results = new ArrayList< Hashtable<String, String> >();
+		this.results = new ArrayList< HashMap<String, String> >();
 		
 		int tablePages = bufferManager.getLastPageIndex(this.tableName);
 		
@@ -186,7 +186,7 @@ public class SelectCommand implements Command {
 	}
 
 	private void convertPointers() throws DBEngineException {
-		this.results = new ArrayList< Hashtable<String, String> >();
+		this.results = new ArrayList< HashMap<String, String> >();
 		
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
@@ -201,7 +201,7 @@ public class SelectCommand implements Command {
 		return this.resultPointers;
 	}
 	
-	public ArrayList<Hashtable<String, String> > getResults(){
+	public ArrayList<HashMap<String, String> > getResults(){
 		return this.results;
 	}
 

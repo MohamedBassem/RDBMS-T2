@@ -3,7 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Set;
 
 import javax.swing.text.TabableView;
@@ -24,11 +24,11 @@ public class InsertCommand implements Command {
 	CSVReader reader;
 	String tableName;
 	Properties properties;
-	Hashtable<String,String> htblColNameValue; 
+	HashMap<String,String> htblColNameValue; 
 	BufferManager bufferManager;
 	
 	public InsertCommand(BTreeFactory btFactory, CSVReader reader, BufferManager bufferManager, String tableName, 
-			Properties properties, Hashtable<String,String> htblColNameValue) {
+			Properties properties, HashMap<String,String> htblColNameValue) {
 		this.btFactory = btFactory;
 		this.reader = reader;
 		this.tableName = tableName;

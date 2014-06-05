@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.interfaces;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public interface LogManager {
 
@@ -13,10 +13,10 @@ public interface LogManager {
     		Object objOld,
     		Object objNew);
     public void recordInsert(String strTransID, String tableName, int pageNumber,
-            Hashtable<String,String> htblColValues);
+            HashMap<String,String> htblColValues);
     public void recordDelete(String strTransID, String tableName, int pageNumber,
             String strKeyValue,
-            Hashtable<String,String> htblColValues);
+            HashMap<String,String> htblColValues);
     public void recordCommit( String strTransID );
 
 	

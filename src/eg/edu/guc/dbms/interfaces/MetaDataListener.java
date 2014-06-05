@@ -1,8 +1,8 @@
 package eg.edu.guc.dbms.interfaces;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public interface MetaDataListener  {
-	public void refresh(ArrayList<Hashtable<String,String>> data);
+	public void refresh(ArrayList<HashMap<String,String>> data);
 }
