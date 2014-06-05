@@ -3,7 +3,7 @@ package eg.edu.guc.dbms.utils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Set;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -14,9 +14,9 @@ public class Properties implements MetaDataListener {
 	
 	private CSVReader reader;
 	
-	private ArrayList<Hashtable<String, String>>unparsedData;
+	private ArrayList<HashMap<String, String>>unparsedData;
 	
-	private Hashtable< String , Hashtable<String, Hashtable<String,String> >  > data;
+	private HashMap< String , HashMap<String, HashMap<String,String> >  > data;
 
 	private int maximumPageSize;
 	 
@@ -31,19 +31,19 @@ public class Properties implements MetaDataListener {
 		parseData();
 	}
 	
-	public Hashtable<String, Hashtable<String, Hashtable<String, String>>> getData() {
+	public HashMap<String, HashMap<String, HashMap<String, String>>> getData() {
 		return data;
 	}
 	
 	//TODO save it
 	public void setData(
-			Hashtable<String, Hashtable<String, Hashtable<String, String>>> data) {
+			HashMap<String, HashMap<String, HashMap<String, String>>> data) {
 		this.data = data;
-		ArrayList<Hashtable<String,String>> toBeSaved = new ArrayList<Hashtable<String,String>>();
+		ArrayList<HashMap<String,String>> toBeSaved = new ArrayList<HashMap<String,String>>();
 		for(String tblName : this.data.keySet()){
 			for(String columnName : this.data.get(tblName).keySet()){
-				Hashtable<String,String> row = new Hashtable<String,String>();
-				Hashtable<String,String> col = this.data.get(tblName).get(columnName);
+				HashMap<String,String> row = new HashMap<String,String>();
+				HashMap<String,String> col = this.data.get(tblName).get(columnName);
 				row.put("Table Name",tblName);
 				row.put("Column Name",columnName);
 				row.put("Column Type", col.get("Column Type"));
@@ -83,19 +83,19 @@ public class Properties implements MetaDataListener {
 	}
 	
 	@Override
-	public void refresh( ArrayList<Hashtable<String, String>> data) {
+	public void refresh( ArrayList<HashMap<String, String>> data) {
 		this.unparsedData = data;
 		parseData();
 	}
 	
 	private void parseData(){
-		this.data = new Hashtable< String , Hashtable<String,Hashtable<String,String> >  >();
+		this.data = new HashMap< String , HashMap<String,HashMap<String,String> >  >();
 		
-		for(Hashtable<String, String> row : unparsedData){
+		for(HashMap<String, String> row : unparsedData){
 			if( !data.containsKey(row.get("Table Name"))){
-				data.put( row.get("Table Name") , new Hashtable<String,Hashtable<String,String>>());
+				data.put( row.get("Table Name") , new HashMap<String,HashMap<String,String>>());
 			}
-			data.get(row.get("Table Name")).put(row.get("Column Name"), new Hashtable<String,String>());
+			data.get(row.get("Table Name")).put(row.get("Column Name"), new HashMap<String,String>());
 			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Column Type", row.get("Column Type"));
 			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Key", row.get("Key"));
 			data.get(row.get("Table Name")).get(row.get("Column Name")).put("Indexed", row.get("Indexed"));

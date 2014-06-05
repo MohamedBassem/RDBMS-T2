@@ -1,9 +1,7 @@
 package eg.edu.guc.dbms.interfaces;
 
+import java.util.HashMap;
 import java.io.IOException;
-import java.util.Hashtable;
-
-import eg.edu.guc.dbms.exceptions.DBAppException;
 
 public interface LogManager {
 
@@ -16,12 +14,11 @@ public interface LogManager {
     		Object objOld,
     		Object objNew) throws IOException;
     public void recordInsert(String strTransID, String tableName, int pageNumber,
-            Hashtable<String,String> htblColValues) throws IOException;
+            HashMap<String,String> htblColValues) throws IOException;
     public void recordDelete(String strTransID, String tableName, int pageNumber,
             String strKeyValue,
-            Hashtable<String,String> htblColValues) throws IOException;
+            HashMap<String,String> htblColValues) throws IOException;
     public void recordCommit( String strTransID) throws IOException;
-
 
 	
 }

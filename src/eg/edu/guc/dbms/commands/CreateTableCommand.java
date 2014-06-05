@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.commands;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -8,8 +8,6 @@ import java.util.logging.Logger;
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
-import eg.edu.guc.dbms.interfaces.LogManager;
-import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.Utils;
@@ -18,16 +16,16 @@ import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 public class CreateTableCommand implements Command {
 	CSVReader reader;
 	String strTableName;
-	Hashtable<String,String> htblColNameType;
-	Hashtable<String,String>htblColNameRefs;
+	HashMap<String,String> htblColNameType;
+	HashMap<String,String>htblColNameRefs;
 	String strKeyColName;
 	Properties properties;
 	BTreeFactory btreeFactory;
 	BufferManager bufferManager;
 	
 	public CreateTableCommand(String strTableName,
-							Hashtable<String,String> htblColNameType,
-							Hashtable<String,String>htblColNameRefs,
+							HashMap<String,String> htblColNameType,
+							HashMap<String,String>htblColNameRefs,
 							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,Properties properties, BufferManager bufferManager){
 		this.strTableName=strTableName; 
 		this.htblColNameType=htblColNameType;
@@ -44,7 +42,7 @@ public class CreateTableCommand implements Command {
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i =0; i<columnNames.length; i++){
 			
-			Hashtable<String, String> metaData = new Hashtable<String, String>();
+			HashMap<String, String> metaData = new HashMap<String, String>();
 			metaData.put("Table Name", strTableName);
 			metaData.put("Column Name", columnNames[i]);
 			metaData.put("Column Type", htblColNameType.get(columnNames[i]));
@@ -87,7 +85,7 @@ public class CreateTableCommand implements Command {
 		
 	}
 	@Override
-	public List<Hashtable<String, String>> getResult() {
+	public List<HashMap<String, String>> getResult() {
 		// TODO Auto-generated method stub
 		return null;
 	}

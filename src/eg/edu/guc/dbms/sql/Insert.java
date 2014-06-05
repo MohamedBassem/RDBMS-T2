@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.sql;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 public class Insert extends PhysicalPlanTree {
@@ -10,7 +10,7 @@ public class Insert extends PhysicalPlanTree {
 		return Operation.INSERT;
 	}
 
-	public Hashtable<String, String> getColValues() {
+	public HashMap<String, String> getColValues() {
 		// TODO Auto-generated method stub
 		return null;
 	}

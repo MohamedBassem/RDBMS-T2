@@ -2,12 +2,9 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.text.TabableView;
 
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -15,7 +12,6 @@ import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
-import eg.edu.guc.dbms.utils.Utils;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
 import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 
@@ -25,11 +21,11 @@ public class InsertCommand implements Command {
 	CSVReader reader;
 	String tableName;
 	Properties properties;
-	Hashtable<String,String> htblColNameValue; 
+	HashMap<String,String> htblColNameValue; 
 	BufferManager bufferManager;
 	
 	public InsertCommand(BTreeFactory btFactory, CSVReader reader, BufferManager bufferManager, String tableName, 
-			Properties properties, Hashtable<String,String> htblColNameValue) {
+			Properties properties, HashMap<String,String> htblColNameValue) {
 		this.btFactory = btFactory;
 		this.reader = reader;
 		this.tableName = tableName;
@@ -98,7 +94,7 @@ public class InsertCommand implements Command {
 			}
 		}
 	@Override
-	public List<Hashtable<String, String>> getResult() {
+	public List<HashMap<String, String>> getResult() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -2,15 +2,13 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.interfaces.Command;
-import eg.edu.guc.dbms.interfaces.LogManager;
-import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -19,7 +17,7 @@ import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 
 public class DeleteCommand implements Command {
 	String strTableName; 
-	Hashtable<String, String> htblColNameValue;
+	HashMap<String, String> htblColNameValue;
 	String strOperator;  
 	CSVReader reader; 
 	BTreeFactory btfactory;
@@ -27,7 +25,7 @@ public class DeleteCommand implements Command {
 	Properties properties;
 	BufferManager bufferManager;
 	SelectCommand select;
-	public DeleteCommand(String strTableName,Hashtable<String,String> htblColNameValue,
+	public DeleteCommand(String strTableName,HashMap<String,String> htblColNameValue,
 								String strOperator, CSVReader reader,Properties properties,BTreeFactory btfactory, BufferManager bufferManager){
 		this.strTableName=strTableName; 
 		this.htblColNameValue=htblColNameValue; 
@@ -66,7 +64,7 @@ public class DeleteCommand implements Command {
 	public void deleteFromTree() throws DBEngineException, IOException{
 		ArrayList<String> indexedColumns = properties.getIndexedColumns(strTableName); 
 		ArrayList<String> pointers = select.getResultPointers();
-		ArrayList< Hashtable<String, String> > results = select.getResults();
+		ArrayList< HashMap<String, String> > results = select.getResults();
 		for(int i=0; i<indexedColumns.size(); i++){
 			BTreeAdopter adoptor= btfactory.getBtree(strTableName, indexedColumns.get(i));			
 			for(int j=0; j<pointers.size(); j++){
@@ -76,7 +74,7 @@ public class DeleteCommand implements Command {
 	}
 
 	@Override
-	public List<Hashtable<String, String>> getResult() {
+	public List<HashMap<String, String>> getResult() {
 		// TODO Auto-generated method stub
 		return null;
 	}
