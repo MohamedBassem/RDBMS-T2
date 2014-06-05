@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -169,7 +169,7 @@ public class DatabaseIO {
 		return obj;
 	}
 	
-	private String encodeRow(Hashtable<String, String> data, ArrayList<String> columns) {
+	private String encodeRow(HashMap<String, String> data, ArrayList<String> columns) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < columns.size(); i++) {
 			buffer.append(data.get(columns.get(i)));

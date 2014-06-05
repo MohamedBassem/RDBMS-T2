@@ -1,6 +1,7 @@
 package eg.edu.guc.dbms.components;
 
 import java.util.HashMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -195,5 +196,9 @@ public class BufferManager {
 		return databaseIO.getLastPageIndex(tableName);
 	}
 	
-
+	
+	public static void main(String[] args) {
+		HashMap<String,String> h = new HashMap<String,String>();
+		h.put("test", null);
+	}
 }

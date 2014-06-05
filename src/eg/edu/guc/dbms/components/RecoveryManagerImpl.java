@@ -2,6 +2,7 @@ package eg.edu.guc.dbms.components;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.swing.plaf.SliderUI;
@@ -42,7 +43,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 				String[] splittedLine = line.split(",");
 				switch (splittedLine[1]) {
 				case "I":
-					Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+					HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
 							.substring(0, splittedLine[splittedLine.length - 1]
 									.length() - 2);
@@ -61,7 +62,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					break;
 
 				case "D":
-					htblColNameValue = new Hashtable<String, String>();
+					htblColNameValue = new HashMap<String, String>();
 					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
 							.substring(0, splittedLine[splittedLine.length - 1]
 									.length() - 2);
@@ -81,8 +82,8 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					break;
 
 				case "U":
-					htblColNameValue = new Hashtable<String, String>();
-					Hashtable<String, String> colValue = new Hashtable<String, String>();
+					htblColNameValue = new HashMap<String, String>();
+					HashMap<String, String> colValue = new HashMap<String, String>();
 					colValue.put(splittedLine[5], splittedLine[4]);
 					if (transactions.get(splittedLine[0])) {
 						htblColNameValue.put(splittedLine[5], splittedLine[7]);
