@@ -75,7 +75,9 @@ public class SQLParserImpl implements SQLParser {
 							"CREATE TABLE Gamdeen (name STRING)",
 							"INSERT INTO Gamdeen (name) VALUES ('Rami')",
 							"UPDATE Gamdeen SET name = 'Rami Khalil' wHERE name = 'Rami'",
-							"CREATE INDEX index_gamda ON Gamdeen (name)"};
+							"CREATE INDEX index_gamda ON Gamdeen (name)",
+							"SELECT FROM WHERE",
+							"Enta 3amel eih?"};
 		for(int i = 0; i < tests.length; i++) {
 			System.out.println(tests[i]);
 			if(test.parseSQLStatement(tests[i]))

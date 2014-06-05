@@ -4,18 +4,17 @@ import java.util.HashMap;
 
 public class Create extends PhysicalPlanTree {
 
-	private String name;
 	private HashMap<String, String> columnReference;
 	private HashMap<String, String> types;
 	private String keyColName;
+	
+	public Create(String tableName) {
+		super(tableName);
+	}
 
 	@Override
 	public Operation getOperation() {
 		return Operation.CREATE_TABLE;
-	}
-
-	public String getTableName() {
-		return name;
 	}
 
 	public HashMap<String, String> getTableColRefs() {
@@ -28,10 +27,6 @@ public class Create extends PhysicalPlanTree {
 
 	public String getKeyColName() {
 		return keyColName;
-	}
-	
-	public void setTableName(String name) {
-		this.name = name;
 	}
 	
 	public void setTableColRefs(HashMap<String, String> colRefs) {

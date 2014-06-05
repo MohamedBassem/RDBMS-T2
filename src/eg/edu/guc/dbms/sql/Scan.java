@@ -2,20 +2,20 @@ package eg.edu.guc.dbms.sql;
 
 
 public class Scan extends PhysicalPlanTree {
+	
+	String tableName;
 
 	public Scan(String tableName) {
-		// TODO Auto-generated constructor stub
-		// @Farghal: Implement
+		super();
+		this.tableName = tableName;
 	}
 
-	@Override
 	public Operation getOperation() {
 		return Operation.SCAN;
 	}
 
 	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+		return tableName;
 	}
 
 

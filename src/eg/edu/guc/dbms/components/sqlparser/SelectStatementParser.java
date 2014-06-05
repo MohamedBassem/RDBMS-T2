@@ -26,7 +26,8 @@ public class SelectStatementParser {
 		
 		if (statement.getWhereClause() != null) {
 			System.out.printf("\nWhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString());
-			next = new Select(statement.getWhereClause().getCondition().toString());
+			next = new Select();
+			next.setWhereClause(statement.getWhereClause().getCondition().toString());
 			current.addChild(next);
 			current = next;
 		}

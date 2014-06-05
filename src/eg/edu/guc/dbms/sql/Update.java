@@ -4,14 +4,13 @@ import java.util.HashMap;
 
 public class Update extends PhysicalPlanTree {
 
+	public Update(String tableName) {
+		super(tableName);
+	}
+
 	@Override
 	public Operation getOperation() {
 		return Operation.UPDATE;
-	}
-
-	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public HashMap<String, String> getColSearchValue() {

@@ -12,14 +12,12 @@ public class Project extends PhysicalPlanTree {
 		projectionColumns = new LinkedList<String>();
 	}
 
-	@Override
 	public Operation getOperation() {
 		return Operation.PROJECT;
 	}
 
 	public List<String> getProjectionColumns() {
-		// TODO Auto-generated method stub
-		return null;
+		return projectionColumns;
 	}
 	
 	public void addProjectionColumn(String column) {
