@@ -1,9 +1,17 @@
 package eg.edu.guc.dbms.sql;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Insert extends PhysicalPlanTree {
+
+	private String tableName;
+	private HashMap<String, String> colValues;
+	
+	public Insert(String tableName) {
+		// TODO Auto-generated constructor stub
+		this.tableName = tableName;
+		colValues = new HashMap<String, String>();
+	}
 
 	@Override
 	public Operation getOperation() {
@@ -14,10 +22,13 @@ public class Insert extends PhysicalPlanTree {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public void setColValue(String column, String value) {
+		colValues.put(column, value);
+	}
 
 	public String getTableName() {
-		// TODO Auto-generated method stub
-		return null;
+		return tableName;
 	}
 
 

@@ -1,7 +1,6 @@
 package eg.edu.guc.dbms.sql;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Create extends PhysicalPlanTree {
 
