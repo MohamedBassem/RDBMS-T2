@@ -22,6 +22,10 @@ public class Properties implements MetaDataListener {
 	 
 	private int bTreeN;
 	
+	private int minimumEmptyBufferSlots;
+	
+	private int maximumUsedBufferSlots;
+	
 	
 	public Properties(CSVReader reader){
 		this.reader = reader;
@@ -35,7 +39,6 @@ public class Properties implements MetaDataListener {
 		return data;
 	}
 	
-	//TODO save it
 	public void setData(
 			HashMap<String, HashMap<String, HashMap<String, String>>> data) {
 		this.data = data;
@@ -69,9 +72,13 @@ public class Properties implements MetaDataListener {
 		}
 		String maxNum = properties.getProperty("MaximumRowsCountinPage");
 		String bn = properties.getProperty("BPlusTreeN");
+		String minimumEmptyBufferSlots = properties.getProperty("MinimumEmptyBufferSlots");
+		String maxEmptyBufferSlots = properties.getProperty("MaxmumEmptyBufferSlots");
 		
 		this.maximumPageSize = Integer.parseInt(maxNum);
 		this.bTreeN = Integer.parseInt(bn);
+		this.minimumEmptyBufferSlots = Integer.parseInt(minimumEmptyBufferSlots);
+		this.maximumUsedBufferSlots = Integer.parseInt(maxEmptyBufferSlots);
 	}
 
 	private void loadData(){
@@ -191,6 +198,14 @@ public class Properties implements MetaDataListener {
 	
 	public int getBTreeN(){
 		return bTreeN;
+	}
+
+	public int getMinimumEmptyBufferSlots() {
+		return minimumEmptyBufferSlots;
+	}
+
+	public int getMaximumUsedBufferSlots() {
+		return maximumUsedBufferSlots;
 	}
 	
 }
