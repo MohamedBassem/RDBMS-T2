@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.transactions.Transaction;
 
 
 public interface Command {
