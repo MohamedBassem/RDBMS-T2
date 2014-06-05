@@ -8,6 +8,8 @@ import java.util.List;
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.interfaces.LogManager;
+import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -75,5 +77,6 @@ public class CreateIndex implements Command {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }
