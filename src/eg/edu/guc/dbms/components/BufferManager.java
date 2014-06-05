@@ -48,12 +48,15 @@ public class BufferManager {
 	
 	private Semaphore mutex;
 	
+	boolean runBackGroundFlusher;
+	
 	
 	DatabaseIO databaseIO;
 	
-	public BufferManager(int minimumSlots,int maximumSlots){
+	public BufferManager(int minimumSlots,int maximumSlots,boolean runBackGroundFlusher){
 		this.minimumSlots = minimumSlots;
 		this.maximumSlots = maximumSlots;
+		this.runBackGroundFlusher = runBackGroundFlusher;
 		databaseIO = new DatabaseIO();
 		
 		ConsoleHandler handler = new ConsoleHandler();
@@ -79,7 +82,9 @@ public class BufferManager {
 		}
 		mutex.release();
 		
-		initializeFlusher();
+		if(runBackGroundFlusher){
+			initializeFlusher();
+		}
 		
 		LOGGER.info("Buffer Manager Started");
 		
@@ -149,7 +154,7 @@ public class BufferManager {
 		long lastAccessed = 0;
 		for(String pageName : usedSlots.keySet()){
 			BufferSlot bufferSlot = usedSlots.get(pageName);
-			if(bufferSlot.isDirty()){
+			if(bufferSlot.isDirty() ){
 				try {
 					databaseIO.writePage(bufferSlot.getTableName(), bufferSlot.getPageNumber(), bufferSlot.getPage());
 					bufferSlot.setDirty(false);
@@ -157,7 +162,7 @@ public class BufferManager {
 					e.printStackTrace();
 				}
 			}
-			if(lastAccessed < bufferSlot.getLastUsed()){
+			if(lastAccessed < bufferSlot.getLastUsed() && bufferSlot.isNotUsed()){
 				lastAccessed = bufferSlot.getLastUsed();
 				leastUsedSlot = bufferSlot;
 			}
@@ -231,7 +236,7 @@ public class BufferManager {
 		}).start();
 	}
 	
-	private void runFlusher(){
+	public void runFlusher(){
 		new Thread(new Runnable() {
 
 			@Override

@@ -30,7 +30,7 @@ public class DBApp {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots());
+		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots(),true);
 	}
 	
 	public void createTable(String strTableName,
