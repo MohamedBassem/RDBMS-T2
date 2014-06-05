@@ -7,8 +7,8 @@ import gudusoft.gsqlparser.stmt.TCreateIndexSqlStatement;
 
 public class CreateIndexStatementParser {
 	public static PhysicalPlanTree parse(TCreateIndexSqlStatement statement) {
-		String tableName = statement.getTargetTable().toString();
-		String indexName = statement.getIndexName().toString();
+		String tableName = statement.getTableName().toString();
+		String indexName = statement.getIndexName() == null ? "" : statement.getIndexName().toString();
 		// TODO Support multi key index
 		String columnName = statement.getColumnNameList().getOrderByItem(0).getSortKey().toString();
 		Index result = new Index(tableName, columnName);
