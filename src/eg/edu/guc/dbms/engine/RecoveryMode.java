@@ -40,8 +40,7 @@ public class RecoveryMode {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		// TODO
-		this.bufferManager = new BufferManager(0, 100);
+		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots(),true);
 	}
 
 	public void createTable(String strTableName,
