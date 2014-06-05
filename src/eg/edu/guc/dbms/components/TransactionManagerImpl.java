@@ -58,6 +58,8 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 	
 	public static void main(String[] args) {
+		Hashtable<String, String> a = new Hashtable<String, String>();
+		a.put("ankosh", null);
 		PhysicalPlanTree t = new Project();
 		t.addChild((new Select()).addChild(new Product().addChild(new Scan()).addChild(new Scan())));
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
