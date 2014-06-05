@@ -83,7 +83,7 @@ public class UpdateCommand implements Command {
 			for (int j = 0; j < pointers.size(); j++) {
 				adoptor.delete(results.get(j).get(indexedColumns.get(i)),
 						pointers.get(j));
-				adoptor.insert(colValue.get(indexedColumns.get(i)),
+				adoptor.insert(hMapColNameValue.get(indexedColumns.get(i)),
 						pointers.get(j));
 			}
 		}
