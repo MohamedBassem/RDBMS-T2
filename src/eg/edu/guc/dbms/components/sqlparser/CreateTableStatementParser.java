@@ -29,6 +29,9 @@ public class CreateTableStatementParser {
             if (column.getConstraints() != null){
                 System.out.println("\tInline constraints:");
                 for(int j=0;j<column.getConstraints().size();j++){
+                	String constraint = column.getConstraints().getConstraint(j).toString();
+                	if(constraint.equals("PRIMARY KEY"))
+                		result.setKeyColName(columnName);
                     printConstraint(column.getConstraints().getConstraint(j),false);
                 }
             }
@@ -38,6 +41,7 @@ public class CreateTableStatementParser {
         if(statement.getTableConstraints().size() > 0){
             System.out.println("\tOutline Constraints:");
             for(int i=0;i<statement.getTableConstraints().size();i++){
+            	//TODO Add regex for PRIMARY KEY(col1, col2, ...) constraint ?
               printConstraint(statement.getTableConstraints().getConstraint(i), true);
               System.out.println("");
             }
