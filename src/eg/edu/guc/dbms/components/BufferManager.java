@@ -130,19 +130,19 @@ public class BufferManager {
 		return page;
 	}
 
-	public void write(String tableName,int pageNumber,Page page){
+	public void write(int id,String tableName,int pageNumber,Page page){
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);
 		slot.setDirty(true);
 		slot.release();
-		LOGGER.info("Lock on " + pageName + " Released.");
+		LOGGER.info(id + " : Lock on " + pageName + " Released.");
 	}
 	
-	public void createTable(String tableName,String[] columns){
+	public void createTable(int id,String tableName,String[] columns){
 		try {
 			databaseIO.createTablePage(tableName, columns);
-			LOGGER.info("Created Table Page");
+			LOGGER.info(id + " : Created Table Page");
 		} catch (DBEngineException e) {
 			e.printStackTrace();
 		}
@@ -244,7 +244,9 @@ public class BufferManager {
 				try {
 					mutex.acquire();
 				} catch (InterruptedException e) {}
+				LOGGER.info("Flusher Started..");
 				LRU();
+				LOGGER.info("Flusher Ended..");
 				mutex.release();
 			}
 		}).start();
