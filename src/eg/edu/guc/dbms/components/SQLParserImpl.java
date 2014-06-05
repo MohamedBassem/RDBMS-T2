@@ -72,7 +72,7 @@ public class SQLParserImpl implements SQLParser {
 		String tests[] = {	"SELECT * FROM pokemon WHERE name = 'Pikachu'",
 							"INSERT INTO kitchen (woman) VALUES ('SAK')",
 							"DELETE FROM kitchen WHERE woman = 'Alaa Maher'",
-							"CREATE TABLE Gamdeen (name STRING)",
+							"CREATE TABLE Gamdeen (name STRING, gamadan INT)",
 							"INSERT INTO Gamdeen (name) VALUES ('Rami')",
 							"UPDATE Gamdeen SET name = 'Rami Khalil' wHERE name = 'Rami'",
 							"CREATE INDEX index_gamda ON Gamdeen (name)",
