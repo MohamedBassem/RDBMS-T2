@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import eg.edu.guc.dbms.components.BufferManager;
-import eg.edu.guc.dbms.components.LogManagerImpl;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.factories.LogManagerFactory;
 import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.interfaces.LogManager;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -25,12 +26,13 @@ public class DeleteCommand implements Command {
 	Properties properties;
 	BufferManager bufferManager;
 	SelectCommand select;
-	String transaction;
+	long transactionId;
+	LogManager logManager;
 
 	public DeleteCommand(String strTableName,
 			HashMap<String, String> htblColNameValue, String strOperator,
 			CSVReader reader, Properties properties, BTreeFactory btfactory,
-			BufferManager bufferManager) {
+			BufferManager bufferManager, long transactionId) {
 		this.strTableName = strTableName;
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
@@ -38,12 +40,27 @@ public class DeleteCommand implements Command {
 		this.properties = properties;
 		this.btfactory = btfactory;
 		this.bufferManager = bufferManager;
+		this.transactionId = transactionId;
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.strTableName,
-				this.htblColNameValue, this.strOperator);
+				this.htblColNameValue, this.strOperator, transactionId);
+		this.logManager = LogManagerFactory.getInstance();
+
 	}
 
+	public DeleteCommand(String strTableName,
+			HashMap<String, String> htblColNameValue, String strOperator,
+			CSVReader reader, Properties properties, BTreeFactory btfactory,
+			BufferManager bufferManager, long transactionId,
+			LogManager logManager) {
+		this(strTableName, htblColNameValue, strOperator, reader, properties,
+				btfactory, bufferManager, transactionId);
+		this.logManager = logManager;
+		select = new SelectCommand(this.btfactory, this.reader,
+				this.properties, this.bufferManager, this.strTableName,
+				this.htblColNameValue, this.strOperator, transactionId);
 
+	}
 
 	public void execute() throws DBEngineException {
 		select.execute();
@@ -67,18 +84,18 @@ public class DeleteCommand implements Command {
 			int pageNumber = Integer.parseInt(x[1]);
 			pageId = pageNumber;
 			int rowNumber = Integer.parseInt(x[2]);
-			Page page = bufferManager.read(strTableName, pageNumber, true);
+			Page page = bufferManager.read(transactionId, strTableName,
+					pageNumber, true);
+			try {
+				logManager.recordDelete(transactionId + "", strTableName,
+						pageNumber, getKeyValue(strTableName, page, rowNumber),
+						htblColNameValue);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			page.set(rowNumber, null);
-			bufferManager.write(strTableName, pageNumber, page);
-				LogManagerImpl logManager = LogManagerImpl.getInstance();
-				try {
-					logManager.recordDelete(transaction, strTableName,
-							pageNumber,
-							getKeyValue(strTableName, page, rowNumber),
-							htblColNameValue);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			bufferManager.write(transactionId, strTableName, pageNumber, page);
+
 		}
 	}
 

@@ -73,7 +73,7 @@ public class Properties implements MetaDataListener {
 		String maxNum = properties.getProperty("MaximumRowsCountinPage");
 		String bn = properties.getProperty("BPlusTreeN");
 		String minimumEmptyBufferSlots = properties.getProperty("MinimumEmptyBufferSlots");
-		String maxEmptyBufferSlots = properties.getProperty("MaxmumEmptyBufferSlots");
+		String maxEmptyBufferSlots = properties.getProperty("MaximumUsedBufferSlots");
 		
 		this.maximumPageSize = Integer.parseInt(maxNum);
 		this.bTreeN = Integer.parseInt(bn);

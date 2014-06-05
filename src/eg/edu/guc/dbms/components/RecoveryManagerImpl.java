@@ -16,61 +16,61 @@ public class RecoveryManagerImpl implements RecoveryManager {
 	RecoveryMode recoveryMode;
 	Hashtable<String, Boolean> transactions;
 
-	public static void main(String[] args) throws IOException, DBEngineException {
+	public static void main(String[] args) throws IOException,
+			DBEngineException {
 		RecoveryManagerImpl x = new RecoveryManagerImpl();
 		x.recover();
 	}
-	
+
 	public void recover() throws IOException, DBEngineException {
 		raf = new RandomAccessFile("data/log/logFile.log", "r");
 		transactions = new Hashtable<String, Boolean>();
 		recoveryMode = new RecoveryMode(new LogManager() {
-			
+
 			@Override
 			public void recordUpdate(String strTransID, String tableName,
 					int pageNummber, String strKeyValue, String strColName,
 					Object objOld, Object objNew) throws IOException {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void recordStart(String strTransID) throws IOException {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void recordInsert(String strTransID, String tableName,
 					int pageNumber, HashMap<String, String> htblColValues)
 					throws IOException {
-				System.out.println("7amada");
+				System.out.println("Inserting");
 			}
-			
+
 			@Override
 			public void recordDelete(String strTransID, String tableName,
 					int pageNumber, String strKeyValue,
 					HashMap<String, String> htblColValues) throws IOException {
-				// TODO Auto-generated method stub
-				
+				System.out.println("deleting");
 			}
-			
+
 			@Override
 			public void recordCommit(String strTransID) throws IOException {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void init() throws IOException {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void flushLog() throws IOException {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
@@ -103,24 +103,26 @@ public class RecoveryManagerImpl implements RecoveryManager {
 							.substring(0, splittedLine[splittedLine.length - 1]
 									.length() - 2);
 					for (int i = 4; i < splittedLine.length; i++) {
-						if (splittedLine[i].contains("{") || splittedLine[i].contains(" ")) {
+						if (splittedLine[i].contains("{")
+								|| splittedLine[i].contains(" ")) {
 							htblColNameValue.put(splittedLine[i].substring(1,
-									splittedLine[i].indexOf("=")), splittedLine[i]
-									.substring(splittedLine[i].indexOf("=") + 1));
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
 						} else {
-						htblColNameValue.put(splittedLine[i].substring(0,
-								splittedLine[i].indexOf("=")), splittedLine[i]
-								.substring(splittedLine[i].indexOf("=") + 1));
+							htblColNameValue.put(splittedLine[i].substring(0,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
 						}
 					}
-					if (transactions.get(splittedLine[0].substring(1))){
+					if (transactions.get(splittedLine[0].substring(1))) {
 						recoveryMode.insertIntoTable(splittedLine[2],
 								htblColNameValue);
-					}
-					else
+					} else {
 						recoveryMode.deleteFromTable(splittedLine[2],
 								htblColNameValue, "AND");
-
+					}
 					break;
 
 				case "D":
@@ -129,18 +131,26 @@ public class RecoveryManagerImpl implements RecoveryManager {
 							.substring(0, splittedLine[splittedLine.length - 1]
 									.length() - 2);
 					for (int i = 5; i < splittedLine.length; i++) {
-						htblColNameValue.put(splittedLine[i].substring(0,
-								splittedLine[i].indexOf("=")), splittedLine[i]
-								.substring(splittedLine[i].indexOf("=")));
+						if (splittedLine[i].contains("{")
+								|| splittedLine[i].contains(" ")) {
+							htblColNameValue.put(splittedLine[i].substring(1,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						} else {
+							htblColNameValue.put(splittedLine[i].substring(0,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						}
 					}
-					if (transactions.get(splittedLine[0]))
+					if (transactions.get(splittedLine[0].substring(1))) {
 						recoveryMode.deleteFromTable(splittedLine[2],
 								htblColNameValue, "AND");
-
-					else
+					} else {
 						recoveryMode.insertIntoTable(splittedLine[2],
 								htblColNameValue);
-
+					}
 					break;
 
 				case "U":
@@ -149,12 +159,12 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					colValue.put(splittedLine[5], splittedLine[4]);
 					if (transactions.get(splittedLine[0])) {
 						htblColNameValue.put(splittedLine[5], splittedLine[7]);
-						recoveryMode.updateTable(splittedLine[2], htblColNameValue,
-								"AND", colValue);
+						recoveryMode.updateTable(splittedLine[2],
+								htblColNameValue, "AND", colValue);
 					} else {
 						htblColNameValue.put(splittedLine[5], splittedLine[6]);
-						recoveryMode.updateTable(splittedLine[2], htblColNameValue,
-								"AND", colValue);
+						recoveryMode.updateTable(splittedLine[2],
+								htblColNameValue, "AND", colValue);
 					}
 					break;
 

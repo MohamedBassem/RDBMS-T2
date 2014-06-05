@@ -6,9 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import sun.org.mozilla.javascript.xml.XMLLib.Factory;
 import eg.edu.guc.dbms.components.BufferManager;
-import eg.edu.guc.dbms.components.LogManagerImpl;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.factories.LogManagerFactory;
 import eg.edu.guc.dbms.helpers.Page;
@@ -26,12 +24,13 @@ public class InsertCommand implements Command {
 	Properties properties;
 	HashMap<String, String> htblColNameValue;
 	BufferManager bufferManager;
-	String transaction;
+	long transactionId;
 	LogManager logManager;
 
 	public InsertCommand(BTreeFactory btFactory, CSVReader reader,
 			BufferManager bufferManager, String tableName,
-			Properties properties, HashMap<String, String> htblColNameValue) {
+			Properties properties, HashMap<String, String> htblColNameValue,
+			long transactionId) {
 		this.btFactory = btFactory;
 		this.reader = reader;
 		this.tableName = tableName;
@@ -39,19 +38,18 @@ public class InsertCommand implements Command {
 		this.htblColNameValue = htblColNameValue;
 		this.bufferManager = bufferManager;
 		this.logManager = LogManagerFactory.getInstance();
-	}
-	public InsertCommand(BTreeFactory btFactory, CSVReader reader,
-			BufferManager bufferManager, String tableName,
-			Properties properties, HashMap<String, String> htblColNameValue,LogManager logManager) {
-		this.btFactory = btFactory;
-		this.reader = reader;
-		this.tableName = tableName;
-		this.properties = properties;
-		this.htblColNameValue = htblColNameValue;
-		this.bufferManager = bufferManager;
-		this.logManager = logManager;
+		this.transactionId = transactionId;
 	}
 
+	public InsertCommand(BTreeFactory btFactory, CSVReader reader,
+			BufferManager bufferManager, String tableName,
+			Properties properties, HashMap<String, String> htblColNameValue,
+			LogManager logManager, long transactionId) {
+		this(btFactory, reader, bufferManager, tableName, properties,
+				htblColNameValue, transactionId);
+		this.logManager = logManager;
+		this.transactionId = transactionId;
+	}
 
 	@Override
 	public void execute() throws DBEngineException {
@@ -99,16 +97,18 @@ public class InsertCommand implements Command {
 		}
 
 		int lastPage = bufferManager.getLastPageIndex(tableName);
-		Page page = bufferManager.read(tableName, lastPage, false);
+		Page page = bufferManager.read(transactionId, tableName, lastPage,
+				false);
 		if (page.size() + 1 == properties.getMaximumPageSize()) {
 			lastPage++;
 		}
-		page = bufferManager.read(tableName, lastPage, true);
+		page = bufferManager.read(transactionId, tableName, lastPage, true);
 		page.add(htblColNameValue);
 		int insertRow = page.size() - 1;
-		bufferManager.write(tableName, lastPage, page);
+		bufferManager.write(transactionId, tableName, lastPage, page);
 		try {
-			logManager.recordInsert(transaction, tableName, lastPage, htblColNameValue);
+			logManager.recordInsert(transactionId + "", tableName, lastPage,
+					htblColNameValue);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

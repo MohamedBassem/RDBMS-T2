@@ -11,6 +11,7 @@ import eg.edu.guc.dbms.commands.InsertCommand;
 import eg.edu.guc.dbms.commands.SelectCommand;
 import eg.edu.guc.dbms.commands.UpdateCommand;
 import eg.edu.guc.dbms.components.BufferManager;
+import eg.edu.guc.dbms.components.TransactionManagerImpl;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.factories.LogManagerFactory;
 import eg.edu.guc.dbms.interfaces.LogManager;
@@ -25,6 +26,7 @@ public class RecoveryMode {
 	Properties properties;
 	BufferManager bufferManager;
 	private LogManager logManager;
+	long transactionId;
 
 	public RecoveryMode() {
 		this.init();
@@ -40,33 +42,17 @@ public class RecoveryMode {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots(),true);
-	}
-
-	public void createTable(String strTableName,
-			HashMap<String, String> htblColNameType,
-			HashMap<String, String> htblColNameRefs, String strKeyColName)
-			throws DBEngineException {
-		CreateTableCommand newTable = new CreateTableCommand(strTableName,
-				htblColNameType, htblColNameRefs, strKeyColName, this.reader,
-				this.bTreeFactory, properties, bufferManager);
-		newTable.execute();
-
-	}
-
-	public void createIndex(String strTableName, String strColName)
-			throws DBEngineException {
-		CreateIndex createIndex = new CreateIndex(strTableName, strColName,
-				this.properties, reader, bTreeFactory, bufferManager);
-		createIndex.execute();
+		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots(),false);
+		this.bufferManager.init();
 	}
 
 	public void insertIntoTable(String strTableName,
 			HashMap<String, String> htblColNameValue) throws DBEngineException {
 		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory,
 				reader, bufferManager, strTableName, properties,
-				htblColNameValue, logManager);
+				htblColNameValue, logManager,transactionId);
 		insertCommand.execute();
+		bufferManager.runFlusher();
 
 	}
 
@@ -75,8 +61,9 @@ public class RecoveryMode {
 			throws DBEngineException {
 		DeleteCommand delete = new DeleteCommand(strTableName,
 				htblColNameValue, strOperator, reader, properties,
-				bTreeFactory, bufferManager);
+				bTreeFactory, bufferManager, transactionId, logManager);
 		delete.execute();
+		bufferManager.runFlusher();
 
 	}
 
@@ -85,8 +72,8 @@ public class RecoveryMode {
 			throws DBEngineException {
 		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory,
 				this.reader, properties, bufferManager, strTable,
-				htblColNameValue, strOperator);
-		selectCommand.execute();
+				htblColNameValue, strOperator, transactionId);
+		selectCommand.execute(); 
 		Iterator<HashMap<String, String>> results = selectCommand.getResults()
 				.iterator();
 		if (results.hasNext() == false) {
