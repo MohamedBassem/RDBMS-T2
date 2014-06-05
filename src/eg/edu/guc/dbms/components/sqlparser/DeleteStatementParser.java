@@ -5,7 +5,7 @@ import gudusoft.gsqlparser.stmt.TDeleteSqlStatement;
 
 public class DeleteStatementParser {
 	public static PhysicalPlanTree parse(TDeleteSqlStatement statement) {
-		
+		String tableName = statement.getTargetTable().toString();
 		return null;
 	}
 }

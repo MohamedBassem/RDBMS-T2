@@ -49,7 +49,7 @@ public class CreateTableStatementParser {
 		return result;
 	}
 	
-	protected static void printConstraint(TConstraint constraint, Boolean outline){
+	private static void printConstraint(TConstraint constraint, Boolean outline){
 
         if (constraint.getConstraintName() != null){
             System.out.println("\t\tconstraint name:"+constraint.getConstraintName().toString());
