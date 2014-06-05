@@ -1,8 +1,12 @@
 package eg.edu.guc.dbms.sql;
 
-import java.util.List;
 
 public class Scan extends PhysicalPlanTree {
+
+	public Scan(String tableName) {
+		// TODO Auto-generated constructor stub
+		// @Farghal: Implement
+	}
 
 	@Override
 	public Operation getOperation() {

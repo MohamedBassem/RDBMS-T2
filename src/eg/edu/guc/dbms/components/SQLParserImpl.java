@@ -1,14 +1,9 @@
 package eg.edu.guc.dbms.components;
 
 import eg.edu.guc.dbms.interfaces.SQLParser;
-import eg.edu.guc.dbms.sql.PhysicalPlanTree;
-import eg.edu.guc.dbms.sql.Project;
-import gudusoft.gsqlparser.EDbVendor;
-import gudusoft.gsqlparser.TCustomSqlStatement;
-import gudusoft.gsqlparser.TGSqlParser;
-import gudusoft.gsqlparser.nodes.TJoin;
-import gudusoft.gsqlparser.nodes.TJoinItem;
-import gudusoft.gsqlparser.nodes.TResultColumn;
+import eg.edu.guc.dbms.sql.*;
+import gudusoft.gsqlparser.*;
+import gudusoft.gsqlparser.nodes.*;
 
 public class SQLParserImpl implements SQLParser {
 	private static SQLParserImpl instance = new SQLParserImpl();
@@ -55,46 +50,44 @@ public class SQLParserImpl implements SQLParser {
 	}
 	
 	private PhysicalPlanTree parseSelectStatement(TCustomSqlStatement statement) {
-		Project project = new Project();
+		PhysicalPlanTree result = new Project();
+		
 		for (int i = 0; i < statement.getResultColumnList().size(); i++) {
 			TResultColumn resultColumn = statement.getResultColumnList().getResultColumn(i);
-			project.addProjectionColumn(resultColumn.getExpr().toString());
+			( (Project) result).addProjectionColumn(resultColumn.getExpr().toString());
 			System.out.printf("\tColumn: %s, Alias: %s\n",
 					resultColumn.getExpr().toString(), 
 					(resultColumn.getAliasClause() == null) ? "" : resultColumn.getAliasClause().toString()
 				);
 		}
 		
-		for (int i = 0; i < statement.joins.size(); i++) {
-			TJoin join = statement.joins.getJoin(i);
-			System.out.printf("\ntable: \n\t%s, alias: %s\n", join.getTable()
-					.toString(),
-					(join.getTable().getAliasClause() != null) ? join
-							.getTable().getAliasClause().toString() : "");
-			for (int j = 0; j < join.getJoinItems().size(); j++) {
-				TJoinItem joinItem = join.getJoinItems().getJoinItem(j);
-				System.out.printf("Join type: %s\n", joinItem.getJoinType()
-						.toString());
-				System.out
-						.printf("table: %s, alias: %s\n", joinItem.getTable()
-								.toString(), (joinItem.getTable()
-								.getAliasClause() != null) ? joinItem
-								.getTable().getAliasClause().toString() : "");
-				if (joinItem.getOnCondition() != null) {
-					System.out.printf("On: %s\n", joinItem.getOnCondition()
-							.toString());
-				} else if (joinItem.getUsingColumns() != null) {
-					System.out.printf("using: %s\n", joinItem.getUsingColumns()
-							.toString());
-				}
-			}
+		PhysicalPlanTree next = null, current = result;
+		
+		if (statement.getWhereClause() != null) {
+			System.out.printf("\nwhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString());
+			next = new Select(statement.getWhereClause().getCondition().toString());
+			current.addChild(next);
+			current = next;
 		}
 		
-		if (statement.getWhereClause() != null){ 
-			System.out.printf("\nwhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString()); 
+		for (int i = 0; i < statement.joins.size(); i++) {
+			TJoin join = statement.joins.getJoin(i);
+			System.out.printf("\ntable: \n\t%s, alias: %s\n", join.getTable().toString(),
+					(join.getTable().getAliasClause() != null) ? join
+							.getTable().getAliasClause().toString() : "");
+			
+			if(i > 0) { // Product Tree
+				next = new Product();
+				next.addChild(current.popLastChild());
+				next.addChild(new Scan(join.getTable().toString()));
+				current.addChild(next);
+				current = next;
+			} else { // Single table
+				next = new Scan(join.getTable().toString());
+				current.addChild(next);
+			}
 		}
-
-		return null;
+		return result;
 	}
 	
 	public static void main(String[] args) {

@@ -1,9 +1,13 @@
 package eg.edu.guc.dbms.sql;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Select extends PhysicalPlanTree{
+
+	public Select(String whereClause) {
+		// TODO Auto-generated constructor stub
+		// @Farghal: Implement
+	}
 
 	@Override
 	public Operation getOperation() {

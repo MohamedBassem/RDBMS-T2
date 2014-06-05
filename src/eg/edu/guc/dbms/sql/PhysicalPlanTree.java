@@ -31,4 +31,8 @@ public abstract class PhysicalPlanTree {
 		return this;
 	}
 	
+	public PhysicalPlanTree popLastChild() {
+		return children.remove(children.size()-1);
+	}
+	
 }
