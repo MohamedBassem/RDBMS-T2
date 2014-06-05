@@ -25,7 +25,7 @@ public class SelectStatementParser {
 		PhysicalPlanTree next = null, current = result;
 		
 		if (statement.getWhereClause() != null) {
-			System.out.printf("\nwhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString());
+			System.out.printf("\nWhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString());
 			next = new Select(statement.getWhereClause().getCondition().toString());
 			current.addChild(next);
 			current = next;
@@ -33,7 +33,7 @@ public class SelectStatementParser {
 		
 		for (int i = 0; i < statement.joins.size(); i++) {
 			TJoin join = statement.joins.getJoin(i);
-			System.out.printf("\ntable: \n\t%s, alias: %s\n", join.getTable().toString(),
+			System.out.printf("\nTable: \n\t%s, Alias: %s\n", join.getTable().toString(),
 					(join.getTable().getAliasClause() != null) ? join
 							.getTable().getAliasClause().toString() : "");
 			
