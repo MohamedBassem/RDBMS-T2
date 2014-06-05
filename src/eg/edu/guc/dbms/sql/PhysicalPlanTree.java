@@ -17,7 +17,8 @@ public abstract class PhysicalPlanTree {
 		INSERT,
 		CREATE_TABLE,
 		INDEX,
-		UPDATE;
+		UPDATE,
+		DELETE;
 	}
 	
 	List<PhysicalPlanTree> children;

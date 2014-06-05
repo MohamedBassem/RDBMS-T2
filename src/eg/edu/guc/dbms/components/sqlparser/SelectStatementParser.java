@@ -25,9 +25,10 @@ public class SelectStatementParser {
 		PhysicalPlanTree next = null, current = result;
 		
 		if (statement.getWhereClause() != null) {
-			System.out.printf("\nWhere clause: \n\t%s\n", statement.getWhereClause().getCondition().toString());
+			String whereClause = statement.getWhereClause().getCondition().toString();
+			System.out.printf("\nWhere clause: \n\t%s\n", whereClause);
 			next = new Select();
-			next.setWhereClause(statement.getWhereClause().getCondition().toString());
+			next.setWhereClause(whereClause);
 			current.addChild(next);
 			current = next;
 		}
