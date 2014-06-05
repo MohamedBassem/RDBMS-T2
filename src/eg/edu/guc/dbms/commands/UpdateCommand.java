@@ -60,13 +60,14 @@ public class UpdateCommand implements Command {
 
 	public void updateTable() throws DBEngineException {
 		ArrayList<String> pointers = select.getResultPointers();
+		HashMap<String, HashMap<String, String>> table = properties.getData().get(tableName);
 		for (int i = 0; i < pointers.size(); i++) {
 			String[] x = ((String) pointers.get(i)).split(" ");
 			int pageNumber = Integer.parseInt(x[1]);
 			int rowNumber = Integer.parseInt(x[2]);
 			Page page = bufferManager.read(transactionNumber,tableName, pageNumber, true);
-			//HashMap<String, String> newHMap= updateValues(); 
-			//page.set(rowNumber, new Tuple(newHMap)); 
+			HashMap<String, String> newHMap= updateValues(table.get(""+ rowNumber)); 
+			page.set(rowNumber, new Tuple(newHMap)); 
 			bufferManager.write(transactionNumber,tableName, pageNumber, page);
 		}
 	}
