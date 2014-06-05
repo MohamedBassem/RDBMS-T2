@@ -3,6 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -20,6 +21,7 @@ public class DeleteCommand implements Command {
 	String strOperator;  
 	CSVReader reader; 
 	BTreeFactory btfactory;
+	int pageId;
 	Properties properties;
 	BufferManager bufferManager;
 	SelectCommand select;
@@ -51,6 +53,7 @@ public class DeleteCommand implements Command {
 		for(int i =0; i<pointers.size(); i++){
 			String [] x = ((String) pointers.get(i)).split(" ");
 			int pageNumber = Integer.parseInt(x[1]);
+			pageId = pageNumber;
 			int rowNumber= Integer.parseInt(x[2]);
 			Page page = bufferManager.read(strTableName, pageNumber, true);
 			page.set(rowNumber, null);
@@ -68,6 +71,12 @@ public class DeleteCommand implements Command {
 				adoptor.delete(results.get(j).get(indexedColumns.get(i)), pointers.get(j));
 			}
 		}
+	}
+
+	@Override
+	public List<HashMap<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

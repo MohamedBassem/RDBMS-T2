@@ -3,6 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import eg.edu.guc.dbms.components.BufferManager;
@@ -78,6 +79,7 @@ public class SelectCommand implements Command {
 	
 	@Override
 	public void execute() throws DBEngineException {
+		System.out.println(properties.getData());
 		if(properties.getData().get(tableName) == null){
 			throw new DBEngineException("This table doesn't exist");
 		}else if(htblColNameValue == null && strOperator == null){
@@ -203,6 +205,12 @@ public class SelectCommand implements Command {
 	
 	public ArrayList<HashMap<String, String> > getResults(){
 		return this.results;
+	}
+
+	@Override
+	public List<HashMap<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,8 +1,7 @@
 package eg.edu.guc.dbms.commands;
 
-
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import eg.edu.guc.dbms.components.BufferManager;
@@ -12,7 +11,6 @@ import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.Utils;
 import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
-
 
 public class CreateTableCommand implements Command {
 	CSVReader reader;
@@ -56,6 +54,8 @@ public class CreateTableCommand implements Command {
 				metaData.put("Key", "False");
 				metaData.put("Indexed", "False");
 			}
+			System.out.println(metaData);
+			System.out.println(htblColNameRefs.get(columnNames[i]));
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
@@ -64,7 +64,7 @@ public class CreateTableCommand implements Command {
 	}
 	private void validate() throws DBEngineException{
 		
-		if( properties.getData().get(this.strTableName) != null  ){
+		if(properties.getData().get(this.strTableName) != null  ){
 			throw new DBEngineException("The table already exists.");
 		}
 		
@@ -75,13 +75,18 @@ public class CreateTableCommand implements Command {
 		for(String column : htblColNameRefs.keySet()){
 			if( !htblColNameRefs.get(column).equals("null") ){
 				String[] s = htblColNameRefs.get(column).split("\\.");
-				if( properties.getData().get(s[0]) == null || 
+				if(properties.getData().get(s[0]) == null || 
 						properties.getData().get(s[0]).get(s[1]) == null){
 					throw new DBEngineException("The referenced column doesn't exist.");
 				}
 			}
 		}
 		
+	}
+	@Override
+	public List<HashMap<String, String>> getResult() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -3,7 +3,7 @@ package eg.edu.guc.dbms.commands;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
@@ -68,5 +68,12 @@ public class CreateIndex implements Command {
 			}
 		}
 	}
+
+	@Override
+	public List< HashMap<String, String> > getResult() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
