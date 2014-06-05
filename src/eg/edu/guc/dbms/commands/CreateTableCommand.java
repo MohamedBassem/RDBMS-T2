@@ -56,6 +56,8 @@ public class CreateTableCommand implements Command {
 				metaData.put("Key", "False");
 				metaData.put("Indexed", "False");
 			}
+			System.out.println(metaData);
+			System.out.println(htblColNameRefs.get(columnNames[i]));
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
@@ -64,7 +66,7 @@ public class CreateTableCommand implements Command {
 	}
 	private void validate() throws DBEngineException{
 		
-		if( properties.getData().get(this.strTableName) != null  ){
+		if(properties.getData().get(this.strTableName) != null  ){
 			throw new DBEngineException("The table already exists.");
 		}
 		
@@ -75,7 +77,7 @@ public class CreateTableCommand implements Command {
 		for(String column : htblColNameRefs.keySet()){
 			if( !htblColNameRefs.get(column).equals("null") ){
 				String[] s = htblColNameRefs.get(column).split("\\.");
-				if( properties.getData().get(s[0]) == null || 
+				if(properties.getData().get(s[0]) == null || 
 						properties.getData().get(s[0]).get(s[1]) == null){
 					throw new DBEngineException("The referenced column doesn't exist.");
 				}

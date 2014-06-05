@@ -61,7 +61,19 @@ public class TransactionManagerImpl implements TransactionManager {
 		PhysicalPlanTree t = new Project();
 		t.addChild((new Select()).addChild(new Product().addChild(new Scan()).addChild(new Scan())));
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-		tr.treeToSteps(t, new ArrayList<Command>());
+		tr.executeTrasaction(createTable());
+	}
+	
+	public static PhysicalPlanTree createTable() {
+		Create t = new Create();
+		t.setKeyColName("id");
+		Hashtable<String, String> types = new Hashtable<String, String>();
+		types.put("name", "VARCHAR");
+		types.put("id", "INT");
+		t.setTableColRefs(new Hashtable<String, String>());
+		t.setTableName("Users");
+		t.setTableTypes(types);
+		return t;
 	}
 	
 	
@@ -75,16 +87,16 @@ public class TransactionManagerImpl implements TransactionManager {
 		Command step = null;
 		if (tree.getOperation() == Operation.CREATE_TABLE) {
 			Create node = (Create) tree;
-			step = new CreateTableCommand(node.getTableName(), node.getTableTypes(), node.getTableColRefs(), node.getKeyColName(), this.reader,this.bTreeFactory,properties);
+			step = new CreateTableCommand(node.getTableName(), node.getTableTypes(), node.getTableColRefs(), node.getKeyColName(), this.reader,this.bTreeFactory,properties, bufferManager);
 		} else if (tree.getOperation() == Operation.INDEX) {
 			Index node = (Index) tree;
-			step = new CreateIndex(node.getTableName(), node.getColumnName(), properties, reader, bTreeFactory);
+			step = new CreateIndex(node.getTableName(), node.getColumnName(), properties, reader, bTreeFactory, bufferManager);
 		} else if (tree.getOperation() == Operation.INSERT) {
 			Insert node = (Insert) tree;
-			step = new InsertCommand(bTreeFactory, reader, node.getTableName(), properties, node.getColValues());
+			step = new InsertCommand(bTreeFactory, reader, bufferManager, node.getTableName(), properties, node.getColValues());
 		} else if (tree.getOperation() == Operation.SCAN) {
 			Scan node = (Scan) tree;
-			step = new SelectCommand(bTreeFactory, reader, properties, node.getTableName(), null, null);
+			step = new SelectCommand(bTreeFactory, reader, properties, bufferManager, node.getTableName(), null, null);
 		} else if (tree.getOperation() == Operation.UPDATE) {
 			Update node = (Update) tree;
 			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColSearchValue(), node.getOperator(), node.getColValue());
