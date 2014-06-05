@@ -1,9 +1,10 @@
 package eg.edu.guc.dbms.components;
 
+import java.util.HashMap;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Hashtable;
 import eg.edu.guc.dbms.interfaces.LogManager;
 
 public class LogManagerImpl implements LogManager {
@@ -14,7 +15,7 @@ public class LogManagerImpl implements LogManager {
 
 	public static void main(String[] args) throws IOException {
 		LogManagerImpl x = LogManagerImpl.getInstance();
-		Hashtable<String, String> h = new Hashtable<String, String>();
+		HashMap<String, String> h = new HashMap<String, String>();
 		h.put("aaa", "bbbbb");
 		h.put("cccc", "dddd");
 		x.init();
@@ -67,7 +68,7 @@ public class LogManagerImpl implements LogManager {
 
 	@Override
 	public void recordInsert(String strTransID, String tableName,
-			int pageNumber, Hashtable<String, String> htblColValues)
+			int pageNumber, HashMap<String, String> htblColValues)
 			throws IOException {
 		// <T1,I,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
@@ -79,7 +80,7 @@ public class LogManagerImpl implements LogManager {
 	@Override
 	public void recordDelete(String strTransID, String tableName,
 			int pageNumber, String strKeyValue,
-			Hashtable<String, String> htblColValues) throws IOException {
+			HashMap<String, String> htblColValues) throws IOException {
 		// <T1,D,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
 		String result = "<" + strTransID + ",D," + tableName + pageNumber + ","

@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.sql;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public class Index extends PhysicalPlanTree {
 

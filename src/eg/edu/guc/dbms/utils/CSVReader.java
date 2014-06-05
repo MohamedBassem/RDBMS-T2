@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -65,7 +65,7 @@ public class CSVReader{
 		return buffer.substring(0, buffer.length() - 1);
 	}
 	
-	public synchronized void appendToMetaDataFile(Hashtable<String, String> data)
+	public synchronized void appendToMetaDataFile(HashMap<String, String> data)
 			throws DBEngineException {
 		try {
 			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(metadataFile, true)));			
@@ -79,11 +79,11 @@ public class CSVReader{
 		
 	}
 	
-	public synchronized void saveMetaDataFile(ArrayList<Hashtable<String, String>> data) throws DBEngineException {
+	public synchronized void saveMetaDataFile(ArrayList<HashMap<String, String>> data) throws DBEngineException {
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(metadataFile));
 			writer.println(encodeColumnsRow(metadataColumnOrder_));
-			for (Hashtable<String, String> row : data) {
+			for (HashMap<String, String> row : data) {
 				writer.println(encodeRow(row, metadataColumnOrder));
 			}
 			writer.flush();
@@ -94,18 +94,18 @@ public class CSVReader{
 		}
 	}
 
-	public synchronized ArrayList<Hashtable<String, String>> loadMetaDataFile() throws DBEngineException {
+	public synchronized ArrayList<HashMap<String, String>> loadMetaDataFile() throws DBEngineException {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(metadataFile));
 			String[] columns = decodeRow(reader.readLine());
-			ArrayList<Hashtable<String, String>> list = new ArrayList<Hashtable<String,String>>();
+			ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.equals("")) {
 					continue;
 				}
 				String[] row = decodeRow(line);
-				Hashtable<String, String> table = new Hashtable<String, String>();
+				HashMap<String, String> table = new HashMap<String, String>();
 				for (int i = 0; i < row.length; i++) {
 					table.put(columns[i], row[i]);
 				}
@@ -123,7 +123,7 @@ public class CSVReader{
 		metadataObservers.add(properties);
 	}	
 	
-	private String encodeRow(Hashtable<String, String> data, ArrayList<String> columns) {
+	private String encodeRow(HashMap<String, String> data, ArrayList<String> columns) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < columns.size(); i++) {
 			buffer.append(data.get(columns.get(i)));
@@ -137,7 +137,7 @@ public class CSVReader{
 	}
 
 	private void notifyMetadataObservers() {
-		ArrayList<Hashtable<String, String>> metadataFile = null;
+		ArrayList<HashMap<String, String>> metadataFile = null;
 		try {
 			metadataFile = loadMetaDataFile();
 		} catch (DBEngineException e) {

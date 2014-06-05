@@ -1,13 +1,13 @@
 package eg.edu.guc.dbms.sql;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 public class Create extends PhysicalPlanTree {
 
 	private String name;
-	private Hashtable<String, String> columnReference;
-	private Hashtable<String, String> types;
+	private HashMap<String, String> columnReference;
+	private HashMap<String, String> types;
 	private String keyColName;
 
 	@Override
@@ -19,11 +19,11 @@ public class Create extends PhysicalPlanTree {
 		return name;
 	}
 
-	public Hashtable<String, String> getTableColRefs() {
+	public HashMap<String, String> getTableColRefs() {
 		return columnReference;
 	}
 
-	public Hashtable<String, String> getTableTypes() {
+	public HashMap<String, String> getTableTypes() {
 		return this.types;
 	}
 
@@ -35,11 +35,11 @@ public class Create extends PhysicalPlanTree {
 		this.name = name;
 	}
 	
-	public void setTableColRefs(Hashtable<String, String> colRefs) {
+	public void setTableColRefs(HashMap<String, String> colRefs) {
 		this.columnReference = colRefs;
 	}
 	
-	public void setTableTypes(Hashtable<String, String> types) {
+	public void setTableTypes(HashMap<String, String> types) {
 		this.types = types;
 	}
 	

@@ -1,6 +1,6 @@
 package eg.edu.guc.dbms.engine;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import eg.edu.guc.dbms.commands.CreateIndex;
@@ -36,8 +36,8 @@ public class DBApp {
 	
 	public void createTable(String strTableName,
 
-							Hashtable<String,String> htblColNameType,
-							Hashtable<String,String>htblColNameRefs,
+							HashMap<String,String> htblColNameType,
+							HashMap<String,String>htblColNameRefs,
 							String strKeyColName) 
 									throws DBEngineException {
 		CreateTableCommand newTable = new CreateTableCommand(strTableName, htblColNameType, htblColNameRefs, strKeyColName, this.reader,this.bTreeFactory,properties,bufferManager);
@@ -51,7 +51,7 @@ public class DBApp {
 	}
 	
 	public void insertIntoTable(String strTableName,
-								Hashtable<String,String> htblColNameValue)
+								HashMap<String,String> htblColNameValue)
 										throws DBEngineException {
 		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory, reader,bufferManager, strTableName, properties, htblColNameValue);
 		insertCommand.execute();
@@ -59,7 +59,7 @@ public class DBApp {
 	}
 	
 	public void deleteFromTable(String strTableName,
-								Hashtable<String,String> htblColNameValue,
+								HashMap<String,String> htblColNameValue,
 								String strOperator)
 										throws DBEngineException {
 		DeleteCommand delete = new DeleteCommand(strTableName, htblColNameValue, strOperator, reader,properties,bTreeFactory,bufferManager);
@@ -68,13 +68,13 @@ public class DBApp {
 	}
 
 	
-	public Iterator< Hashtable<String, String >> selectFromTable(String strTable,
-									Hashtable<String,String> htblColNameValue,
+	public Iterator< HashMap<String, String >> selectFromTable(String strTable,
+									HashMap<String,String> htblColNameValue,
 									String strOperator)
 											throws DBEngineException {
 		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory, this.reader,properties,bufferManager, strTable, htblColNameValue, strOperator);
 		selectCommand.execute();
-		Iterator< Hashtable<String, String >> results = selectCommand.getResults().iterator();
+		Iterator< HashMap<String, String >> results = selectCommand.getResults().iterator();
 		if(results.hasNext() == false){
 			return null;
 		}else{

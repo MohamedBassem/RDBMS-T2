@@ -2,14 +2,11 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.interfaces.Command;
-import eg.edu.guc.dbms.interfaces.LogManager;
-import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -36,15 +33,15 @@ public class CreateIndex implements Command {
 
 	@Override
 	public void execute() throws DBEngineException {
-		Hashtable<String, Hashtable<String, Hashtable<String,String>>> data 
+		HashMap<String, HashMap<String, HashMap<String,String>>> data 
 		= properties.getData();
-		Hashtable<String, Hashtable<String, String>> table = data.get(tableName);
+		HashMap<String, HashMap<String, String>> table = data.get(tableName);
 		
 		if(table == null) {
 			 throw new DBEngineException("Table name is wrong or it doesn't exist.");
 		}
 		
-		Hashtable<String, String> column = table.get(columnName);
+		HashMap<String, String> column = table.get(columnName);
 		if(column == null) {
 			 throw new DBEngineException("Column name is wrong or it doesn't exist.");
 		}
@@ -58,7 +55,7 @@ public class CreateIndex implements Command {
 		SelectCommand select = new SelectCommand(factory, reader, properties, bufferManager,
 				tableName, null, null);
 		select.execute();
-		ArrayList<Hashtable<String, String>> rows = select.getResults();
+		ArrayList<HashMap<String, String>> rows = select.getResults();
 		ArrayList<String> pointers = select.getResultPointers();	
 		
 		for(int i = 0; i < rows.size(); i++) {
@@ -73,7 +70,7 @@ public class CreateIndex implements Command {
 	}
 
 	@Override
-	public List<Hashtable<String, String>> getResult() {
+	public List< HashMap<String, String> > getResult() {
 		// TODO Auto-generated method stub
 		return null;
 	}

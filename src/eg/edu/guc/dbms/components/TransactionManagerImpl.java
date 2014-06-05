@@ -1,7 +1,7 @@
 package eg.edu.guc.dbms.components;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import eg.edu.guc.dbms.commands.CreateIndex;
@@ -67,10 +67,10 @@ public class TransactionManagerImpl implements TransactionManager {
 	public static PhysicalPlanTree createTable() {
 		Create t = new Create();
 		t.setKeyColName("id");
-		Hashtable<String, String> types = new Hashtable<String, String>();
+		HashMap<String, String> types = new HashMap<String, String>();
 		types.put("name", "VARCHAR");
 		types.put("id", "INT");
-		t.setTableColRefs(new Hashtable<String, String>());
+		t.setTableColRefs(new HashMap<String, String>());
 		t.setTableName("Users");
 		t.setTableTypes(types);
 		return t;
@@ -106,12 +106,12 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new ProjectCommand(null, node.getProjectionColumn());
 		} else if (tree.getOperation() == Operation.PRODUCT) {
 			Product node = (Product) tree;
-			List<Hashtable<String, String>> relation1 = steps.get(steps.size() - 1).getResult();
-			List<Hashtable<String, String>> relation2 = steps.get(steps.size() - 1).getResult();
+			List<HashMap<String, String>> relation1 = steps.get(steps.size() - 1).getResult();
+			List<HashMap<String, String>> relation2 = steps.get(steps.size() - 1).getResult();
 			step = new ProductCommand(relation1, relation2);
 		} else if (tree.getOperation() == Operation.SELECT) {
 			Select node = (Select) tree;
-			List<Hashtable<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
+			List<HashMap<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
 			step = new IntermediateSelectCommand(previousResult, node.getTableName(), node.getColValues(), node.getOperator());
 		}	
 		steps.add(step);
