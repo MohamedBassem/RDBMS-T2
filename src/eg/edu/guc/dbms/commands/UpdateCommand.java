@@ -51,8 +51,8 @@ public class UpdateCommand implements Command {
 
 	@Override
 	public void execute() throws DBEngineException, IOException {
-		select.execute();
 		this.validate(); 
+		select.execute();
 		this.updateTable();
 		this.updateTree();
 
@@ -97,8 +97,17 @@ public class UpdateCommand implements Command {
 		return input; 
 	}
 	
-	public void validate(){
-		
+	public void validate() throws DBEngineException{
+		if(properties.getData().get(tableName)==null){
+			throw new DBEngineException("Table name is wrong or doesn't exist.");
+		}
+		Set<String> columnName =hMapColNameValue.keySet();
+		String [] columnNames = Utils.setToArray(columnName);   	
+		for(int i =0; i<columnNames.length; i++){
+			if(properties.getData().get(tableName).get(i) == null){
+				throw new DBEngineException("Column name is wrong or doesn't exist.");
+			}
+		}		
 	}
 	@Override
 	public List<HashMap<String, String>> getResult() {
