@@ -58,22 +58,24 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 	
 	public static void main(String[] args) {
-		PhysicalPlanTree t = new Project();
-		t.addChild((new Select()).addChild(new Product().addChild(new Scan()).addChild(new Scan())));
-		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-		tr.executeTrasaction(createTable());
+//		HashMap<String, String> a = new HashMap<String, String>();
+//		a.put("ankosh", null);
+//		PhysicalPlanTree t = new Project();
+//		t.addChild((new Select()).addChild(new Product().addChild(new Scan()).addChild(new Scan())));
+//		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+//		tr.executeTrasaction(createTable());
 	}
 	
 	public static PhysicalPlanTree createTable() {
-		Create t = new Create();
-		t.setKeyColName("id");
-		HashMap<String, String> types = new HashMap<String, String>();
-		types.put("name", "VARCHAR");
-		types.put("id", "INT");
-		t.setTableColRefs(new HashMap<String, String>());
-		t.setTableName("Users");
-		t.setTableTypes(types);
-		return t;
+//		Create t = new Create();
+//		t.setKeyColName("id");
+//		HashMap<String, String> types = new HashMap<String, String>();
+//		types.put("name", "VARCHAR");
+//		types.put("id", "INT");
+//		t.setTableColRefs(new HashMap<String, String>());
+//		t.setTableName("Users");
+//		t.setTableTypes(types);
+		return null;
 	}
 	
 	
@@ -104,7 +106,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		} else if (tree.getOperation() == Operation.PROJECT) {
 			Project node = (Project) tree;
 			//TODO
-			step = new ProjectCommand(null, node.getProjectionColumn());
+			step = new ProjectCommand(null, node.getProjectionColumns());
 		} else if (tree.getOperation() == Operation.PRODUCT) {
 			Product node = (Product) tree;
 			List<HashMap<String, String>> relation1 = steps.get(steps.size() - 1).getResult();

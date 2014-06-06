@@ -1,7 +1,7 @@
 RDBMS-T2
 ===========
 
-RDBMS written in Java for educational purpose.
+RDBMS (Relational Database Management System) implemented in java and supports the basic functionalities of a real database management system.
 
 #### How to use it
 - Fork the repo.

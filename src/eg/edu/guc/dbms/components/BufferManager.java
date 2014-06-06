@@ -91,7 +91,7 @@ public class BufferManager {
 	}
 	
 	
-	public Page read(long id,String tableName,int pageNumber,boolean bModify){
+	public Page read(long transactionId,String tableName,int pageNumber,boolean bModify){
 		String pageName = encodePageName(tableName, pageNumber);
 		Page page = null;
 		BufferSlot slot = null;
@@ -104,14 +104,14 @@ public class BufferManager {
 		if(containsKey){
 			slot = usedSlots.get(pageName);
 			mutex.release();
-			LOGGER.info(id + " : Trying to get read access to " + pageName + " which exists in the memory in slot " + slot.getId());
+			LOGGER.info(transactionId + " : Trying to get read access to " + pageName + " which exists in the memory in slot " + slot.getId());
 			slot.acquire();
-			LOGGER.info(id + " : Read access to " + pageName + " Granted.");
+			LOGGER.info(transactionId + " : Read access to " + pageName + " Granted.");
 			page = slot.getPage();
 		}else{
-			LOGGER.info(id + " : Trying to get read access to " + pageName + " which doesn't exists in the memory.");
-			slot = getEmptySlot(id);
-			LOGGER.info(id + " : Read access to " + pageName + " Granted in slot " + slot.getId());
+			LOGGER.info(transactionId + " : Trying to get read access to " + pageName + " which doesn't exists in the memory.");
+			slot = getEmptySlot(transactionId);
+			LOGGER.info(transactionId + " : Read access to " + pageName + " Granted in slot " + slot.getId());
 			usedSlots.put(pageName, slot);
 			mutex.release();
 			slot.acquire();
@@ -124,19 +124,19 @@ public class BufferManager {
 		}
 		if(!bModify){
 			slot.release();
-			LOGGER.info(id + " : Read access to " + pageName + " Released.");
+			LOGGER.info(transactionId + " : Read access to " + pageName + " Released.");
 		}
 		
 		return page;
 	}
-
-	public void write(long id,String tableName,int pageNumber,Page page){
+	
+	public void write(long transactionId, String tableName, int pageNumber, Page page){
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);
 		slot.setDirty(true);
 		slot.release();
-		LOGGER.info(id + " : Lock on " + pageName + " Released.");
+		LOGGER.info(transactionId + " : Lock on " + pageName + " Released.");
 	}
 	
 	public void createTable(long id,String tableName,String[] columns){
