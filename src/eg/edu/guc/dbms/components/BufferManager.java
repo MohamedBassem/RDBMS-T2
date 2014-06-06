@@ -91,7 +91,7 @@ public class BufferManager {
 	}
 	
 	
-	public Page read(int id,String tableName,int pageNumber,boolean bModify){
+	public Page read(long id,String tableName,int pageNumber,boolean bModify){
 		String pageName = encodePageName(tableName, pageNumber);
 		Page page = null;
 		BufferSlot slot = null;
@@ -130,7 +130,7 @@ public class BufferManager {
 		return page;
 	}
 
-	public void write(int id,String tableName,int pageNumber,Page page){
+	public void write(long id,String tableName,int pageNumber,Page page){
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);
@@ -139,7 +139,7 @@ public class BufferManager {
 		LOGGER.info(id + " : Lock on " + pageName + " Released.");
 	}
 	
-	public void createTable(int id,String tableName,String[] columns){
+	public void createTable(long id,String tableName,String[] columns){
 		try {
 			databaseIO.createTablePage(tableName, columns);
 			LOGGER.info(id + " : Created Table Page");
@@ -185,7 +185,7 @@ public class BufferManager {
 		
 	}
 	
-	private BufferSlot getEmptySlot(int id) {
+	private BufferSlot getEmptySlot(long id) {
 		if(unUsedSlots.size() == 0){
 			Object mon = new Object();
 			waitingForFreeSlots.add(mon);
@@ -194,15 +194,15 @@ public class BufferManager {
 			    	LOGGER.info(id + " : is waiting for an empty slot.");
 			    	mutex.release();
 					mon.wait(); // Wait until notified by another thread that there is an empty slot
+					try {
+						mutex.acquire();
+					} catch (InterruptedException e) {}
 					
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		try {
-			mutex.acquire();
-		} catch (InterruptedException e) {}
 		
 		BufferSlot slot = unUsedSlots.poll();
 		LOGGER.info(id + " : Found an empty slot " + slot.getId());

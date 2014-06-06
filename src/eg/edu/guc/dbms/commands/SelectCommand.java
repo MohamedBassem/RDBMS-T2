@@ -11,6 +11,7 @@ import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.helpers.Tuple;
 import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -25,6 +26,7 @@ public class SelectCommand implements Command {
 	String strOperator;
 	Properties properties;
 	BufferManager bufferManager;
+	long transactionId;
 	
 	// The final arraylist of objects
 	ArrayList< HashMap<String, String> > results;
@@ -38,7 +40,7 @@ public class SelectCommand implements Command {
 	
 	
 	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,BufferManager bufferManager, String tableName,
-			HashMap<String, String> htblColNameValue, String strOperator) {
+			HashMap<String, String> htblColNameValue, String strOperator, long transactionId) {
 		this.btfactory = btfactory;
 		this.reader = reader;
 		this.tableName = tableName;
@@ -46,13 +48,13 @@ public class SelectCommand implements Command {
 		this.strOperator = strOperator;
 		this.properties = properties;
 		this.bufferManager = bufferManager;
+		this.transactionId = transactionId;
 	}
 	
 	private ArrayList<String> intersect(ArrayList<String> resultsPointer,
 			ArrayList<String> arrayList) {
 		
 		ArrayList<String> ret = new ArrayList<String>();
-		
 		for (String element : resultsPointer) {
 			if(arrayList.contains(element)){
 				ret.add(element);
@@ -133,7 +135,7 @@ public class SelectCommand implements Command {
 				ArrayList<String> partialRecord = new ArrayList<String>();
 				int tablePages = bufferManager.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
-					Page res = bufferManager.read(tableName, i, false);
+					Page res = bufferManager.read(transactionId, tableName, i, false);
 					for(int j=0;j<res.size();j++){
 						if(res.get(j) != null && res.get(j).get(key).equals(htblColNameValue.get(key))){
 							String pointer = this.tableName + " " + i + " " + j;
@@ -172,7 +174,7 @@ public class SelectCommand implements Command {
 		int tablePages = bufferManager.getLastPageIndex(this.tableName);
 		
 		for(int i=0;i<=tablePages;i++){
-			Page res = bufferManager.read(tableName, i, false);
+			Page res = bufferManager.read(transactionId, tableName, i, false);
 			for(int j=0;j<res.size();j++){
 				if(res.get(j) == null){ // Deleted Record
 					continue;
@@ -193,7 +195,7 @@ public class SelectCommand implements Command {
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
 			
-			Page page = bufferManager.read(row[0] , Integer.parseInt(row[1]) , false );
+			Page page = bufferManager.read(transactionId, row[0] , Integer.parseInt(row[1]) , false );
 			Tuple record = page.get(Integer.parseInt(row[2]));
 			this.results.add(record);
 		}
