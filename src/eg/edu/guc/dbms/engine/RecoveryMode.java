@@ -11,7 +11,6 @@ import eg.edu.guc.dbms.commands.InsertCommand;
 import eg.edu.guc.dbms.commands.SelectCommand;
 import eg.edu.guc.dbms.commands.UpdateCommand;
 import eg.edu.guc.dbms.components.BufferManager;
-import eg.edu.guc.dbms.components.TransactionManagerImpl;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.factories.LogManagerFactory;
 import eg.edu.guc.dbms.interfaces.LogManager;
