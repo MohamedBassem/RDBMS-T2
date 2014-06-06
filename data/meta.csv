@@ -1,7 +1,0 @@
-Table Name,Column Name,Column Type,Key,Indexed,References
-Department,Name,java.lang.String,True,True,null
-Department,Location,java.lang.String,False,False,null
-Employee,Name,java.lang.String,False,False,null
-Employee,Start_Date,java.util.Date,False,False,null
-Employee,Dept,java.lang.String,False,False,Department.Name
-Employee,ID,java.lang.Integer,True,True,null
