@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import eg.edu.guc.dbms.engine.DBApp;
+import eg.edu.guc.dbms.engine.RecoveryMode;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
 
@@ -17,7 +17,7 @@ public class DBAppTest {
 	 * @param args
 	 */
 	public static void main(String[] args) throws DBEngineException {
-		DBApp dbEngine = new DBApp();
+		RecoveryMode dbEngine = new RecoveryMode();
 		//System.out.println(dbEngine.properties.getData());
 		
 		//testEngine_Meta(dbEngine); //PASSED
@@ -25,7 +25,7 @@ public class DBAppTest {
 		//testEngine_MetaDuplicate(); //PASSED
 		// testEngine_MetaRefrence(); //PASSED
 		// --------------------------------
-		//testEngine_Insert(dbEngine); //PASSED
+		testEngine_Insert(dbEngine); //PASSED
 		//testEngine_DublicateIDInsert(dbEngine);//PASSED
 		//testEngine_NonExistingColumnInsert(dbEngine); //PASSED
 		// -------------------------------------
@@ -46,7 +46,7 @@ public class DBAppTest {
      /*
       * This method should execute the insertion and the pages should show the inserted data
       */
-	public static void testEngine_Insert(DBApp dbEngine) {
+	public static void testEngine_Insert(RecoveryMode dbEngine) {
 		
 
 		try {
@@ -121,7 +121,7 @@ public class DBAppTest {
 	/*
 	 * This method should throws an exception because there are duplicate entries with the same primary key 
 	 */
-	public static void testEngine_DublicateIDInsert(DBApp dbEngine) {
+	public static void testEngine_DublicateIDInsert(RecoveryMode dbEngine) {
 		
 
 		try {
@@ -184,7 +184,7 @@ public class DBAppTest {
 	 * This method should throw an exception because the insertion consists of
 	 *  a column name "End_Date" does not exist
 	 */
-	public static void testEngine_NonExistingColumnInsert(DBApp dbEngine) {
+	public static void testEngine_NonExistingColumnInsert(RecoveryMode dbEngine) {
 		// Test
 
 		try {
@@ -234,7 +234,7 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the records that have the 
 	 * Dept value equals IT or Accounting; this entries should have a deletion marker 
 	 */
-	public static void testEngine_DeleteOR(DBApp dbEngine) {
+	public static void testEngine_DeleteOR(RecoveryMode dbEngine) {
 		
 
 		try {
@@ -254,7 +254,7 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the record that has 
 	 * this two conditions satisfied and this record should have a deletion marker. 
 	 */
-	public static void testEngine_DeleteAND(DBApp dbEngine) {
+	public static void testEngine_DeleteAND(RecoveryMode dbEngine) {
 		
 
 		try {
@@ -275,7 +275,7 @@ public class DBAppTest {
    *This method should print all the rows numbers of the records that 
    *match the selection 
    */
-	public static void testEngine_Select(DBApp dbEngine) {
+	public static void testEngine_Select(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -300,7 +300,7 @@ public class DBAppTest {
 	   *This method should print no records found since no
 	   * records matched the selection
 	   */
-		public static void testEngine_SelectNoRecordsFound(DBApp dbEngine) {
+		public static void testEngine_SelectNoRecordsFound(RecoveryMode dbEngine) {
 
 			try {
 				String tableName = "Employee";
@@ -328,7 +328,7 @@ public class DBAppTest {
 		   *This method should throw an exception because the selection 
 		   *is from a table "Employer" that does not exist.
 		   */
-			public static void testEngine_SelectNoTable(DBApp dbEngine) {
+			public static void testEngine_SelectNoTable(RecoveryMode dbEngine) {
 
 				try {
 					String tableName = "Employer";
@@ -354,7 +354,7 @@ public class DBAppTest {
     /*
      * This method should create an index on the Dept attribute
      */
-	public static void testEngine_CreateIndex(DBApp dbEngine) {
+	public static void testEngine_CreateIndex(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -369,7 +369,7 @@ public class DBAppTest {
 	 * the requested index is on a variable that does not exist
 	 */
 	
-	public static void testEngine_NonExistingColumnCreateIndex(DBApp dbEngine) {
+	public static void testEngine_NonExistingColumnCreateIndex(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -384,7 +384,7 @@ public class DBAppTest {
 	 * This method should create two tables Employee and Department where the Metadata
 	 * file should hold all the information on these tables.
 	 */
-	public static void testEngine_Meta(DBApp dbEngine) {
+	public static void testEngine_Meta(RecoveryMode dbEngine) {
 		
 
 		try {
@@ -433,7 +433,7 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
 			
 			HashMap<String, String> htblColNameType = new HashMap<String, String>();
@@ -479,7 +479,7 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
 			HashMap<String, String> htblColNameType = new HashMap<String, String>();
 
@@ -529,7 +529,7 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
 			
 			// Second table
@@ -573,7 +573,7 @@ public class DBAppTest {
 		}
 	}
 	
-	public static void testEngine_SelectAll(DBApp dbEngine){
+	public static void testEngine_SelectAll(RecoveryMode dbEngine){
 		try {
 			String tableName = "Employee";
 			HashMap<String, String> htblColNameValue = null;
