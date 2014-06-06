@@ -260,8 +260,8 @@ public class DBAppTest {
 		try {
 			String tableName = "Employee";
 			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
-			htblColNameValue.put("Name", "John Smith");
-			htblColNameValue.put("Dept", "Accounting");
+			htblColNameValue.put("Name", "alaa");
+			htblColNameValue.put("ID", "3");
 
 			dbEngine.deleteFromTable(tableName, htblColNameValue, "AND");
 
