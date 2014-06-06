@@ -28,7 +28,12 @@ public class LogManagerImpl implements LogManager {
 	}
 
 	private LogManagerImpl() {
-
+		try {
+			this.init();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static LogManagerImpl getInstance() {
