@@ -25,18 +25,25 @@ public class CreateTableCommand implements Command {
 	Transaction transaction;
 	
 	public CreateTableCommand(String strTableName,
+			HashMap<String,String> htblColNameType,
+			HashMap<String,String>htblColNameRefs,
+			String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,
+			Properties properties, BufferManager bufferManager){
+this.strTableName=strTableName; 
+this.htblColNameType=htblColNameType;
+this.htblColNameRefs= htblColNameRefs; 
+this.strKeyColName=strKeyColName;
+this.reader=reader; 	
+this.btreeFactory = btreeFactory;
+this.properties = properties;
+this.bufferManager = bufferManager;
+}
+	public CreateTableCommand(String strTableName,
 							HashMap<String,String> htblColNameType,
 							HashMap<String,String>htblColNameRefs,
 							String strKeyColName, CSVReader reader,BTreeFactory btreeFactory,
 							Properties properties, BufferManager bufferManager, Transaction transaction){
-		this.strTableName=strTableName; 
-		this.htblColNameType=htblColNameType;
-		this.htblColNameRefs= htblColNameRefs; 
-		this.strKeyColName=strKeyColName;
-		this.reader=reader; 	
-		this.btreeFactory = btreeFactory;
-		this.properties = properties;
-		this.bufferManager = bufferManager;
+		this(strTableName,htblColNameType,htblColNameRefs,strKeyColName,reader,btreeFactory,properties,bufferManager);
 		this.transaction = transaction;
 		}
 	public void execute() throws DBEngineException{

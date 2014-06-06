@@ -2,8 +2,11 @@ package eg.edu.guc.dbms.components;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import eg.edu.guc.dbms.engine.RecoveryMode;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
@@ -128,8 +131,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 				case "D":
 					htblColNameValue = new HashMap<String, String>();
 					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
-							.substring(0, splittedLine[splittedLine.length - 1]
-									.length() - 2);
+							.substring(0, splittedLine[splittedLine.length - 1].length() - 2);
 					for (int i = 5; i < splittedLine.length; i++) {
 						if (splittedLine[i].contains("{")
 								|| splittedLine[i].contains(" ")) {

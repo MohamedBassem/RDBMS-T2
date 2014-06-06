@@ -42,15 +42,35 @@ public class RecoveryMode {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		this.bufferManager = new BufferManager(properties.getMinimumEmptyBufferSlots(), properties.getMaximumUsedBufferSlots(),false);
+		this.bufferManager = new BufferManager(
+				properties.getMinimumEmptyBufferSlots(),
+				properties.getMaximumUsedBufferSlots(), false);
 		this.bufferManager.init();
+	}
+
+	public void createTable(String strTableName,
+			HashMap<String, String> htblColNameType,
+			HashMap<String, String> htblColNameRefs, String strKeyColName)
+			throws DBEngineException {
+		CreateTableCommand newTable = new CreateTableCommand(strTableName,
+				htblColNameType, htblColNameRefs, strKeyColName, this.reader,
+				this.bTreeFactory, properties, bufferManager);
+		newTable.execute();
+
+	}
+
+	public void createIndex(String strTableName, String strColName)
+			throws DBEngineException {
+		CreateIndex createIndex = new CreateIndex(strTableName, strColName,
+				this.properties, reader, bTreeFactory, bufferManager);
+		createIndex.execute();
 	}
 
 	public void insertIntoTable(String strTableName,
 			HashMap<String, String> htblColNameValue) throws DBEngineException {
 		InsertCommand insertCommand = new InsertCommand(this.bTreeFactory,
 				reader, bufferManager, strTableName, properties,
-				htblColNameValue, logManager,transactionId);
+				htblColNameValue, logManager, transactionId);
 		insertCommand.execute();
 		bufferManager.runFlusher();
 
@@ -73,7 +93,7 @@ public class RecoveryMode {
 		SelectCommand selectCommand = new SelectCommand(this.bTreeFactory,
 				this.reader, properties, bufferManager, strTable,
 				htblColNameValue, strOperator, transactionId);
-		selectCommand.execute(); 
+		selectCommand.execute();
 		Iterator<HashMap<String, String>> results = selectCommand.getResults()
 				.iterator();
 		if (results.hasNext() == false) {

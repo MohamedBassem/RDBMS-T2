@@ -20,9 +20,9 @@ public class LogManagerImpl implements LogManager {
 		h.put("cccc", "dddd");
 		x.init();
 		x.recordStart("T1");
-		x.recordInsert("T1", "Student", 4, h);
+//		x.recordInsert("T1", "Student", 4, h);
 //		x.recordUpdate("T1", "Student", 1, "sd", "ID", 2, 4);
-//		x.recordDelete("T1", "Student", 2, "abc", h);
+		x.recordDelete("T1", "Student", 2, "abc", h);
 		x.recordCommit("T1");
 		x.flushLog();
 	}

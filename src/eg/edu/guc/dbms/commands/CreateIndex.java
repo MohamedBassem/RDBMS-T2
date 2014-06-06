@@ -24,15 +24,22 @@ public class CreateIndex implements Command {
 	BufferManager bufferManager;
 	long transactionId;
 
+
 	public CreateIndex(String tableName, String columnName,
 			Properties properties, CSVReader reader, BTreeFactory factory,
-			BufferManager bufferManager, long transactionId) {
+			BufferManager bufferManager) {
 		this.tableName = tableName;
 		this.columnName = columnName;
 		this.properties = properties;
 		this.reader = reader;
 		this.factory = factory;
 		this.bufferManager = bufferManager;
+	}
+	
+	public CreateIndex(String tableName, String columnName,
+			Properties properties, CSVReader reader, BTreeFactory factory,
+			BufferManager bufferManager, long transactionId) {
+		this(tableName,columnName,properties,reader,factory,bufferManager);
 		this.transactionId = transactionId;
 	}
 
