@@ -15,10 +15,9 @@ public class InsertStatementParser {
 		
 		System.out.println("Key/Value:");
 		for (int i = 0; i < statement.getColumnList().size(); i++) {
-			TMultiTarget mt = statement.getValues().getMultiTarget(i);
+			TMultiTarget mt = statement.getValues().getMultiTarget(0);
 			String column = statement.getColumnList().getObjectName(i).toString();
-			// TODO Support multi target?
-			String value = mt.getColumnList().getResultColumn(0).toString();
+			String value = mt.getColumnList().getResultColumn(i).toString();
 			System.out.println("\t" + column + ": " + value);
 			result.setColValue(column, value);
 		}
