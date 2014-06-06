@@ -46,7 +46,7 @@ public class UpdateCommand implements Command {
 		this.transactionNumber=transactionNumber; 
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.tableName,
-				this.hMapColNameValue, this.strOperator);
+				this.hMapColNameValue, this.strOperator, transactionNumber);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class UpdateCommand implements Command {
 			int pageNumber = Integer.parseInt(x[1]);
 			int rowNumber = Integer.parseInt(x[2]);
 			Page page = bufferManager.read(transactionNumber,tableName, pageNumber, true);
-			HashMap<String, String> newHMap= updateValues(table.get(""+ rowNumber)); 
+			HashMap<String, String> newHMap= updateValues(page.get(rowNumber)); 
 			page.set(rowNumber, new Tuple(newHMap)); 
 			bufferManager.write(transactionNumber,tableName, pageNumber, page);
 		}
