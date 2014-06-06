@@ -155,21 +155,16 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					break;
 
 				case "U":
-					htblColNameValue = new HashMap<String, String>();
 					HashMap<String, String> colValue = new HashMap<String, String>();
-					colValue.put(splittedLine[5], splittedLine[4]);
-					if (transactions.get(splittedLine[0])) {
-						htblColNameValue.put(splittedLine[5], splittedLine[7]);
-						recoveryMode.updateTable(splittedLine[2],
-								htblColNameValue, "AND", colValue);
-					} else {
+					htblColNameValue = new HashMap<String, String>();
+					if (transactions.get(splittedLine[0].substring(1))) {
 						htblColNameValue.put(splittedLine[5], splittedLine[6]);
-						recoveryMode.updateTable(splittedLine[2],
-								htblColNameValue, "AND", colValue);
+						recoveryMode.updateTable(splittedLine[2], htblColNameValue, "AND", colValue);
+					} else {
+						htblColNameValue.put(splittedLine[5], 
+								splittedLine[7].substring(0,splittedLine[7].length()-2));
+						recoveryMode.updateTable(splittedLine[2], htblColNameValue, "AND", colValue);
 					}
-					break;
-
-				default:
 					break;
 				}
 

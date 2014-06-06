@@ -116,10 +116,12 @@ public class RecoveryMode {
 			HashMap<String, String> htblColNameValue, String strOperator,
 			HashMap<String, String> colValue) throws IOException,
 			DBEngineException {
-		UpdateCommand updateCommand = new UpdateCommand(this.bTreeFactory,
-				this.reader, this.properties, strTableName, htblColNameValue,
-				strOperator, colValue, bufferManager, transactionId);
+		UpdateCommand updateCommand = new UpdateCommand(bTreeFactory,
+				reader, properties, strTableName, htblColNameValue,
+				strOperator, colValue, bufferManager, transactionId, logManager);
 		updateCommand.execute();
+		bufferManager.runFlusher();
+
 	}
 
 	public void saveAll() throws DBEngineException {
