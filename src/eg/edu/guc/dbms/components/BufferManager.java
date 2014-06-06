@@ -1,18 +1,25 @@
 package eg.edu.guc.dbms.components;
 
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.helpers.BufferSlot;
 import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.utils.DatabaseIO;
+import eg.edu.guc.dbms.utils.LoggerFormater;
+
 
 public class BufferManager {
 	
-	public static final int FLUSH_PERIOD = 2000;
+	private final static Logger LOGGER = Logger.getLogger(BufferManager.class.getName()); 
+	
+	public static final int FLUSH_PERIOD = 1000*60*2;
 	
 	/**
 	 * The Queue of unused buffer slots
@@ -39,13 +46,26 @@ public class BufferManager {
 	 */
 	Queue<Object> waitingForFreeSlots;
 	
+	private Semaphore mutex;
+	
+	boolean runBackGroundFlusher;
+	
 	
 	DatabaseIO databaseIO;
 	
-	public BufferManager(int minimumSlots,int maximumSlots){
+	public BufferManager(int minimumSlots,int maximumSlots,boolean runBackGroundFlusher){
 		this.minimumSlots = minimumSlots;
 		this.maximumSlots = maximumSlots;
+		this.runBackGroundFlusher = runBackGroundFlusher;
 		databaseIO = new DatabaseIO();
+		
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setLevel(Level.ALL);
+		handler.setFormatter(new LoggerFormater());
+        LOGGER.setUseParentHandlers(false);
+        LOGGER.addHandler(handler);
+        mutex = new Semaphore(1);
+        
 	}
 	
 	public void init(){
@@ -53,29 +73,47 @@ public class BufferManager {
 		usedSlots = new HashMap<String,BufferSlot>();
 		waitingForFreeSlots = new LinkedList<Object>();
 		
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {}
+		
 		for(int i=0;i<maximumSlots;i++){
 			unUsedSlots.add(new BufferSlot(i));
 		}
+		mutex.release();
 		
-		initializeFlusher();
+		if(runBackGroundFlusher){
+			initializeFlusher();
+		}
+		
+		LOGGER.info("Buffer Manager Started");
 		
 	}
 	
 	
-	public Page read(String tableName,int pageNumber,boolean bModify){
+	public Page read(int id,String tableName,int pageNumber,boolean bModify){
 		String pageName = encodePageName(tableName, pageNumber);
 		Page page = null;
 		BufferSlot slot = null;
-		if(usedSlots.containsKey(pageName)){
+		
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {}
+		boolean containsKey = usedSlots.containsKey(pageName);
+
+		if(containsKey){
 			slot = usedSlots.get(pageName);
+			mutex.release();
+			LOGGER.info(id + " : Trying to get read access to " + pageName + " which exists in the memory in slot " + slot.getId());
 			slot.acquire();
+			LOGGER.info(id + " : Read access to " + pageName + " Granted.");
 			page = slot.getPage();
-			if(!bModify){
-				slot.release();
-			}
 		}else{
-			slot = getEmptySlot();
+			LOGGER.info(id + " : Trying to get read access to " + pageName + " which doesn't exists in the memory.");
+			slot = getEmptySlot(id);
+			LOGGER.info(id + " : Read access to " + pageName + " Granted in slot " + slot.getId());
 			usedSlots.put(pageName, slot);
+			mutex.release();
 			slot.acquire();
 			try {
 				page = databaseIO.loadPage(tableName, pageNumber);
@@ -86,22 +124,25 @@ public class BufferManager {
 		}
 		if(!bModify){
 			slot.release();
+			LOGGER.info(id + " : Read access to " + pageName + " Released.");
 		}
 		
 		return page;
 	}
 
-	public void write(String tableName,int pageNumber,Page page){
+	public void write(int id,String tableName,int pageNumber,Page page){
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);
 		slot.setDirty(true);
 		slot.release();
+		LOGGER.info(id + " : Lock on " + pageName + " Released.");
 	}
 	
-	public void createTable(String tableName,String[] columns){
+	public void createTable(int id,String tableName,String[] columns){
 		try {
 			databaseIO.createTablePage(tableName, columns);
+			LOGGER.info(id + " : Created Table Page");
 		} catch (DBEngineException e) {
 			e.printStackTrace();
 		}
@@ -113,7 +154,7 @@ public class BufferManager {
 		long lastAccessed = 0;
 		for(String pageName : usedSlots.keySet()){
 			BufferSlot bufferSlot = usedSlots.get(pageName);
-			if(bufferSlot.isDirty()){
+			if(bufferSlot.isDirty() ){
 				try {
 					databaseIO.writePage(bufferSlot.getTableName(), bufferSlot.getPageNumber(), bufferSlot.getPage());
 					bufferSlot.setDirty(false);
@@ -121,39 +162,50 @@ public class BufferManager {
 					e.printStackTrace();
 				}
 			}
-			if(lastAccessed < bufferSlot.getLastUsed()){
+			if(lastAccessed < bufferSlot.getLastUsed() && bufferSlot.isNotUsed()){
 				lastAccessed = bufferSlot.getLastUsed();
 				leastUsedSlot = bufferSlot;
 			}
 			
 		}
+		LOGGER.info("Dirty Data flushed.");
+		
 		if(leastUsedSlot != null){
 			usedSlots.remove(leastUsedSlot.getPageName());
 			leastUsedSlot.clear();
 			unUsedSlots.add(leastUsedSlot);
 			
 			Object mon = waitingForFreeSlots.poll();
-			synchronized (mon) {
-				mon.notify();
+			if(mon != null){
+				synchronized (mon) {
+					mon.notify();
+				}
 			}
 		}
 		
 	}
 	
-	private BufferSlot getEmptySlot() {
+	private BufferSlot getEmptySlot(int id) {
 		if(unUsedSlots.size() == 0){
 			Object mon = new Object();
 			waitingForFreeSlots.add(mon);
 			synchronized (mon) {
 			    try {
+			    	LOGGER.info(id + " : is waiting for an empty slot.");
+			    	mutex.release();
 					mon.wait(); // Wait until notified by another thread that there is an empty slot
+					
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		try {
+			mutex.acquire();
+		} catch (InterruptedException e) {}
 		
 		BufferSlot slot = unUsedSlots.poll();
+		LOGGER.info(id + " : Found an empty slot " + slot.getId());
 		
 		if(unUsedSlots.size() < minimumSlots || usedSlots.size() > maximumSlots ){
 			runFlusher();
@@ -169,7 +221,13 @@ public class BufferManager {
 			@Override
 			public void run() {
 				while(true){
+					LOGGER.info("Flusher Started..");
+					try {
+						mutex.acquire();
+					} catch (InterruptedException e) {}
 					LRU();
+					mutex.release();
+					LOGGER.info("Flusher Ended..");
 					try {
 						Thread.sleep(FLUSH_PERIOD);
 					} catch (InterruptedException e) {}
@@ -178,12 +236,18 @@ public class BufferManager {
 		}).start();
 	}
 	
-	private void runFlusher(){
+	public void runFlusher(){
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
+				try {
+					mutex.acquire();
+				} catch (InterruptedException e) {}
+				LOGGER.info("Flusher Started..");
 				LRU();
+				LOGGER.info("Flusher Ended..");
+				mutex.release();
 			}
 		}).start();
 	}
@@ -196,9 +260,4 @@ public class BufferManager {
 		return databaseIO.getLastPageIndex(tableName);
 	}
 	
-	
-	public static void main(String[] args) {
-		HashMap<String,String> h = new HashMap<String,String>();
-		h.put("test", null);
-	}
 }

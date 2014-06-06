@@ -37,6 +37,10 @@ public class DatabaseIO {
 	public synchronized Page loadPage(String tableName, int pageNumber)
 			throws DBEngineException {
 		try {
+			
+			if(numberOfPages.containsKey(tableName) && numberOfPages.get(tableName) == pageNumber){
+				return new Page();
+			}
 			BufferedReader reader = new BufferedReader(new FileReader(encodePageName(tableName, pageNumber)));
 			String[] columns = decodeRow(reader.readLine());
 			Page list = new Page();
