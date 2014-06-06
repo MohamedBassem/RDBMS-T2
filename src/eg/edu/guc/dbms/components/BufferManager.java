@@ -129,12 +129,8 @@ public class BufferManager {
 		
 		return page;
 	}
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-	public void write(int transactionId, String tableName, int pageNumber, Page page){
+	
+	public void write(long transactionId, String tableName, int pageNumber, Page page){
 		String pageName = encodePageName(tableName, pageNumber);
 		BufferSlot slot = usedSlots.get(pageName);
 		slot.setPage(pageName, page);

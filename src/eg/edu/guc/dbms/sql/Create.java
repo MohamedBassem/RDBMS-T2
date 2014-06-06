@@ -31,4 +31,8 @@ public class Create extends PhysicalPlanTree {
 		this.keyColName = keyColName;
 	}
 
+	public HashMap<String, String> getTableTypes() {
+		return null;
+	}
+	
 }
