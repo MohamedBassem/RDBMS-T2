@@ -13,13 +13,22 @@ public class Transaction extends Thread {
 	private BufferManager bufferManager;
 	private LogManager logManager;
 	private List<Command> steps;
+	private long id;
 	
 	public Transaction(BufferManager bufManager, LogManager logManager,
             List<Command> vSteps) {
 		this.bufferManager	= bufManager;
 		this.logManager		= logManager;
 		this.steps			= vSteps;
+		this.id 			= (long) Math.random() * 1000000;
 	}
+	
+	@Override
+	public long getId() {
+		// TODO Auto-generated method stub
+		return id;
+	}
+	
 	
 	public void execute() {
 		start();
@@ -27,16 +36,25 @@ public class Transaction extends Thread {
 
 	@Override
 	public void run() {
-		for (Command step : steps) {
-			try {
-				step.execute();
-			} catch (IOException e) {
-				e.printStackTrace();
-				break;
-			} catch (DBEngineException e) {
-				e.printStackTrace();
-				break;
+		try {
+			logManager.recordStart("" + getId());
+			for (Command step : steps) {
+				try {
+					step.execute();
+				} catch (IOException e) {
+					e.printStackTrace();
+					break;
+				} catch (DBEngineException e) {
+					e.printStackTrace();
+					break;
+				}
 			}
+			logManager.recordCommit("" + getId());
+			logManager.flushLog();
+			bufferManager.runFlusher();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 	}
 	

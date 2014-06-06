@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Create extends PhysicalPlanTree {
 
-	private HashMap<String, String> columnReference;
+	private HashMap<String, String> columnReference = new HashMap<String, String>();
 	private String keyColName;
 	
 	public Create(String tableName) {
@@ -32,7 +32,7 @@ public class Create extends PhysicalPlanTree {
 	}
 
 	public HashMap<String, String> getTableTypes() {
-		return null;
+		return super.getColValues();
 	}
 	
 }

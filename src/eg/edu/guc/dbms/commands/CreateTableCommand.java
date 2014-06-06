@@ -66,8 +66,8 @@ this.bufferManager = bufferManager;
 				metaData.put("Key", "False");
 				metaData.put("Indexed", "False");
 			}
-			System.out.println(metaData);
-			System.out.println(htblColNameRefs.get(columnNames[i]));
+//			System.out.println(metaData);
+//			System.out.println(htblColNameRefs.get(columnNames[i]));
 			metaData.put("References", htblColNameRefs.get(columnNames[i]));
 			reader.appendToMetaDataFile(metaData);
 		}
