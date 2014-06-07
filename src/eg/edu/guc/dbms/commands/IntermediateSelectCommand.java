@@ -61,6 +61,7 @@ public class IntermediateSelectCommand implements Command {
 		for(int j =0; j<columnNames.length; j++){
 			if(relation.get(i).get(columnNames[i])==htblColNameValue.get(columnNames[i])){
 				satisfiedOnce=true;
+				 break; 
 			}
 		}
 		if(satisfiedOnce){
