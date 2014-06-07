@@ -84,7 +84,6 @@ public class UpdateCommand implements Command {
 				if (hMapColNameValue.get(indexedColumns.get(i)) != null) {
 					adoptor.delete(results.get(j).get(indexedColumns.get(i)),
 							pointers.get(j));
-
 					adoptor.insert(indexedColumns.get(i),
 							hMapColNameValue.get(indexedColumns.get(i)));
 				}
