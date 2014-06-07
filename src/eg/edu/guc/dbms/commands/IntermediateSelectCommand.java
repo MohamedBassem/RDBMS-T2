@@ -62,21 +62,14 @@ public class IntermediateSelectCommand implements Command {
 		String[] columnNames = Utils.setToArray(columnName);
 		for (int i = 0; i < relation.size(); i++) {
 			boolean satisfiedOnce = false;
-			System.out.println("i " + relation.get(i).toString());
 			for (int j = 0; j < columnNames.length; j++) {
 				if (relation.get(i).get(columnNames[j]) == htblColNameValue
 						.get(columnNames[j])) {
 					satisfiedOnce = true;
-//				System.out.println("I " + i);
-//				System.out.println("J "+ j );
-//					System.out.println(relation.get(i).get(columnNames[j]));
-//					System.out.println(htblColNameValue.get(columnNames[j]));
-//					System.out.println("h2");
-					//break;
+					break;
 				}
 			}
 			if (satisfiedOnce) {
-				System.out.println("heh");
 				results.add(relation.get(i));
 			}
 		}
