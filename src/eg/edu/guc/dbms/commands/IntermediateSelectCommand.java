@@ -9,7 +9,7 @@ import eg.edu.guc.dbms.interfaces.Command;
 
 public class IntermediateSelectCommand implements Command {
 
-	public IntermediateSelectCommand(List<HashMap<String, String>> relation, String tableName,
+	public IntermediateSelectCommand(List<HashMap<String, String>> relation,
 			HashMap<String, String> htblColNameValue, String strOperator) {
 		
 	}

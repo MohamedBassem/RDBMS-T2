@@ -12,9 +12,11 @@ import eg.edu.guc.dbms.commands.ProductCommand;
 import eg.edu.guc.dbms.commands.ProjectCommand;
 import eg.edu.guc.dbms.commands.SelectCommand;
 import eg.edu.guc.dbms.commands.UpdateCommand;
+import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.factories.TransactionManagerFactory;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.interfaces.LogManager;
+import eg.edu.guc.dbms.interfaces.SQLParser;
 import eg.edu.guc.dbms.interfaces.TransactionManager;
 import eg.edu.guc.dbms.sql.Create;
 import eg.edu.guc.dbms.sql.Index;
@@ -41,11 +43,16 @@ public class TransactionManagerImpl implements TransactionManager {
 	
 	
 	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager) {
-		this.bufferManager 	= bufferManager;
+		//this.bufferManager 	= bufferManager;
 		this.logManager 	= logManager;
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
+		System.out.println(properties.getBTreeN());
+		this.bufferManager = new BufferManager(
+				properties.getMinimumEmptyBufferSlots(),
+				properties.getMaximumUsedBufferSlots(), false);
+		this.bufferManager.init();
 		
 	}
 	
@@ -58,12 +65,17 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 	
 	public static void main(String[] args) {
-//		HashMap<String, String> a = new HashMap<String, String>();
-//		a.put("ankosh", null);
-//		PhysicalPlanTree t = new Project();
-//		t.addChild((new Select()).addChild(new Product().addChild(new Scan()).addChild(new Scan())));
-//		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-//		tr.executeTrasaction(createTable());
+		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+		SQLParser parser = SQLParserImpl.getInstance();
+		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
+		parser.parseSQLStatement("SELECT * FROM Gamdeen");
+		PhysicalPlanTree tree = parser.getParseTree();
+		tr.executeTrasaction(tree);
+		//parser.parseSQLStatement("create table Users (name STRING PRIMARY KEY, age INT)");
+		//tree = parser.getParseTree();
+		//tr.executeTrasaction(tree);
+		
+		
 	}
 	
 	public static PhysicalPlanTree createTable() {
@@ -102,7 +114,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new SelectCommand(bTreeFactory, reader, properties, bufferManager, node.getTableName(), null, null, transaction.getId());
 		} else if (tree.getOperation() == Operation.UPDATE) {
 			Update node = (Update) tree;
-			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColSearchValue(), node.getOperator(), node.getColValue());
+			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColSearchValue(), node.getOperator(), node.getColValue(), bufferManager, transaction.getId());
 		} else if (tree.getOperation() == Operation.PROJECT) {
 			Project node = (Project) tree;
 			//TODO
@@ -115,7 +127,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		} else if (tree.getOperation() == Operation.SELECT) {
 			Select node = (Select) tree;
 			List<HashMap<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
-			step = new IntermediateSelectCommand(previousResult, node.getTableName(), node.getColValues(), node.getOperator());
+			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator());
 		}	
 		steps.add(step);
 	}

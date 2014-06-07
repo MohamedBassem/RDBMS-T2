@@ -73,8 +73,8 @@ public class SQLParserImpl implements SQLParser {
 							"INSERT INTO kitchen (woman) VALUES ('SAK')",
 							"DELETE FROM kitchen WHERE woman = 'Alaa Maher'",
 							"CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)",
-							"INSERT INTO Gamdeen (name) VALUES ('Rami')",
-							"UPDATE Gamdeen SET name = 'Rami Khalil' wHERE name = 'Rami'",
+							"INSERT INTO Gamdeen (name, gamadan) VALUES ('Rami', 99999)",
+							"UPDATE Gamdeen SET name = 'Rami Khalil' WHERE name = 'Rami'",
 							"CREATE INDEX index_gamda ON Gamdeen (name)",
 							"SELECT FROM WHERE",
 							"Enta 3amel eih?"};

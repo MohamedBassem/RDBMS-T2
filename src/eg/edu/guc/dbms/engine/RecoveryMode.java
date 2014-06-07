@@ -118,7 +118,7 @@ public class RecoveryMode {
 			DBEngineException {
 		UpdateCommand updateCommand = new UpdateCommand(this.bTreeFactory,
 				this.reader, this.properties, strTableName, htblColNameValue,
-				strOperator, colValue);
+				strOperator, colValue, bufferManager, transactionId);
 		updateCommand.execute();
 	}
 

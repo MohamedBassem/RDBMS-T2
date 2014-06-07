@@ -28,12 +28,12 @@ public class UpdateCommand implements Command {
 	SelectCommand select;
 	BufferManager bufferManager;
 	int pageId;
-	int transactionNumber; 
+	long transactionNumber; 
 	public UpdateCommand(BTreeFactory btfactory, CSVReader reader,
 			Properties properties, String tableName,
 			HashMap<String, String>hMapColNameValue,
 			String strOperator, HashMap<String, String> colValue,
-			BufferManager bufferManager, int transactionNumber) {
+			BufferManager bufferManager, long transactionNumber) {
 		this.btfactory = btfactory;
 		this.reader = reader;
 		this.tableName = tableName;
@@ -41,8 +41,8 @@ public class UpdateCommand implements Command {
 		this.strOperator = strOperator;
 		this.colValue = colValue;
 		this.bufferManager = bufferManager;
-		this.transactionNumber=transactionNumber;
 		this.properties=properties;
+		this.transactionNumber = transactionNumber; 
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.tableName,
 				this.hMapColNameValue, this.strOperator, transactionNumber);

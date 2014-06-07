@@ -7,6 +7,7 @@ import gudusoft.gsqlparser.nodes.TConstraint;
 import gudusoft.gsqlparser.stmt.TCreateTableSqlStatement;
 
 public class CreateTableStatementParser {
+	
 	public static PhysicalPlanTree parse(TCreateTableSqlStatement statement) {
 		String tableName = statement.getTargetTable().toString();
 		Create result = new Create(tableName);
