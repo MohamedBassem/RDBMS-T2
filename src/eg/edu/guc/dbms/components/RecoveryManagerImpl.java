@@ -176,7 +176,6 @@ public class RecoveryManagerImpl implements RecoveryManager {
 		String line = raf.readLine();
 		recoveryMode.init();
 		while (line != null) {
-			System.out.println(line);
 			if (!line.contains("<START ") && !line.contains("<COMMIT ")) {
 				String[] splittedLine = line.split(",");
 				switch (splittedLine[1]) {
