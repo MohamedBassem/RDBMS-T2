@@ -41,7 +41,8 @@ public class UpdateCommand implements Command {
 		this.strOperator = strOperator;
 		this.colValue = colValue;
 		this.bufferManager = bufferManager;
-		this.transactionNumber=transactionNumber; 
+		this.transactionNumber=transactionNumber;
+		this.properties=properties;
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.tableName,
 				this.hMapColNameValue, this.strOperator, transactionNumber);
@@ -102,7 +103,7 @@ public class UpdateCommand implements Command {
 		Set<String> columnName =hMapColNameValue.keySet();
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i =0; i<columnNames.length; i++){
-			if(properties.getData().get(tableName).get(i) == null){
+			if(properties.getData().get(tableName).get(columnNames[i]) == null){
 				throw new DBEngineException("Column name is wrong or doesn't exist.");
 			}
 		}		
