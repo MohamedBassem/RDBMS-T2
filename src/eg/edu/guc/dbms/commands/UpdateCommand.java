@@ -9,7 +9,6 @@ import java.util.Set;
 import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.helpers.Page;
-import eg.edu.guc.dbms.helpers.Tuple;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
@@ -28,7 +27,7 @@ public class UpdateCommand implements Command {
 	SelectCommand select;
 	BufferManager bufferManager;
 	int pageId;
-	long transactionNumber; 
+	long transactionNumber=1; 
 	public UpdateCommand(BTreeFactory btfactory, CSVReader reader,
 			Properties properties, String tableName,
 			HashMap<String, String>hMapColNameValue,
@@ -45,7 +44,8 @@ public class UpdateCommand implements Command {
 		this.transactionNumber = transactionNumber; 
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.tableName,
-				this.hMapColNameValue, this.strOperator, transactionNumber);
+				this.colValue, this.strOperator, transactionNumber);
+	
 	}
 
 	@Override
@@ -59,14 +59,12 @@ public class UpdateCommand implements Command {
 
 	public void updateTable() throws DBEngineException {
 		ArrayList<String> pointers = select.getResultPointers();
-		HashMap<String, HashMap<String, String>> table = properties.getData().get(tableName);
 		for (int i = 0; i < pointers.size(); i++) {
 			String[] x = ((String) pointers.get(i)).split(" ");
 			int pageNumber = Integer.parseInt(x[1]);
 			int rowNumber = Integer.parseInt(x[2]);
 			Page page = bufferManager.read(transactionNumber,tableName, pageNumber, true);
-			HashMap<String, String> newHMap= updateValues(page.get(rowNumber)); 
-			page.set(rowNumber, new Tuple(newHMap)); 
+			page.add(updateValues(page.get(rowNumber)));
 			bufferManager.write(transactionNumber,tableName, pageNumber, page);
 		}
 	}
@@ -82,8 +80,9 @@ public class UpdateCommand implements Command {
 			for (int j = 0; j < pointers.size(); j++) {
 				adoptor.delete(results.get(j).get(indexedColumns.get(i)),
 						pointers.get(j));
-				adoptor.insert(hMapColNameValue.get(indexedColumns.get(i)),
-						pointers.get(j));
+		
+				adoptor.insert(indexedColumns.get(i),hMapColNameValue.get(indexedColumns.get(i)));
+				
 			}
 		}
 	}
@@ -91,7 +90,7 @@ public class UpdateCommand implements Command {
 		Set<String> columnName =hMapColNameValue.keySet();
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i =0; i<columnNames.length; i++){
-			input.put(columnNames[i],hMapColNameValue.get(columnNames[i]));
+			input.put(columnNames[i],hMapColNameValue.get(columnNames[i]));	
 		}
 		return input; 
 	}
