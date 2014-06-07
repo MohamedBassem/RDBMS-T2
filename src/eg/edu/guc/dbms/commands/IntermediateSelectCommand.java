@@ -18,16 +18,14 @@ public class IntermediateSelectCommand implements Command {
 	String strOperator;
 	List<HashMap<String, String>> results;
 	Properties properties;
-	String tblName;
 
 	public IntermediateSelectCommand(List<HashMap<String, String>> relation,
 			HashMap<String, String> htblColNameValue, String strOperator,
-			Properties properties, String tblName) {
+			Properties properties) {
 		this.relation = relation;
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
 		this.properties = properties;
-		this.tblName = tblName;
 		this.results= new ArrayList<HashMap<String,String>>(); 
 	}
 
@@ -48,8 +46,8 @@ public class IntermediateSelectCommand implements Command {
 		for (int i = 0; i < relation.size(); i++) {
 			boolean satisfied = true;
 			for (int j = 0; j < columnNames.length; j++) {
-				if (relation.get(i).get(columnNames[i]) != htblColNameValue
-						.get(columnNames[i])) {
+				if (relation.get(i).get(columnNames[j]) != htblColNameValue
+						.get(columnNames[j])) {
 					satisfied = false;
 				}
 			}
@@ -64,14 +62,21 @@ public class IntermediateSelectCommand implements Command {
 		String[] columnNames = Utils.setToArray(columnName);
 		for (int i = 0; i < relation.size(); i++) {
 			boolean satisfiedOnce = false;
+			System.out.println("i " + relation.get(i).toString());
 			for (int j = 0; j < columnNames.length; j++) {
-				if (relation.get(i).get(columnNames[i]) == htblColNameValue
-						.get(columnNames[i])) {
+				if (relation.get(i).get(columnNames[j]) == htblColNameValue
+						.get(columnNames[j])) {
 					satisfiedOnce = true;
-					break;
+//				System.out.println("I " + i);
+//				System.out.println("J "+ j );
+//					System.out.println(relation.get(i).get(columnNames[j]));
+//					System.out.println(htblColNameValue.get(columnNames[j]));
+//					System.out.println("h2");
+					//break;
 				}
 			}
 			if (satisfiedOnce) {
+				System.out.println("heh");
 				results.add(relation.get(i));
 			}
 		}
