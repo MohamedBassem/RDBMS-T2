@@ -63,6 +63,9 @@ public class UpdateCommand implements Command {
 		this(btfactory, reader, properties, tableName, hMapColNameValue, 
 				strOperator, colValue, bufferManager, transactionNumber);
 		this.logManager = logManager;
+		select = new SelectCommand(this.btfactory, this.reader,
+				this.properties, this.bufferManager, this.tableName,
+				this.hMapColNameValue, this.strOperator, transactionNumber);
 	}
 
 	@Override
@@ -99,7 +102,6 @@ public class UpdateCommand implements Command {
 			for (int j = 0; j < pointers.size(); j++) {
 				adoptor.delete(results.get(j).get(indexedColumns.get(i)),
 						pointers.get(j));
-				System.out.println(indexedColumns.get(i));
 				adoptor.insert(hMapColNameValue.get(indexedColumns.get(i)),
 						pointers.get(j));
 			}
@@ -133,7 +135,6 @@ public class UpdateCommand implements Command {
 		Set<String> columnName =hMapColNameValue.keySet();
 		String [] columnNames = Utils.setToArray(columnName);   	
 		for(int i = 0; i<columnNames.length; i++){
-			System.out.println(columnNames[i]);
 			if(properties.getData().get(tableName).get(columnNames[i]) == null){
 				throw new DBEngineException("Column name is wrong or doesn't exist.");
 			}
