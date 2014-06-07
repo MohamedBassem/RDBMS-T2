@@ -68,7 +68,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
 		SQLParser parser = SQLParserImpl.getInstance();
 		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
-		parser.parseSQLStatement("SELECT * FROM Gamdeen");
+		parser.parseSQLStatement("INSERT INTO Gamdeen (name, gamadan) VALUES ('an', 1)");
 		PhysicalPlanTree tree = parser.getParseTree();
 		tr.executeTrasaction(tree);
 		//parser.parseSQLStatement("create table Users (name STRING PRIMARY KEY, age INT)");
