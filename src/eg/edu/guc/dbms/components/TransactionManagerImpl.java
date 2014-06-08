@@ -127,7 +127,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		} else if (tree.getOperation() == Operation.SELECT) {
 			Select node = (Select) tree;
 			List<HashMap<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
-			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator());
+			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator(),properties);
 		}	
 		steps.add(step);
 	}
