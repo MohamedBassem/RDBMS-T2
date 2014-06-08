@@ -3,6 +3,7 @@ package eg.edu.guc.dbms.components;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import eg.edu.guc.dbms.commands.CreateIndex;
 import eg.edu.guc.dbms.commands.CreateTableCommand;
@@ -38,6 +39,8 @@ import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 
 public class TransactionManagerImpl implements TransactionManager {
 
+	private static final int THREAD_POOL_SIZE = 5;
+	
 	private BufferManager bufferManager;
 	private LogManager logManager;
 	private BTreeFactory bTreeFactory;
@@ -48,6 +51,9 @@ public class TransactionManagerImpl implements TransactionManager {
 		
 		@Override
 		public void onPostExecute(List<HashMap<String, String>> results) {
+
+			if(results == null) return;
+
 			for(HashMap<String, String> result : results){
 				print(result);
 			}
@@ -55,6 +61,9 @@ public class TransactionManagerImpl implements TransactionManager {
 		}
 
 		private void print(HashMap<String, String> result) {
+			
+			if(result == null) return;
+			
 			System.out.println(result);
 		}
 	};
@@ -73,6 +82,10 @@ public class TransactionManagerImpl implements TransactionManager {
 		
 	}
 	
+	public void setCallBack(TransactionCallbackInterface callBack) {
+		this.transactionCallBack = callBack;
+	}
+	
 	@Override
 	public void executeTrasaction(PhysicalPlanTree tree) {
 		ArrayList<Command> steps = new ArrayList<Command>();
@@ -81,22 +94,39 @@ public class TransactionManagerImpl implements TransactionManager {
 		transaction.execute(transactionCallBack);
 	}
 	
-	public static void main(String[] args) {
-		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+	public static void runConcurrently(String sqlFile){
+		final TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
 		SQLParser parser = SQLParserImpl.getInstance();
-		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
-
-		//parser.parseSQLStatement("INSERT INTO Gamdeen(name, gamadan) VALUES(Alaa,4)");
-		parser.parseSQLStatement("DELETE FROM Gamdeen WHERE name = 'Alaa'");
-		PhysicalPlanTree tree = parser.getParseTree();
-		tr.executeTrasaction(tree);
-		//parser.parseSQLStatement("SELECT * FROM Gamdeen");
-		//parser.parseSQLStatement("create table Users (name STRING PRIMARY KEY, age INT)");
-		//tree = parser.getParseTree();
-		//tr.executeTrasaction(tree);
-		
-		
+		String[] sqlStatments = sqlFile.trim().split(";");
+		Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
+		for(String sqlStatment : sqlStatments){
+			parser.parseSQLStatement(sqlStatment);
+			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
+				try {
+					semaphore.acquire(THREAD_POOL_SIZE);
+				} catch (InterruptedException e) {}
+			}else{
+				try {
+					semaphore.acquire();
+				} catch (InterruptedException e) {}
+			}
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+				}
+			}).start();
+			
+			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
+				semaphore.release(THREAD_POOL_SIZE);
+			}else{
+				semaphore.release();
+			}
+		}
 	}
+
 	
 	public static PhysicalPlanTree createTable() {
 //		Create t = new Create();
