@@ -65,7 +65,7 @@ public class DeleteCommand implements Command {
 
 	public void execute() throws DBEngineException {
 		select.execute();
-		System.out.println("sss "+select.getResult());
+//		System.out.println("sss "+select.getResult());
 		this.deleteFromTable();
 		try {
 			this.deleteFromTree();

@@ -51,6 +51,8 @@ public class BufferManager {
 	
 	boolean runBackGroundFlusher;
 	
+	BTreeFactory bTreeFactory;
+	
 	
 	DatabaseIO databaseIO;
 	
@@ -66,6 +68,8 @@ public class BufferManager {
         LOGGER.setUseParentHandlers(false);
         LOGGER.addHandler(handler);
         mutex = new Semaphore(1);
+        
+        this.bTreeFactory = btree;
         
 	}
 	
@@ -169,6 +173,7 @@ public class BufferManager {
 			}
 			
 		}
+		bTreeFactory.saveAll();
 		LOGGER.info("Dirty Data flushed.");
 		
 		if(leastUsedSlot != null){

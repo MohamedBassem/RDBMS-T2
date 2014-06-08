@@ -14,7 +14,7 @@ public class TransactionManagerFactory {
 		CSVReader reader = new CSVReader();
 		Properties properties = new Properties(reader);
 		BTreeFactory btree =  new BTreeFactory(properties.getBTreeN());
-		return new TransactionManagerImpl(BufferManagerFactory.getInstance(btree), LogManagerFactory.getInstance(), btree, properties, reader);
+		return new TransactionManagerImpl(BufferManagerFactory.getInstance(btree, properties), LogManagerFactory.getInstance(), btree, properties, reader);
 	}
 	
 }

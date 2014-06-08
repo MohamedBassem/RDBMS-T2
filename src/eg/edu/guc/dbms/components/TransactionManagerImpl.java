@@ -83,7 +83,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		this.properties = properties;
 		this.bTreeFactory = btree;
 		this.bufferManager = BufferManagerFactory.getInstance(btree, properties);
-		
+
 	}
 	
 	public void setCallBack(TransactionCallbackInterface callBack) {
@@ -99,36 +99,40 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 	
 	public static void runConcurrently(String sqlFile){
-		final TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-		final SQLParser parser = SQLParserImpl.getInstance();
+		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+		SQLParser parser = SQLParserImpl.getInstance();
 		String[] sqlStatments = sqlFile.trim().split(";");
-		final Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
+//		Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
 		for(String sqlStatment : sqlStatments){
-			parser.parseSQLStatement(sqlStatment);
-			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
-				try {
-					semaphore.acquire(THREAD_POOL_SIZE);
-				} catch (InterruptedException e) {}
-			}else{
-				try {
-					semaphore.acquire();
-				} catch (InterruptedException e) {}
+			
+			if(!parser.parseSQLStatement(sqlStatment)){
+				System.out.println("ERROR" + parser.getErrorMessage());
+				continue;
 			}
-			
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					tr.executeTrasaction(parser.getParseTree());
-					if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
-						semaphore.release(THREAD_POOL_SIZE);
-					}else{
-						semaphore.release();
-					}
-				}
-			}).start();
-			
-			
+//			System.out.println(sqlStatment);
+//			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
+//				try {
+//					semaphore.acquire(THREAD_POOL_SIZE);
+//				} catch (InterruptedException e) {}
+//			}else{
+//				try {
+//					semaphore.acquire();
+//				} catch (InterruptedException e) {}
+//			}
+//			
+//			new Thread(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+			tr.executeTrasaction(parser.getParseTree());
+//					if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
+//						semaphore.release(THREAD_POOL_SIZE);
+//					}else{
+//						semaphore.release();
+//					}
+//				}
+//			}).start();
+						
 		}
 	}
 
