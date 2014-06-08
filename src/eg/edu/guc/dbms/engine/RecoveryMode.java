@@ -43,7 +43,7 @@ public class RecoveryMode {
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
-				properties.getMaximumUsedBufferSlots(), false);
+				properties.getMaximumUsedBufferSlots(), false, bTreeFactory);
 		this.bufferManager.init();
 	}
 

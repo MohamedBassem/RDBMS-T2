@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+
 import eg.edu.guc.dbms.commands.CreateIndex;
 import eg.edu.guc.dbms.commands.CreateTableCommand;
 import eg.edu.guc.dbms.commands.DeleteCommand;
@@ -20,6 +21,7 @@ import eg.edu.guc.dbms.commands.ProjectCommand;
 import eg.edu.guc.dbms.commands.SelectCommand;
 import eg.edu.guc.dbms.commands.UpdateCommand;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.factories.BufferManagerFactory;
 import eg.edu.guc.dbms.factories.TransactionManagerFactory;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.interfaces.LogManager;
@@ -80,10 +82,7 @@ public class TransactionManagerImpl implements TransactionManager {
 	
 		this.properties = properties;
 		this.bTreeFactory = btree;
-		this.bufferManager = new BufferManager(
-				properties.getMinimumEmptyBufferSlots(),
-				properties.getMaximumUsedBufferSlots(), false);
-		this.bufferManager.init();
+		this.bufferManager = BufferManagerFactory.getInstance(btree, properties);
 		
 	}
 	
