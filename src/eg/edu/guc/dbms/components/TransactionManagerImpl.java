@@ -6,6 +6,7 @@ import java.util.List;
 
 import eg.edu.guc.dbms.commands.CreateIndex;
 import eg.edu.guc.dbms.commands.CreateTableCommand;
+import eg.edu.guc.dbms.commands.DeleteCommand;
 import eg.edu.guc.dbms.commands.InsertCommand;
 import eg.edu.guc.dbms.commands.IntermediateSelectCommand;
 import eg.edu.guc.dbms.commands.ProductCommand;
@@ -19,6 +20,7 @@ import eg.edu.guc.dbms.interfaces.LogManager;
 import eg.edu.guc.dbms.interfaces.SQLParser;
 import eg.edu.guc.dbms.interfaces.TransactionManager;
 import eg.edu.guc.dbms.sql.Create;
+import eg.edu.guc.dbms.sql.Delete;
 import eg.edu.guc.dbms.sql.Index;
 import eg.edu.guc.dbms.sql.Insert;
 import eg.edu.guc.dbms.sql.PhysicalPlanTree;
@@ -48,7 +50,6 @@ public class TransactionManagerImpl implements TransactionManager {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		System.out.println(properties.getBTreeN());
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
 				properties.getMaximumUsedBufferSlots(), false);
@@ -68,9 +69,12 @@ public class TransactionManagerImpl implements TransactionManager {
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
 		SQLParser parser = SQLParserImpl.getInstance();
 		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
-		parser.parseSQLStatement("INSERT INTO Gamdeen (name, gamadan) VALUES ('an', 1)");
+
+		//parser.parseSQLStatement("INSERT INTO Gamdeen(name, gamadan) VALUES(Alaa,4)");
+		parser.parseSQLStatement("DELETE FROM Gamdeen WHERE name = 'Alaa'");
 		PhysicalPlanTree tree = parser.getParseTree();
 		tr.executeTrasaction(tree);
+		//parser.parseSQLStatement("SELECT * FROM Gamdeen");
 		//parser.parseSQLStatement("create table Users (name STRING PRIMARY KEY, age INT)");
 		//tree = parser.getParseTree();
 		//tr.executeTrasaction(tree);
@@ -114,21 +118,24 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new SelectCommand(bTreeFactory, reader, properties, bufferManager, node.getTableName(), null, null, transaction.getId());
 		} else if (tree.getOperation() == Operation.UPDATE) {
 			Update node = (Update) tree;
-			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColSearchValue(), node.getOperator(), node.getColValue(), bufferManager, transaction.getId());
+			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColWhereValues(), node.getOperator(), node.getColValues(), bufferManager, transaction.getId());
 		} else if (tree.getOperation() == Operation.PROJECT) {
 			Project node = (Project) tree;
 			//TODO
-			step = new ProjectCommand(null, node.getProjectionColumns());
+			step = new ProjectCommand(steps.get(steps.size() - 1).getResult(), node.getProjectionColumns());
 		} else if (tree.getOperation() == Operation.PRODUCT) {
 			Product node = (Product) tree;
 			List<HashMap<String, String>> relation1 = steps.get(steps.size() - 1).getResult();
-			List<HashMap<String, String>> relation2 = steps.get(steps.size() - 1).getResult();
+			List<HashMap<String, String>> relation2 = steps.get(steps.size() - 2).getResult();
 			step = new ProductCommand(relation1, relation2);
 		} else if (tree.getOperation() == Operation.SELECT) {
 			Select node = (Select) tree;
 			List<HashMap<String, String>> previousResult = steps.get(steps.size() - 1).getResult();
-			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator());
-		}	
+			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator(),properties);
+		} else if (tree.getOperation() == Operation.DELETE) {
+			Delete node = (Delete) tree;
+			step = new DeleteCommand(node.getTableName(), node.getColValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
+		}
 		steps.add(step);
 	}
 

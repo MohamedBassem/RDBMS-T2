@@ -65,4 +65,26 @@ public abstract class PhysicalPlanTree {
 	public void setColValue(String column, String value) {
 		colValues.put(column, value);
 	}
+	
+	public String getOperator() {
+		if(getWhereClause().contains("AND"))
+			return "AND";
+		else if(getWhereClause().contains("OR"))
+			return "OR";
+		return null;
+	}
+	
+	public HashMap<String, String> getColWhereValues() {
+		String[] sets = getWhereClause().split(getOperator());
+		for(int i = 0; i < sets.length; i++)
+			sets[i] = sets[i].trim();
+		HashMap<String, String> result = new HashMap<String, String>();
+		for(int i = 0; i < sets.length; i++) {
+			String[] where = sets[i].split("=");
+			result.put(where[0], where[1]);
+		}
+		return result;
+	}
+
+
 }
