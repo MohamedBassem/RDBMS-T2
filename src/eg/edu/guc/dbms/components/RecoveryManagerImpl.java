@@ -33,8 +33,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 			public void recordUpdate(String strTransID, String tableName,
 					int pageNummber, String strKeyValue, String strColName,
 					Object objOld, Object objNew) throws IOException {
-				// TODO Auto-generated method stub
-
+				System.out.println("Updating");
 			}
 
 			@Override
@@ -54,7 +53,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 			public void recordDelete(String strTransID, String tableName,
 					int pageNumber, String strKeyValue,
 					HashMap<String, String> htblColValues) throws IOException {
-				System.out.println("deleting");
+				System.out.println("Deleting");
 			}
 
 			@Override
@@ -87,11 +86,91 @@ public class RecoveryManagerImpl implements RecoveryManager {
 			line = raf.readLine();
 		}
 		raf.seek(0);
-		doAction(raf);
+		line = raf.readLine();
+		ArrayList<String> file = new ArrayList<String>();
+		while(line != null) {
+			file.add(line);
+			line = raf.readLine();
+		}
+		
+		undoAction(file);
+		raf.seek(0);
+		redoAction(raf);
 
 	}
 
-	public void doAction(RandomAccessFile raf) throws IOException,
+	public void undoAction(ArrayList<String> file) throws IOException, DBEngineException {
+		recoveryMode.init();
+		String line = "";
+		for(int k = file.size()-1; k >=0; k--) {
+			line = file.get(k);
+			if (!line.contains("<START ") && !line.contains("<COMMIT ")) {
+				String[] splittedLine = line.split(",");
+				switch (splittedLine[1]) {
+				case "I":
+					HashMap<String, String> htblColNameValue = new HashMap<String, String>();
+					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
+							.substring(0, splittedLine[splittedLine.length - 1]
+									.length() - 2);
+					for (int i = 4; i < splittedLine.length; i++) {
+						if (splittedLine[i].contains("{")
+								|| splittedLine[i].contains(" ")) {
+							htblColNameValue.put(splittedLine[i].substring(1,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						} else {
+							htblColNameValue.put(splittedLine[i].substring(0,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						}
+					}
+					if (!transactions.get(splittedLine[0].substring(1))) {
+						recoveryMode.deleteFromTable(splittedLine[2],
+								htblColNameValue, "AND");
+					}
+					break;
+
+				case "D":
+					htblColNameValue = new HashMap<String, String>();
+					splittedLine[splittedLine.length - 1] = splittedLine[splittedLine.length - 1]
+							.substring(0, splittedLine[splittedLine.length - 1].length() - 2);
+					for (int i = 5; i < splittedLine.length; i++) {
+						if (splittedLine[i].contains("{")
+								|| splittedLine[i].contains(" ")) {
+							htblColNameValue.put(splittedLine[i].substring(1,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						} else {
+							htblColNameValue.put(splittedLine[i].substring(0,
+									splittedLine[i].indexOf("=")),
+									splittedLine[i].substring(splittedLine[i]
+											.indexOf("=") + 1));
+						}
+					}
+					if (!transactions.get(splittedLine[0].substring(1))) {
+						recoveryMode.insertIntoTable(splittedLine[2],
+								htblColNameValue);
+					}
+					break;
+
+				case "U":
+					HashMap<String, String> colValue = new HashMap<String, String>();
+					htblColNameValue = new HashMap<String, String>();
+					colValue.put(splittedLine[5], splittedLine[4]);
+					if (!transactions.get(splittedLine[0].substring(1))) {
+						htblColNameValue.put(splittedLine[5], splittedLine[6]);
+						recoveryMode.updateTable(splittedLine[2], htblColNameValue, "AND", colValue);
+					}
+					break;
+				}
+			}
+		}
+	}
+	
+	public void redoAction(RandomAccessFile raf) throws IOException,
 			DBEngineException {
 		String line = raf.readLine();
 		recoveryMode.init();
@@ -121,10 +200,7 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					if (transactions.get(splittedLine[0].substring(1))) {
 						recoveryMode.insertIntoTable(splittedLine[2],
 								htblColNameValue);
-					} else {
-						recoveryMode.deleteFromTable(splittedLine[2],
-								htblColNameValue, "AND");
-					}
+					} 
 					break;
 
 				case "D":
@@ -148,28 +224,18 @@ public class RecoveryManagerImpl implements RecoveryManager {
 					if (transactions.get(splittedLine[0].substring(1))) {
 						recoveryMode.deleteFromTable(splittedLine[2],
 								htblColNameValue, "AND");
-					} else {
-						recoveryMode.insertIntoTable(splittedLine[2],
-								htblColNameValue);
-					}
+					} 
 					break;
 
 				case "U":
-					htblColNameValue = new HashMap<String, String>();
 					HashMap<String, String> colValue = new HashMap<String, String>();
+					htblColNameValue = new HashMap<String, String>();
 					colValue.put(splittedLine[5], splittedLine[4]);
-					if (transactions.get(splittedLine[0])) {
-						htblColNameValue.put(splittedLine[5], splittedLine[7]);
-						recoveryMode.updateTable(splittedLine[2],
-								htblColNameValue, "AND", colValue);
-					} else {
-						htblColNameValue.put(splittedLine[5], splittedLine[6]);
-						recoveryMode.updateTable(splittedLine[2],
-								htblColNameValue, "AND", colValue);
+					if (transactions.get(splittedLine[0].substring(1))) {
+						htblColNameValue.put(splittedLine[5], 
+								splittedLine[7].substring(0,splittedLine[7].length()-1));
+						recoveryMode.updateTable(splittedLine[2], htblColNameValue, "AND", colValue);
 					}
-					break;
-
-				default:
 					break;
 				}
 
