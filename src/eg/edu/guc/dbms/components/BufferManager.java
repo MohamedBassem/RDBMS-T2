@@ -13,6 +13,7 @@ import eg.edu.guc.dbms.helpers.BufferSlot;
 import eg.edu.guc.dbms.helpers.Page;
 import eg.edu.guc.dbms.utils.DatabaseIO;
 import eg.edu.guc.dbms.utils.LoggerFormater;
+import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 
 
 public class BufferManager {
@@ -53,7 +54,7 @@ public class BufferManager {
 	
 	DatabaseIO databaseIO;
 	
-	public BufferManager(int minimumSlots,int maximumSlots,boolean runBackGroundFlusher){
+	public BufferManager(int minimumSlots,int maximumSlots,boolean runBackGroundFlusher, BTreeFactory btree){
 		this.minimumSlots = minimumSlots;
 		this.maximumSlots = maximumSlots;
 		this.runBackGroundFlusher = runBackGroundFlusher;

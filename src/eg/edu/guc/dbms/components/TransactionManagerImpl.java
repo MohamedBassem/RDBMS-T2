@@ -74,17 +74,21 @@ public class TransactionManagerImpl implements TransactionManager {
 	};
 	
 	
-	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager) {
+	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager, BTreeFactory btree, Properties properties, CSVReader reader2) {
 		//this.bufferManager 	= bufferManager;
 		this.logManager 	= logManager;
-		this.reader = new CSVReader();
-		this.properties = new Properties(reader);
-		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
+	
+		this.properties = properties;
+		this.bTreeFactory = btree;
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
 				properties.getMaximumUsedBufferSlots(), false);
 		this.bufferManager.init();
 		
+	}
+	
+	public void setCallBack(TransactionCallbackInterface callBack) {
+		this.transactionCallBack = callBack;
 	}
 	
 	@Override
@@ -132,7 +136,7 @@ public class TransactionManagerImpl implements TransactionManager {
 						
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		if(args.length == 1){
 			BufferedReader reader = new BufferedReader(new FileReader(new File(args[0])));

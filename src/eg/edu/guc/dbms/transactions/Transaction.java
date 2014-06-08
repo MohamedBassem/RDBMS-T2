@@ -57,8 +57,9 @@ public class Transaction extends Thread {
 			}
 			logManager.recordCommit("" + getId());
 			logManager.flushLog();
-			callback.onPostExecute(results);
-			bufferManager.runFlusher();
+			if (callback != null) {
+				callback.onPostExecute(results);				
+			}
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
