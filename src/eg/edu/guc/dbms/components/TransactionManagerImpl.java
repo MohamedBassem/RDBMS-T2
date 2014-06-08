@@ -18,6 +18,7 @@ import eg.edu.guc.dbms.factories.TransactionManagerFactory;
 import eg.edu.guc.dbms.interfaces.Command;
 import eg.edu.guc.dbms.interfaces.LogManager;
 import eg.edu.guc.dbms.interfaces.SQLParser;
+import eg.edu.guc.dbms.interfaces.TransactionCallbackInterface;
 import eg.edu.guc.dbms.interfaces.TransactionManager;
 import eg.edu.guc.dbms.sql.Create;
 import eg.edu.guc.dbms.sql.Delete;
@@ -43,6 +44,21 @@ public class TransactionManagerImpl implements TransactionManager {
 	private CSVReader reader;
 	private Properties properties;
 	
+	private TransactionCallbackInterface transactionCallBack = new TransactionCallbackInterface() {
+		
+		@Override
+		public void onPostExecute(List<HashMap<String, String>> results) {
+			for(HashMap<String, String> result : results){
+				print(result);
+			}
+			
+		}
+
+		private void print(HashMap<String, String> result) {
+			System.out.println(result);
+		}
+	};
+	
 	
 	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager) {
 		//this.bufferManager 	= bufferManager;
@@ -62,7 +78,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		ArrayList<Command> steps = new ArrayList<Command>();
 		Transaction transaction = new Transaction(bufferManager, logManager, steps);
 		treeToSteps(tree, steps, transaction);
-		transaction.execute();
+		transaction.execute(transactionCallBack);
 	}
 	
 	public static void main(String[] args) {
