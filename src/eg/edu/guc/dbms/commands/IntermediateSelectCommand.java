@@ -32,12 +32,13 @@ public class IntermediateSelectCommand implements Command {
 	@Override
 	public void execute() throws DBEngineException, IOException {
 		this.validate();
-		if (strOperator.equals("AND")) {
+		if (strOperator.equals("AND")|| strOperator.equals("")) {
 			selectAndOperator();
 		}
 		if (strOperator.equals("OR")) {
 			selectOrOperator();
 		}
+		
 	}
 
 	public void selectAndOperator() {
@@ -76,7 +77,7 @@ public class IntermediateSelectCommand implements Command {
 	}
 
 	public void validate() throws DBEngineException {
-		if (!strOperator.equals("AND") && !strOperator.equals("OR")) {
+		if (!strOperator.equals("AND") && !strOperator.equals("OR") && !strOperator.equals("")) {
 			throw new DBEngineException("Unknown Operator");
 		}
 	}
