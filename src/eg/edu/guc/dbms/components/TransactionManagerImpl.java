@@ -134,8 +134,8 @@ public class TransactionManagerImpl implements TransactionManager {
 	}
 
 	public static void main(String[] args) throws IOException {
-		if(args.length == 2){
-			BufferedReader reader = new BufferedReader(new FileReader(new File(args[1])));
+		if(args.length == 1){
+			BufferedReader reader = new BufferedReader(new FileReader(new File(args[0])));
 			String res = "";
 			while(true){
 				String line = reader.readLine();

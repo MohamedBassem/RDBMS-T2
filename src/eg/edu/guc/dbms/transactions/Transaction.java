@@ -34,6 +34,7 @@ public class Transaction extends Thread {
 	
 	
 	public void execute(TransactionCallbackInterface callback) {
+		this.callback = callback;
 		start();
 	}
 
