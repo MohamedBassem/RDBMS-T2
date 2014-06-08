@@ -82,7 +82,7 @@ public class SelectCommand implements Command {
 	
 	@Override
 	public void execute() throws DBEngineException {
-		System.out.println(properties.getData());
+//		System.out.println(properties.getData());
 		if(properties.getData().get(tableName) == null){
 			throw new DBEngineException("This table doesn't exist");
 		}else if(htblColNameValue == null && strOperator == null){
