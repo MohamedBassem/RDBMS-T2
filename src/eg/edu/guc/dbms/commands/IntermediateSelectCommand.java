@@ -16,7 +16,7 @@ public class IntermediateSelectCommand implements Command {
 	List<HashMap<String, String>> relation;
 	HashMap<String, String> htblColNameValue;
 	String strOperator;
-	List<HashMap<String, String>> results;
+	List<HashMap<String, String>> results = new ArrayList<HashMap<String, String>>();
 	Properties properties;
 
 	public IntermediateSelectCommand(List<HashMap<String, String>> relation,
@@ -26,13 +26,12 @@ public class IntermediateSelectCommand implements Command {
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
 		this.properties = properties;
-		this.results= new ArrayList<HashMap<String,String>>(); 
 	}
 
 	@Override
 	public void execute() throws DBEngineException, IOException {
 		this.validate();
-		if (strOperator.equals("AND")|| strOperator.equals("")) {
+		if (strOperator==null || strOperator.equals("AND")) {
 			selectAndOperator();
 		}
 		if (strOperator.equals("OR")) {
@@ -77,7 +76,7 @@ public class IntermediateSelectCommand implements Command {
 	}
 
 	public void validate() throws DBEngineException {
-		if (!strOperator.equals("AND") && !strOperator.equals("OR") && !strOperator.equals("")) {
+		if (strOperator!=null && !strOperator.equals("AND") && !strOperator.equals("OR")) {
 			throw new DBEngineException("Unknown Operator");
 		}
 	}

@@ -103,7 +103,7 @@ public class DeleteCommand implements Command {
 		ArrayList<String> indexedColumns = properties
 				.getIndexedColumns(strTableName);
 		ArrayList<String> pointers = select.getResultPointers();
-		ArrayList<HashMap<String, String>> results = select.getResults();
+		List<HashMap<String, String>> results = select.getResult();
 		for (int i = 0; i < indexedColumns.size(); i++) {
 			BTreeAdopter adoptor = btfactory.getBtree(strTableName,
 					indexedColumns.get(i));

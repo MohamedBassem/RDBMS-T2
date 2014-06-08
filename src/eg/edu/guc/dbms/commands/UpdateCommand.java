@@ -93,7 +93,7 @@ public class UpdateCommand implements Command {
 		ArrayList<String> indexedColumns = properties
 				.getIndexedColumns(tableName);
 		ArrayList<String> pointers = select.getResultPointers();
-		ArrayList<HashMap<String, String>> results = select.getResults();
+		List<HashMap<String, String>> results = select.getResult();
 		for (int i = 0; i < indexedColumns.size(); i++) {
 			BTreeAdopter adoptor = btfactory.getBtree(tableName,
 					indexedColumns.get(i));

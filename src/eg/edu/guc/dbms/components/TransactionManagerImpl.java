@@ -51,9 +51,9 @@ public class TransactionManagerImpl implements TransactionManager {
 		
 		@Override
 		public void onPostExecute(List<HashMap<String, String>> results) {
-			
+
 			if(results == null) return;
-			
+
 			for(HashMap<String, String> result : results){
 				print(result);
 			}
@@ -125,8 +125,7 @@ public class TransactionManagerImpl implements TransactionManager {
 	
 	public static void main(String[] args) {
 		
-		
-		
+				
 		
 	}
 	
