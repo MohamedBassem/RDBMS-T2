@@ -157,6 +157,7 @@ public class SelectCommand implements Command {
 			// DO NOTHING
 		}else{
 			this.resultPointers = partialRecords.get(0);
+			System.out.println(partialRecords);
 			for(int i=1;i<partialRecords.size();i++){
 				if(strOperator.equals("AND")){
 					this.resultPointers = intersect(this.resultPointers,partialRecords.get(i));
@@ -193,7 +194,6 @@ public class SelectCommand implements Command {
 
 	private void convertPointers() throws DBEngineException {
 //		this.results = new ArrayList< HashMap<String, String> >();
-		
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
 			

@@ -74,12 +74,12 @@ public class TransactionManagerImpl implements TransactionManager {
 	};
 	
 	
-	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager) {
+	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager, BTreeFactory btree, Properties properties, CSVReader reader2) {
 		//this.bufferManager 	= bufferManager;
 		this.logManager 	= logManager;
-		this.reader = new CSVReader();
-		this.properties = new Properties(reader);
-		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
+	
+		this.properties = properties;
+		this.bTreeFactory = btree;
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
 				properties.getMaximumUsedBufferSlots(), false);

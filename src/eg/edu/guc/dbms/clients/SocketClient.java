@@ -16,19 +16,21 @@ public class SocketClient {
 	public static void main(String[] args) throws IOException {
 		
 		ServerSocket server = new ServerSocket(2698);
-		Socket socket = server.accept();
-		TransactionManagerImpl transaction = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-		final Client client = new Client(socket, transaction);
-		transaction.setCallBack(new TransactionCallbackInterface() {
+		while (true) {
+			Socket socket = server.accept();
+			TransactionManagerImpl transaction = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+			final Client client = new Client(socket, transaction);
+			transaction.setCallBack(new TransactionCallbackInterface() {
 			
-			@Override
-			public void onPostExecute(List<HashMap<String, String>> results) {
+				@Override
+				public void onPostExecute(List<HashMap<String, String>> results) {
 				for (HashMap<String, String> h : results) {
 					client.write(h.toString());
 				}
 			}
-		});
-
+			});
+			client.start();
+		}
 		
 
 	}
