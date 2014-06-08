@@ -8,9 +8,4 @@ public class Select extends PhysicalPlanTree{
 		return Operation.SELECT;
 	}
 
-	public String getOperator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

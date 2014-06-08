@@ -69,7 +69,7 @@ public class CreateIndex implements Command {
 		SelectCommand select = new SelectCommand(factory, reader, properties,
 				bufferManager, tableName, null, null,transactionId);
 		select.execute();
-		ArrayList<HashMap<String, String>> rows = select.getResults();
+		List<HashMap<String, String>> rows = select.getResult();
 		ArrayList<String> pointers = select.getResultPointers();
 
 		for (int i = 0; i < rows.size(); i++) {

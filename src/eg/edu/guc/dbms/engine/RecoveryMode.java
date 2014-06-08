@@ -93,7 +93,7 @@ public class RecoveryMode {
 				this.reader, properties, bufferManager, strTable,
 				htblColNameValue, strOperator, transactionId);
 		selectCommand.execute();
-		Iterator<HashMap<String, String>> results = selectCommand.getResults()
+		Iterator<HashMap<String, String>> results = selectCommand.getResult()
 				.iterator();
 		if (results.hasNext() == false) {
 			return null;
@@ -116,7 +116,8 @@ public class RecoveryMode {
 			HashMap<String, String> htblColNameValue, String strOperator,
 			HashMap<String, String> colValue) throws IOException,
 			DBEngineException {
-		UpdateCommand updateCommand = new UpdateCommand(bTreeFactory, reader, properties, strTableName, htblColNameValue, strOperator, 
+		UpdateCommand updateCommand = new UpdateCommand(bTreeFactory, reader,
+				properties, strTableName, htblColNameValue, strOperator,
 				colValue, bufferManager, transactionId, logManager);
 		updateCommand.execute();
 		bufferManager.runFlusher();

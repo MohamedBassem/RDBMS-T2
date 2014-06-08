@@ -12,13 +12,13 @@ import eg.edu.guc.dbms.interfaces.Command;
 public class ProductCommand implements Command {
 	private List<HashMap<String, String>> relation1;
 	private List<HashMap<String, String>> relation2;
-	private List<HashMap<String, String>> result;
+	private List<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>();
 
 	public ProductCommand(List<HashMap<String, String>> relation1,
 			List<HashMap<String, String>> relation2) {
 		this.relation1 = relation1;
 		this.relation2 = relation2;
-		result = new ArrayList<HashMap<String, String>>();
+		 
 	}
 
 	@Override

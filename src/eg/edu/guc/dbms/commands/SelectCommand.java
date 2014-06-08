@@ -49,6 +49,7 @@ public class SelectCommand implements Command {
 		this.properties = properties;
 		this.bufferManager = bufferManager;
 		this.transactionId = transactionId;
+		this.results = new ArrayList<HashMap<String, String>>();
 	}
 	
 	private ArrayList<String> intersect(ArrayList<String> resultsPointer,
@@ -97,7 +98,7 @@ public class SelectCommand implements Command {
 
 	private void validate() throws DBEngineException {
 		
-		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
+		if(strOperator != null && !strOperator.equals("AND") && !strOperator.equals("OR")){
 			throw new DBEngineException("Unknown Opertator");
 		}
 		
@@ -169,7 +170,7 @@ public class SelectCommand implements Command {
 	private void selectAll() throws DBEngineException {
 		
 		this.resultPointers = new ArrayList<String>();
-		this.results = new ArrayList< HashMap<String, String> >();
+//		this.results = new ArrayList< HashMap<String, String> >();
 		
 		int tablePages = bufferManager.getLastPageIndex(this.tableName);
 		
@@ -190,7 +191,7 @@ public class SelectCommand implements Command {
 	}
 
 	private void convertPointers() throws DBEngineException {
-		this.results = new ArrayList< HashMap<String, String> >();
+//		this.results = new ArrayList< HashMap<String, String> >();
 		
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
@@ -205,14 +206,10 @@ public class SelectCommand implements Command {
 		return this.resultPointers;
 	}
 	
-	public ArrayList<HashMap<String, String> > getResults(){
-		return this.results;
-	}
 
 	@Override
 	public List<HashMap<String, String>> getResult() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.results;
 	}
 
 }
