@@ -82,7 +82,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		this.bTreeFactory = btree;
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
-				properties.getMaximumUsedBufferSlots(), false);
+				properties.getMaximumUsedBufferSlots(), true,bTreeFactory);
 		this.bufferManager.init();
 		
 	}
