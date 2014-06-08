@@ -49,7 +49,6 @@ public class BTreeFactory implements BtreeFactoryInterface {
 			recman.setNamedObject( tableName+"."+columnName , tree.getRecid() );
 			BTreeAdopter ret = new BTreeAdopter(tree,this);
 			inMemoryTrees.add(ret);
-			System.out.println("ankoooooosh");
 			saveAll();
 			return ret;
 		} catch (IOException e) {

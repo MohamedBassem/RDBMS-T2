@@ -48,7 +48,6 @@ public class TransactionManagerImpl implements TransactionManager {
 		this.reader = new CSVReader();
 		this.properties = new Properties(reader);
 		this.bTreeFactory = new BTreeFactory(properties.getBTreeN());
-		System.out.println(properties.getBTreeN());
 		this.bufferManager = new BufferManager(
 				properties.getMinimumEmptyBufferSlots(),
 				properties.getMaximumUsedBufferSlots(), false);
@@ -67,8 +66,8 @@ public class TransactionManagerImpl implements TransactionManager {
 	public static void main(String[] args) {
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
 		SQLParser parser = SQLParserImpl.getInstance();
-		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
-		parser.parseSQLStatement("SELECT * FROM Gamdeen");
+		parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
+		//parser.parseSQLStatement("SELECT * FROM Gamdeen");
 		PhysicalPlanTree tree = parser.getParseTree();
 		tr.executeTrasaction(tree);
 		//parser.parseSQLStatement("create table Users (name STRING PRIMARY KEY, age INT)");
