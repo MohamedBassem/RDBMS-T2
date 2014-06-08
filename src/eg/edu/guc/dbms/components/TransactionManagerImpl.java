@@ -1,5 +1,10 @@
 package eg.edu.guc.dbms.components;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,9 +101,9 @@ public class TransactionManagerImpl implements TransactionManager {
 	
 	public static void runConcurrently(String sqlFile){
 		final TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
-		SQLParser parser = SQLParserImpl.getInstance();
+		final SQLParser parser = SQLParserImpl.getInstance();
 		String[] sqlStatments = sqlFile.trim().split(";");
-		Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
+		final Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
 		for(String sqlStatment : sqlStatments){
 			parser.parseSQLStatement(sqlStatment);
 			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
@@ -115,18 +120,35 @@ public class TransactionManagerImpl implements TransactionManager {
 				
 				@Override
 				public void run() {
-					
+					tr.executeTrasaction(parser.getParseTree());
+					if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
+						semaphore.release(THREAD_POOL_SIZE);
+					}else{
+						semaphore.release();
+					}
 				}
 			}).start();
 			
-			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
-				semaphore.release(THREAD_POOL_SIZE);
-			}else{
-				semaphore.release();
-			}
+			
 		}
 	}
 
+	public static void main(String[] args) throws IOException {
+		if(args.length == 2){
+			BufferedReader reader = new BufferedReader(new FileReader(new File(args[1])));
+			String res = "";
+			while(true){
+				String line = reader.readLine();
+				if(line == null) break;
+				res += line;
+			}
+			reader.close();
+			runConcurrently(res);
+		}else{
+			
+		}	
+		
+	}
 	
 	public static PhysicalPlanTree createTable() {
 //		Create t = new Create();
@@ -180,7 +202,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator(),properties);
 		} else if (tree.getOperation() == Operation.DELETE) {
 			Delete node = (Delete) tree;
-			step = new DeleteCommand(node.getTableName(), node.getColValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
+			step = new DeleteCommand(node.getTableName(), node.getColWhereValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
 		}
 		steps.add(step);
 	}
