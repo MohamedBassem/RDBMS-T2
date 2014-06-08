@@ -93,6 +93,7 @@ public class SelectCommand implements Command {
 			mergeResults();
 			convertPointers();
 		}
+		System.out.println("3abod" + results);
 		
 	}
 

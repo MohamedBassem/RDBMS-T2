@@ -67,24 +67,44 @@ public abstract class PhysicalPlanTree {
 	}
 	
 	public String getOperator() {
-		if(getWhereClause().contains("AND"))
+		if(getWhereClause() != null && getWhereClause().contains("AND"))
 			return "AND";
-		else if(getWhereClause().contains("OR"))
+		else if(getWhereClause() != null && getWhereClause().contains("OR"))
 			return "OR";
 		return null;
 	}
 	
 	public HashMap<String, String> getColWhereValues() {
-		String[] sets = getWhereClause().split(getOperator());
+		if (getWhereClause() == null) {
+			return null;
+		}
+		String[] sets = new String[1];
+		if (getOperator() == null) {
+			sets[0] = getWhereClause();
+		} else {
+			sets = getWhereClause().split(getOperator());
+		}
+		
 		for(int i = 0; i < sets.length; i++)
 			sets[i] = sets[i].trim();
 		HashMap<String, String> result = new HashMap<String, String>();
 		for(int i = 0; i < sets.length; i++) {
 			String[] where = sets[i].split("=");
-			result.put(where[0], where[1]);
+			result.put(trimEnd(where[0]), trimEnd(where[1]));
 		}
-		return result;
+		return result.size() == 0? null: result;
 	}
 
+	
+	private String trimEnd(String str) {
+		int count = 0;
+		for (int i = str.length() - 1; i >= 0; i--) {
+			if (str.charAt(i) != ' ') {
+				break;
+			}
+			count++;
+		}
+		return str.substring(0, str.length() - count);
+	}
 
 }

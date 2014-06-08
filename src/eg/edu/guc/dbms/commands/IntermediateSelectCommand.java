@@ -34,7 +34,7 @@ public class IntermediateSelectCommand implements Command {
 		if (strOperator==null || strOperator.equals("AND")) {
 			selectAndOperator();
 		}
-		if (strOperator.equals("OR")) {
+		if (strOperator==null ||strOperator.equals("OR")) {
 			selectOrOperator();
 		}
 		

@@ -59,11 +59,13 @@ public class DeleteCommand implements Command {
 		select = new SelectCommand(this.btfactory, this.reader,
 				this.properties, this.bufferManager, this.strTableName,
 				this.htblColNameValue, this.strOperator, transactionId);
+		
 
 	}
 
 	public void execute() throws DBEngineException {
 		select.execute();
+		System.out.println("sss "+select.getResult());
 		this.deleteFromTable();
 		try {
 			this.deleteFromTree();

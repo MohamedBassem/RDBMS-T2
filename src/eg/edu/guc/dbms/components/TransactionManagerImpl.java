@@ -142,8 +142,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			runConcurrently(res);
 		}else{
 			
-		}
-				
+		}	
 		
 	}
 	
@@ -199,7 +198,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator(),properties);
 		} else if (tree.getOperation() == Operation.DELETE) {
 			Delete node = (Delete) tree;
-			step = new DeleteCommand(node.getTableName(), node.getColValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
+			step = new DeleteCommand(node.getTableName(), node.getColWhereValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
 		}
 		steps.add(step);
 	}
