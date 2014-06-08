@@ -13,12 +13,12 @@ public class CreateIndexStatementParser {
 		String columnName = statement.getColumnNameList().getOrderByItem(0).getSortKey().toString();
 		Index result = new Index(tableName, columnName);
 
-		System.out.println("Index name: " + indexName);
-        System.out.println("Table name: " + tableName);
+//		System.out.println("Index name: " + indexName);
+//        System.out.println("Table name: " + tableName);
         TOrderByItemList list = statement.getColumnNameList();
         if (list != null){
             for(int i=0;i<list.size();i++){
-                System.out.println("\tColumn name:" + list.getOrderByItem(i).getSortKey().toString());
+//                System.out.println("\tColumn name:" + list.getOrderByItem(i).getSortKey().toString());
             }
         }
         

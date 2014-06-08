@@ -11,8 +11,8 @@ public class CreateTableStatementParser {
 	public static PhysicalPlanTree parse(TCreateTableSqlStatement statement) {
 		String tableName = statement.getTargetTable().toString();
 		Create result = new Create(tableName);
-		System.out.println("Table Name:" + tableName);
-        System.out.println("Columns:");
+//		System.out.println("Table Name:" + tableName);
+//        System.out.println("Columns:");
         TColumnDefinition column;
         for(int i=0;i<statement.getColumnList().size();i++){
             column = statement.getColumnList().getColumn(i);
@@ -20,15 +20,15 @@ public class CreateTableStatementParser {
             String columnType = column.getDatatype().toString();
             result.setColValue(columnName, columnType);
             
-            System.out.println("\t" + columnName + ": " + columnType);
+//            System.out.println("\t" + columnName + ": " + columnType);
             if (column.getDefaultExpression() != null){
-                System.out.println("\tDefault:"+column.getDefaultExpression().toString());
+//                System.out.println("\tDefault:"+column.getDefaultExpression().toString());
             }
             if (column.isNull()){
-                System.out.println("\tNull: yes");
+//                System.out.println("\tNull: yes");
             }
             if (column.getConstraints() != null){
-                System.out.println("\tInline constraints:");
+//                System.out.println("\tInline constraints:");
                 for(int j=0;j<column.getConstraints().size();j++){
                 	String constraint = column.getConstraints().getConstraint(j).toString();
                 	if(constraint.equals("PRIMARY KEY"))
@@ -36,15 +36,15 @@ public class CreateTableStatementParser {
                     printConstraint(column.getConstraints().getConstraint(j),false);
                 }
             }
-            System.out.println("");
+//            System.out.println("");
         }
 
         if(statement.getTableConstraints().size() > 0){
-            System.out.println("\tOutline Constraints:");
+//            System.out.println("\tOutline Constraints:");
             for(int i=0;i<statement.getTableConstraints().size();i++){
             	//TODO Add regex for PRIMARY KEY(col1, col2, ...) constraint ?
               printConstraint(statement.getTableConstraints().getConstraint(i), true);
-              System.out.println("");
+//              System.out.println("");
             }
         }
 		return result;
