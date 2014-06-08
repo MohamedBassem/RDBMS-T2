@@ -70,6 +70,7 @@ public class TransactionManagerImpl implements TransactionManager {
 		SQLParser parser = SQLParserImpl.getInstance();
 		//parser.parseSQLStatement("CREATE TABLE Gamdeen (name STRING PRIMARY KEY, gamadan INT)");
 		//parser.parseSQLStatement("INSERT INTO Gamdeen(name, gamadan) VALUES(Alaa,4)");
+		//parser.parseSQLStatement("SELECT * FROM Gamdeen WHERE name = 'Alaa'");
 		parser.parseSQLStatement("DELETE FROM Gamdeen WHERE name = 'Alaa'");
 		PhysicalPlanTree tree = parser.getParseTree();
 		tr.executeTrasaction(tree);
@@ -133,7 +134,7 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new IntermediateSelectCommand(previousResult, node.getColValues(), node.getOperator(),properties);
 		} else if (tree.getOperation() == Operation.DELETE) {
 			Delete node = (Delete) tree;
-			step = new DeleteCommand(node.getTableName(), node.getColValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
+			step = new DeleteCommand(node.getTableName(), node.getColWhereValues(), node.getOperator(), reader, properties, bTreeFactory, bufferManager, transaction.getId());
 		}
 		steps.add(step);
 	}

@@ -86,10 +86,11 @@ public class LogManagerImpl implements LogManager {
 	public void recordDelete(String strTransID, String tableName,
 			int pageNumber, String strKeyValue,
 			HashMap<String, String> htblColValues) throws IOException {
+		String colVal = htblColValues == null? "" : htblColValues.toString();
 		// <T1,D,Student4,pageNumber,htblColValues.objectId>
 		// Transcation1 : Insert x into Student page 4 with these attributes
 		String result = "<" + strTransID + ",D," + tableName + "," + pageNumber + ","
-				+ strKeyValue + "," + htblColValues.toString() + ">\n";
+				+ strKeyValue + "," + colVal + ">\n";
 		bfr.write(result);
 
 	}
