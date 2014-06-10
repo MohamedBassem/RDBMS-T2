@@ -8,3 +8,6 @@ RDBMS (Relational Database Management System) implemented in java and supports t
 - Clone the forked repo.
 - Navigate to the repo root folder.
 - Run `make` to reset the database to its intial state.
+- Run SocketClient to run the Server
+- Connect using any client (telnet) to the port 2698. and start making SQL queries. 
+Each query must be followed with ; and to flush the queries to server to run write END or end.

@@ -45,12 +45,13 @@ public class Client extends Thread {
 		String line = "";
 		try {
 			while (true) {
+				result = "";
 				line = br.readLine();
 				while (!line.toLowerCase().equals("end")) {
 				result += line;
 				line = br.readLine();
 				}
-				transaction.runConcurrently(result);
+				TransactionManagerImpl.runConcurrently(result);
 			}
 			
 			

@@ -43,10 +43,15 @@ public class Transaction extends Thread {
 		try {
 			logManager.recordStart("" + getId());
 			List< HashMap<String, String> > results = null;
+			int i = 0;
 			for (Command step : steps) {
 				try {
 					step.execute();
 					results = step.getResult();
+					if (i > 0)
+						System.out.println(step.getClass().getName() + steps.get(i - 1).getResult());
+					i++;
+					System.out.println(step.getResult());
 				} catch (IOException e) {
 					e.printStackTrace();
 					break;

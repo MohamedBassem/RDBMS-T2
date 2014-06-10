@@ -24,6 +24,10 @@ public class ProjectCommand implements Command {
 
 	@Override
 	public void execute() throws DBEngineException, IOException {
+		if (projectionColumn.size() == 1 && projectionColumn.get(0).equals("*")) {
+			result = source;
+			return;
+		}
 		for (int i = 0; i < source.size(); i++) {
 			Set<String> s = source.get(i).keySet();
 			HashMap<String, String> record = new HashMap<String, String>();

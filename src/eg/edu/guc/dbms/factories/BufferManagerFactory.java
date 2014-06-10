@@ -1,12 +1,22 @@
 package eg.edu.guc.dbms.factories;
 
 import eg.edu.guc.dbms.components.BufferManager;
+import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeFactory;
 
 public class BufferManagerFactory {
 
-	public static BufferManager getInstance(BTreeFactory btree) {
-		return new BufferManager(5, 10, true, btree);
+	static BufferManager bufferManager;
+	
+	
+	public static BufferManager getInstance(BTreeFactory btree, Properties properties) {
+		if (bufferManager == null) {
+			bufferManager = new BufferManager(
+					properties.getMinimumEmptyBufferSlots(),
+					properties.getMaximumUsedBufferSlots(), true, btree);
+			bufferManager.init();
+		}
+		return bufferManager;
 	}
 	
 }

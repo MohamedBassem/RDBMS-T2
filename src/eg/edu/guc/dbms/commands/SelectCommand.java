@@ -196,7 +196,6 @@ public class SelectCommand implements Command {
 //		this.results = new ArrayList< HashMap<String, String> >();
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
-			
 			Page page = bufferManager.read(transactionId, row[0] , Integer.parseInt(row[1]) , false );
 			Tuple record = page.get(Integer.parseInt(row[2]));
 			this.results.add(record);
