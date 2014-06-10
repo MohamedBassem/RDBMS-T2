@@ -18,12 +18,15 @@ public class SocketClient {
 		ServerSocket server = new ServerSocket(2698);
 		while (true) {
 			Socket socket = server.accept();
-			TransactionManagerImpl transaction = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
+			TransactionManagerImpl transaction = null;
 			final Client client = new Client(socket, transaction);
-			transaction.setCallBack(new TransactionCallbackInterface() {
-			
+			TransactionManagerImpl.setCallBack(new TransactionCallbackInterface() {
 				@Override
 				public void onPostExecute(List<HashMap<String, String>> results) {
+				if (results == null) {
+					client.write("OK");
+					return;
+				}
 				for (HashMap<String, String> h : results) {
 					client.write(h.toString());
 				}

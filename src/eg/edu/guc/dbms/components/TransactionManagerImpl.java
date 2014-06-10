@@ -54,40 +54,21 @@ public class TransactionManagerImpl implements TransactionManager {
 	private CSVReader reader;
 	private Properties properties;
 	
-	private TransactionCallbackInterface transactionCallBack = new TransactionCallbackInterface() {
-		
-		@Override
-		public void onPostExecute(List<HashMap<String, String>> results) {
-
-			if(results == null) return;
-
-			for(HashMap<String, String> result : results){
-				print(result);
-			}
-			
-		}
-
-		private void print(HashMap<String, String> result) {
-			
-			if(result == null) return;
-			
-			System.out.println(result);
-		}
-	};
+	private static TransactionCallbackInterface transactionCallBack;
 	
 	
 	public TransactionManagerImpl(BufferManager bufferManager, LogManager logManager, BTreeFactory btree, Properties properties, CSVReader reader2) {
 		//this.bufferManager 	= bufferManager;
 		this.logManager 	= logManager;
-	
+		this.reader 		= reader2;
 		this.properties = properties;
 		this.bTreeFactory = btree;
 		this.bufferManager = BufferManagerFactory.getInstance(btree, properties);
 
 	}
 	
-	public void setCallBack(TransactionCallbackInterface callBack) {
-		this.transactionCallBack = callBack;
+	public static void setCallBack(TransactionCallbackInterface callBack) {
+		transactionCallBack = callBack;
 	}
 	
 	@Override
@@ -102,36 +83,15 @@ public class TransactionManagerImpl implements TransactionManager {
 		TransactionManagerImpl tr = (TransactionManagerImpl) TransactionManagerFactory.getInstance();
 		SQLParser parser = SQLParserImpl.getInstance();
 		String[] sqlStatments = sqlFile.trim().split(";");
-//		Semaphore semaphore = new Semaphore(THREAD_POOL_SIZE);
 		for(String sqlStatment : sqlStatments){
 			
 			if(!parser.parseSQLStatement(sqlStatment)){
 				System.out.println("ERROR" + parser.getErrorMessage());
 				continue;
 			}
-//			System.out.println(sqlStatment);
-//			if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
-//				try {
-//					semaphore.acquire(THREAD_POOL_SIZE);
-//				} catch (InterruptedException e) {}
-//			}else{
-//				try {
-//					semaphore.acquire();
-//				} catch (InterruptedException e) {}
-//			}
-//			
-//			new Thread(new Runnable() {
-//				
-//				@Override
-//				public void run() {
+
 			tr.executeTrasaction(parser.getParseTree());
-//					if(parser.getParseTree().getOperation() == Operation.CREATE_TABLE || parser.getParseTree().getOperation() == Operation.INDEX ){
-//						semaphore.release(THREAD_POOL_SIZE);
-//					}else{
-//						semaphore.release();
-//					}
-//				}
-//			}).start();
+
 						
 		}
 	}
@@ -153,17 +113,6 @@ public class TransactionManagerImpl implements TransactionManager {
 		
 	}
 	
-	public static PhysicalPlanTree createTable() {
-//		Create t = new Create();
-//		t.setKeyColName("id");
-//		HashMap<String, String> types = new HashMap<String, String>();
-//		types.put("name", "VARCHAR");
-//		types.put("id", "INT");
-//		t.setTableColRefs(new HashMap<String, String>());
-//		t.setTableName("Users");
-//		t.setTableTypes(types);
-		return null;
-	}
 	
 	
 	private void treeToSteps(PhysicalPlanTree tree, ArrayList<Command> steps,Transaction transaction) {
@@ -192,7 +141,6 @@ public class TransactionManagerImpl implements TransactionManager {
 			step = new UpdateCommand(bTreeFactory, reader, properties, node.getTableName(), node.getColWhereValues(), node.getOperator(), node.getColValues(), bufferManager, transaction.getId());
 		} else if (tree.getOperation() == Operation.PROJECT) {
 			Project node = (Project) tree;
-			//TODO
 			step = new ProjectCommand(steps.get(steps.size() - 1).getResult(), node.getProjectionColumns());
 		} else if (tree.getOperation() == Operation.PRODUCT) {
 			Product node = (Product) tree;

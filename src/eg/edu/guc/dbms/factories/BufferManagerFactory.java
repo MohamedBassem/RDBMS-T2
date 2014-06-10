@@ -13,7 +13,7 @@ public class BufferManagerFactory {
 		if (bufferManager == null) {
 			bufferManager = new BufferManager(
 					properties.getMinimumEmptyBufferSlots(),
-					properties.getMaximumUsedBufferSlots(), false, btree);
+					properties.getMaximumUsedBufferSlots(), true, btree);
 			bufferManager.init();
 		}
 		return bufferManager;
