@@ -3,10 +3,10 @@ package eg.edu.guc.dbms.tests;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 
-import eg.edu.guc.dbms.engine.DBApp;
+import eg.edu.guc.dbms.engine.RecoveryMode;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
 
@@ -17,7 +17,7 @@ public class DBAppTest {
 	 * @param args
 	 */
 	public static void main(String[] args) throws DBEngineException {
-		DBApp dbEngine = new DBApp();
+		RecoveryMode dbEngine = new RecoveryMode();
 		//System.out.println(dbEngine.properties.getData());
 		
 		//testEngine_Meta(dbEngine); //PASSED
@@ -25,7 +25,7 @@ public class DBAppTest {
 		//testEngine_MetaDuplicate(); //PASSED
 		// testEngine_MetaRefrence(); //PASSED
 		// --------------------------------
-		//testEngine_Insert(dbEngine); //PASSED
+		testEngine_Insert(dbEngine); //PASSED
 		//testEngine_DublicateIDInsert(dbEngine);//PASSED
 		//testEngine_NonExistingColumnInsert(dbEngine); //PASSED
 		// -------------------------------------
@@ -46,14 +46,14 @@ public class DBAppTest {
      /*
       * This method should execute the insertion and the pages should show the inserted data
       */
-	public static void testEngine_Insert(DBApp dbEngine) {
+	public static void testEngine_Insert(RecoveryMode dbEngine) {
 		
 
 		try {
 			
 			String tableName = "Department";
 
-			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue_ = new HashMap<String, String>();
 			htblColNameValue_.put("Name", "Accounting");
 			htblColNameValue_.put("Location", "test");
 			dbEngine.insertIntoTable(tableName, htblColNameValue_);
@@ -73,7 +73,7 @@ public class DBAppTest {
 			
 			tableName = "Employee";
 
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
 			htblColNameValue.put("Name", "Stevenson Morris");
 			htblColNameValue.put("Dept", "Software");
@@ -121,14 +121,14 @@ public class DBAppTest {
 	/*
 	 * This method should throws an exception because there are duplicate entries with the same primary key 
 	 */
-	public static void testEngine_DublicateIDInsert(DBApp dbEngine) {
+	public static void testEngine_DublicateIDInsert(RecoveryMode dbEngine) {
 		
 
 		try {
 			
 			String tableName = "Department";
 
-			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue_ = new HashMap<String, String>();
 			htblColNameValue_.put("Name", "Accounting");
 			htblColNameValue_.put("Location", "test");
 			dbEngine.insertIntoTable(tableName, htblColNameValue_);
@@ -147,7 +147,7 @@ public class DBAppTest {
 			
 			tableName = "Employee";
 
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
 			htblColNameValue.put("Name", "Stevenson Morris");
 			htblColNameValue.put("Dept", "Software");
@@ -184,14 +184,14 @@ public class DBAppTest {
 	 * This method should throw an exception because the insertion consists of
 	 *  a column name "End_Date" does not exist
 	 */
-	public static void testEngine_NonExistingColumnInsert(DBApp dbEngine) {
+	public static void testEngine_NonExistingColumnInsert(RecoveryMode dbEngine) {
 		// Test
 
 		try {
 			
 			String tableName = "Department";
 
-			Hashtable<String, String> htblColNameValue_ = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue_ = new HashMap<String, String>();
 			htblColNameValue_.put("Name", "Accounting");
 			htblColNameValue_.put("Location", "test");
 			dbEngine.insertIntoTable(tableName, htblColNameValue_);
@@ -210,7 +210,7 @@ public class DBAppTest {
 			
 			tableName = "Employee";
 
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 			htblColNameValue.put("ID", (new Integer(1)).toString());
 			htblColNameValue.put("Name", "Stevenson Morris");
 			htblColNameValue.put("Dept", "Software");
@@ -234,12 +234,12 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the records that have the 
 	 * Dept value equals IT or Accounting; this entries should have a deletion marker 
 	 */
-	public static void testEngine_DeleteOR(DBApp dbEngine) {
+	public static void testEngine_DeleteOR(RecoveryMode dbEngine) {
 		
 
 		try {
 			String tableName = "Employee";
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 			//htblColNameValue.put("Dept", "IT");
 			htblColNameValue.put("Dept", "Accounting");
 
@@ -254,14 +254,14 @@ public class DBAppTest {
 	 * This method should result on the deletions of all the record that has 
 	 * this two conditions satisfied and this record should have a deletion marker. 
 	 */
-	public static void testEngine_DeleteAND(DBApp dbEngine) {
+	public static void testEngine_DeleteAND(RecoveryMode dbEngine) {
 		
 
 		try {
 			String tableName = "Employee";
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
-			htblColNameValue.put("Name", "John Smith");
-			htblColNameValue.put("Dept", "Accounting");
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
+			htblColNameValue.put("Name", "alaa");
+			htblColNameValue.put("ID", "3");
 
 			dbEngine.deleteFromTable(tableName, htblColNameValue, "AND");
 
@@ -275,11 +275,11 @@ public class DBAppTest {
    *This method should print all the rows numbers of the records that 
    *match the selection 
    */
-	public static void testEngine_Select(DBApp dbEngine) {
+	public static void testEngine_Select(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
-			Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 			htblColNameValue.put("Dept", "Accounting");
 			htblColNameValue.put("ID", "3");
 			htblColNameValue.put("Name", "Adam Mathew");
@@ -287,7 +287,7 @@ public class DBAppTest {
 			Iterator iter = dbEngine.selectFromTable(tableName,
 					htblColNameValue, "OR");
 			while (iter.hasNext()) {
-				Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+				HashMap<String, String> obj = (HashMap<String, String>) iter.next();
 				System.out.println(obj);
 			}
 
@@ -300,11 +300,11 @@ public class DBAppTest {
 	   *This method should print no records found since no
 	   * records matched the selection
 	   */
-		public static void testEngine_SelectNoRecordsFound(DBApp dbEngine) {
+		public static void testEngine_SelectNoRecordsFound(RecoveryMode dbEngine) {
 
 			try {
 				String tableName = "Employee";
-				Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+				HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 				htblColNameValue.put("Dept", "Management");
 
 				Iterator iter = dbEngine.selectFromTable(tableName,
@@ -315,7 +315,7 @@ public class DBAppTest {
 				}
 				
 				while (iter.hasNext()) {
-					Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+					HashMap<String, String> obj = (HashMap<String, String>) iter.next();
 					System.out.println(obj);
 				}
 				
@@ -328,11 +328,11 @@ public class DBAppTest {
 		   *This method should throw an exception because the selection 
 		   *is from a table "Employer" that does not exist.
 		   */
-			public static void testEngine_SelectNoTable(DBApp dbEngine) {
+			public static void testEngine_SelectNoTable(RecoveryMode dbEngine) {
 
 				try {
 					String tableName = "Employer";
-					Hashtable<String, String> htblColNameValue = new Hashtable<String, String>();
+					HashMap<String, String> htblColNameValue = new HashMap<String, String>();
 					htblColNameValue.put("Dept", "Management");
 
 					Iterator iter = dbEngine.selectFromTable(tableName,
@@ -354,7 +354,7 @@ public class DBAppTest {
     /*
      * This method should create an index on the Dept attribute
      */
-	public static void testEngine_CreateIndex(DBApp dbEngine) {
+	public static void testEngine_CreateIndex(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -369,7 +369,7 @@ public class DBAppTest {
 	 * the requested index is on a variable that does not exist
 	 */
 	
-	public static void testEngine_NonExistingColumnCreateIndex(DBApp dbEngine) {
+	public static void testEngine_NonExistingColumnCreateIndex(RecoveryMode dbEngine) {
 
 		try {
 			String tableName = "Employee";
@@ -384,16 +384,16 @@ public class DBAppTest {
 	 * This method should create two tables Employee and Department where the Metadata
 	 * file should hold all the information on these tables.
 	 */
-	public static void testEngine_Meta(DBApp dbEngine) {
+	public static void testEngine_Meta(RecoveryMode dbEngine) {
 		
 
 		try {
-			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameType = new HashMap<String, String>();
 			//htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Location", "java.lang.String");
 
-			Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameRefs = new HashMap<String, String>();
 			//htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Location", "null");
@@ -402,13 +402,13 @@ public class DBAppTest {
 					htblColNameRefs, "Name");
 			
 			String tableName = "Employee";
-			htblColNameType = new Hashtable<String, String>();
+			htblColNameType = new HashMap<String, String>();
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Dept", "java.lang.String");
 			htblColNameType.put("Start_Date", "java.util.Date");
 
-			htblColNameRefs = new Hashtable<String, String>();
+			htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Dept", "Department.Name");
@@ -433,15 +433,15 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
 			
-			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameType = new HashMap<String, String>();
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Location", "java.lang.String");
 
-			Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Location", "null");
@@ -450,13 +450,13 @@ public class DBAppTest {
 					htblColNameRefs, "ID");
 			
 			String tableName = "Employee";
-			htblColNameType = new Hashtable<String, String>();
+			htblColNameType = new HashMap<String, String>();
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Dept", "java.lang.String");
 			htblColNameType.put("Start_Date", "java.util.Date");
 
-			htblColNameRefs = new Hashtable<String, String>();
+			htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Dept", "Department.ID");
@@ -479,16 +479,16 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
-			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameType = new HashMap<String, String>();
 
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Location", "java.lang.String");
 
 			
-			Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameRefs = new HashMap<String, String>();
 
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
@@ -498,13 +498,13 @@ public class DBAppTest {
 					htblColNameRefs, "ID");
 			
 			String tableName = "Employee";
-			htblColNameType = new Hashtable<String, String>();
+			htblColNameType = new HashMap<String, String>();
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Dept", "java.lang.String");
 			htblColNameType.put("Start_Date", "java.util.Date");
 
-			htblColNameRefs = new Hashtable<String, String>();
+			htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Dept", "Department.ID");
@@ -529,18 +529,18 @@ public class DBAppTest {
 		
 
 		try {
-			DBApp dbEngine = new DBApp();
+			RecoveryMode dbEngine = new RecoveryMode();
 			
 			
 			// Second table
-			Hashtable<String, String> htblColNameType = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameType = new HashMap<String, String>();
 
 		
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Location", "java.lang.String");
 
-			Hashtable<String, String> htblColNameRefs = new Hashtable<String, String>();
+			HashMap<String, String> htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Location", "null");
@@ -549,14 +549,14 @@ public class DBAppTest {
 					htblColNameRefs, "ID");
 			
 			String tableName = "Employee";
-			htblColNameType = new Hashtable<String, String>();
+			htblColNameType = new HashMap<String, String>();
 			
 			htblColNameType.put("ID", "java.lang.Integer");
 			htblColNameType.put("Name", "java.lang.String");
 			htblColNameType.put("Dept", "java.lang.String");
 			htblColNameType.put("Start_Date", "java.util.Date");
 
-			htblColNameRefs = new Hashtable<String, String>();
+			htblColNameRefs = new HashMap<String, String>();
 			htblColNameRefs.put("ID", "null");
 			htblColNameRefs.put("Name", "null");
 			htblColNameRefs.put("Dept", "Company.ID");
@@ -573,10 +573,10 @@ public class DBAppTest {
 		}
 	}
 	
-	public static void testEngine_SelectAll(DBApp dbEngine){
+	public static void testEngine_SelectAll(RecoveryMode dbEngine){
 		try {
 			String tableName = "Employee";
-			Hashtable<String, String> htblColNameValue = null;
+			HashMap<String, String> htblColNameValue = null;
 
 			Iterator iter = dbEngine.selectFromTable(tableName,
 					htblColNameValue, null);
@@ -586,7 +586,7 @@ public class DBAppTest {
 			}
 			
 			while (iter.hasNext()) {
-				Hashtable<String, String> obj = (Hashtable<String, String>) iter.next();
+				HashMap<String, String> obj = (HashMap<String, String>) iter.next();
 				System.out.println(obj);
 			}
 			

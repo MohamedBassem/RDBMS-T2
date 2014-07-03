@@ -8,13 +8,31 @@ import jdbm.btree.BTree;
 public class BTreeAdopter {
 	private BTree tree;
 	private BTreeFactory factory;
+	private String tableName;
+	private String colName;
 	
-	public BTreeAdopter(BTree tree,BTreeFactory factory) {
+	public BTreeAdopter(BTree tree,BTreeFactory factory, String tableName, String colName) {
 		this.tree = tree;
 		this.factory = factory;
+		this.tableName = tableName;
+		this.colName = colName;
 	}
 
-	 public Object insert( Object key, Object value)throws IOException{
+	
+	
+	 public String getTableName() {
+		return tableName;
+	}
+
+
+
+	public String getColName() {
+		return colName;
+	}
+
+
+
+	public Object insert( Object key, Object value)throws IOException{
 		ArrayList<String> values = new ArrayList<String>();
 		values.add((String)value);
 		Object returned = tree.insert(key, values, false);

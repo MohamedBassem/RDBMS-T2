@@ -32,8 +32,13 @@ public class BTreeFactory implements BtreeFactoryInterface {
 		
 		try {
 			long recid = this.recman.getNamedObject(tableName+"."+columnName);
+			for (BTreeAdopter adapt: inMemoryTrees) {
+				if (adapt.getTableName().equals(tableName) && adapt.getColName().equals(columnName)) {
+					return adapt;
+				}
+			}
 			BTree tree = BTree.load( recman, recid );
-			BTreeAdopter ret = new BTreeAdopter(tree,this);
+			BTreeAdopter ret = new BTreeAdopter(tree,this, tableName, columnName);
 			inMemoryTrees.add(ret);
 			return ret;
 		} catch (IOException e) {
@@ -45,10 +50,11 @@ public class BTreeFactory implements BtreeFactoryInterface {
 	public BTreeAdopter createTree(String tableName, String columnName) {
 		 BTree tree;
 		try {
-			tree = BTree.createInstance( recman, new StringComparator(),null,null,this.BPlusTreeN );
+			tree = BTree.createInstance(recman, new StringComparator(),null,null,this.BPlusTreeN );
 			recman.setNamedObject( tableName+"."+columnName , tree.getRecid() );
-			BTreeAdopter ret = new BTreeAdopter(tree,this);
+			BTreeAdopter ret = new BTreeAdopter(tree,this, tableName, columnName);
 			inMemoryTrees.add(ret);
+			saveAll();
 			return ret;
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -2,11 +2,16 @@ package eg.edu.guc.dbms.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
+import eg.edu.guc.dbms.components.BufferManager;
 import eg.edu.guc.dbms.exceptions.DBEngineException;
+import eg.edu.guc.dbms.helpers.Page;
+import eg.edu.guc.dbms.helpers.Tuple;
 import eg.edu.guc.dbms.interfaces.Command;
+import eg.edu.guc.dbms.transactions.Transaction;
 import eg.edu.guc.dbms.utils.CSVReader;
 import eg.edu.guc.dbms.utils.Properties;
 import eg.edu.guc.dbms.utils.btrees.BTreeAdopter;
@@ -17,12 +22,14 @@ public class SelectCommand implements Command {
 	BTreeFactory btfactory;
 	CSVReader reader;
 	String tableName;
-	Hashtable<String,String> htblColNameValue;
+	HashMap<String,String> htblColNameValue;
 	String strOperator;
 	Properties properties;
+	BufferManager bufferManager;
+	long transactionId;
 	
 	// The final arraylist of objects
-	ArrayList< Hashtable<String, String> > results;
+	ArrayList< HashMap<String, String> > results;
 	
 	// The arraylist of results pointer
 	ArrayList< String > resultPointers;
@@ -32,21 +39,23 @@ public class SelectCommand implements Command {
 	
 	
 	
-	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,String tableName,
-			Hashtable<String, String> htblColNameValue, String strOperator) {
+	public SelectCommand(BTreeFactory btfactory,CSVReader reader,Properties properties,BufferManager bufferManager, String tableName,
+			HashMap<String, String> htblColNameValue, String strOperator, long transactionId) {
 		this.btfactory = btfactory;
 		this.reader = reader;
 		this.tableName = tableName;
 		this.htblColNameValue = htblColNameValue;
 		this.strOperator = strOperator;
 		this.properties = properties;
+		this.bufferManager = bufferManager;
+		this.transactionId = transactionId;
+		this.results = new ArrayList<HashMap<String, String>>();
 	}
 	
 	private ArrayList<String> intersect(ArrayList<String> resultsPointer,
 			ArrayList<String> arrayList) {
 		
 		ArrayList<String> ret = new ArrayList<String>();
-		
 		for (String element : resultsPointer) {
 			if(arrayList.contains(element)){
 				ret.add(element);
@@ -73,6 +82,7 @@ public class SelectCommand implements Command {
 	
 	@Override
 	public void execute() throws DBEngineException {
+//		System.out.println(properties.getData());
 		if(properties.getData().get(tableName) == null){
 			throw new DBEngineException("This table doesn't exist");
 		}else if(htblColNameValue == null && strOperator == null){
@@ -83,16 +93,17 @@ public class SelectCommand implements Command {
 			mergeResults();
 			convertPointers();
 		}
+//		System.out.println("3abod" + results);
 		
 	}
 
 	private void validate() throws DBEngineException {
 		
-		if( !strOperator.equals("AND") && !strOperator.equals("OR")){
+		if(strOperator != null && !strOperator.equals("AND") && !strOperator.equals("OR")){
 			throw new DBEngineException("Unknown Opertator");
 		}
 		
-		Hashtable<String, Hashtable<String, String>> table = properties.getData().get(tableName);
+		HashMap<String, HashMap<String, String>> table = properties.getData().get(tableName);
 		
 		Set<String> keys = this.htblColNameValue.keySet();
 		
@@ -124,9 +135,9 @@ public class SelectCommand implements Command {
 			}else{
 				
 				ArrayList<String> partialRecord = new ArrayList<String>();
-				int tablePages = reader.getLastPageIndex(this.tableName);
+				int tablePages = bufferManager.getLastPageIndex(this.tableName);
 				for(int i=0;i<=tablePages;i++){
-					ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+					Page res = bufferManager.read(transactionId, tableName, i, false);
 					for(int j=0;j<res.size();j++){
 						if(res.get(j) != null && res.get(j).get(key).equals(htblColNameValue.get(key))){
 							String pointer = this.tableName + " " + i + " " + j;
@@ -146,6 +157,7 @@ public class SelectCommand implements Command {
 			// DO NOTHING
 		}else{
 			this.resultPointers = partialRecords.get(0);
+			System.out.println(partialRecords);
 			for(int i=1;i<partialRecords.size();i++){
 				if(strOperator.equals("AND")){
 					this.resultPointers = intersect(this.resultPointers,partialRecords.get(i));
@@ -160,12 +172,12 @@ public class SelectCommand implements Command {
 	private void selectAll() throws DBEngineException {
 		
 		this.resultPointers = new ArrayList<String>();
-		this.results = new ArrayList< Hashtable<String, String> >();
+//		this.results = new ArrayList< HashMap<String, String> >();
 		
-		int tablePages = reader.getLastPageIndex(this.tableName);
+		int tablePages = bufferManager.getLastPageIndex(this.tableName);
 		
 		for(int i=0;i<=tablePages;i++){
-			ArrayList<Hashtable<String,String>> res = reader.loadPage(tableName, i);
+			Page res = bufferManager.read(transactionId, tableName, i, false);
 			for(int j=0;j<res.size();j++){
 				if(res.get(j) == null){ // Deleted Record
 					continue;
@@ -181,11 +193,11 @@ public class SelectCommand implements Command {
 	}
 
 	private void convertPointers() throws DBEngineException {
-		this.results = new ArrayList< Hashtable<String, String> >();
-		
+//		this.results = new ArrayList< HashMap<String, String> >();
 		for (String result : this.resultPointers ) {
 			String[] row = result.split(" ");
-			Hashtable<String, String> record = reader.loadRow(row[0] , Integer.parseInt(row[1]) , Integer.parseInt(row[2]) );
+			Page page = bufferManager.read(transactionId, row[0] , Integer.parseInt(row[1]) , false );
+			Tuple record = page.get(Integer.parseInt(row[2]));
 			this.results.add(record);
 		}
 	}
@@ -194,7 +206,9 @@ public class SelectCommand implements Command {
 		return this.resultPointers;
 	}
 	
-	public ArrayList<Hashtable<String, String> > getResults(){
+
+	@Override
+	public List<HashMap<String, String>> getResult() {
 		return this.results;
 	}
 
